@@ -7,7 +7,7 @@ namespace prjProductiveLab_B.Models
     {
         public IdentityServer()
         {
-            staff = new HashSet<staff>();
+            Employees = new HashSet<Employee>();
         }
 
         public int SqlId { get; set; }
@@ -15,6 +15,6 @@ namespace prjProductiveLab_B.Models
         public string ClientSecret { get; set; } = null!;
         public string Scope { get; set; } = null!;
 
-        public virtual ICollection<staff> staff { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; }
     }
 }

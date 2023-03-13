@@ -7,12 +7,12 @@ namespace prjProductiveLab_B.Models
     {
         public JobTitle()
         {
-            staff = new HashSet<staff>();
+            Employees = new HashSet<Employee>();
         }
 
         public int SqlId { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<staff> staff { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; }
     }
 }

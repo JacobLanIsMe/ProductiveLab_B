@@ -18,11 +18,12 @@ namespace prjProductiveLab_B.Models
 
         public virtual DbSet<CourseOfTreatment> CourseOfTreatments { get; set; } = null!;
         public virtual DbSet<Customer> Customers { get; set; } = null!;
+        public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
         public virtual DbSet<IdentityServer> IdentityServers { get; set; } = null!;
         public virtual DbSet<JobTitle> JobTitles { get; set; } = null!;
         public virtual DbSet<Treatment> Treatments { get; set; } = null!;
-        public virtual DbSet<staff> staff { get; set; } = null!;
+        public virtual DbSet<TreatmentStatus> TreatmentStatuses { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -47,6 +48,8 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
+                entity.Property(e => e.SurgicalTime).HasColumnType("datetime");
+
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.CourseOfTreatments)
                     .HasForeignKey(d => d.CustomerId)
@@ -70,6 +73,12 @@ namespace prjProductiveLab_B.Models
                     .HasForeignKey(d => d.TreatmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CourseOfTreatment_Treatment");
+
+                entity.HasOne(d => d.TreatmentStatus)
+                    .WithMany(p => p.CourseOfTreatments)
+                    .HasForeignKey(d => d.TreatmentStatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CourseOfTreatment_TreatmentStatus");
             });
 
             modelBuilder.Entity<Customer>(entity =>
@@ -91,7 +100,32 @@ namespace prjProductiveLab_B.Models
                 entity.HasOne(d => d.SpouseNavigation)
                     .WithMany(p => p.InverseSpouseNavigation)
                     .HasForeignKey(d => d.Spouse)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Customer_Customer");
+            });
+
+            modelBuilder.Entity<Employee>(entity =>
+            {
+                entity.HasKey(e => e.StaffId)
+                    .HasName("PK_Staff");
+
+                entity.ToTable("Employee");
+
+                entity.Property(e => e.StaffId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.IdentityServer)
+                    .WithMany(p => p.Employees)
+                    .HasForeignKey(d => d.IdentityServerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Staff_IdentityServer");
+
+                entity.HasOne(d => d.JobTitle)
+                    .WithMany(p => p.Employees)
+                    .HasForeignKey(d => d.JobTitleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Staff_Identity");
             });
 
             modelBuilder.Entity<Gender>(entity =>
@@ -131,25 +165,13 @@ namespace prjProductiveLab_B.Models
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<staff>(entity =>
+            modelBuilder.Entity<TreatmentStatus>(entity =>
             {
-                entity.ToTable("Staff");
+                entity.HasKey(e => e.SqlId);
 
-                entity.Property(e => e.StaffId).HasDefaultValueSql("(newid())");
+                entity.ToTable("TreatmentStatus");
 
-                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
-
-                entity.HasOne(d => d.IdentityServer)
-                    .WithMany(p => p.staff)
-                    .HasForeignKey(d => d.IdentityServerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Staff_IdentityServer");
-
-                entity.HasOne(d => d.JobTitle)
-                    .WithMany(p => p.staff)
-                    .HasForeignKey(d => d.JobTitleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Staff_Identity");
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
             OnModelCreatingPartial(modelBuilder);
