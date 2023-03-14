@@ -13,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ReproductiveLabContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ReproductiveLabDatabase")));
 builder.Services.AddScoped<ILabMainPage, LabMainPageService>();
+builder.Services.AddScoped<IFunctionService, FunctionService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

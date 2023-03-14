@@ -19,9 +19,11 @@ namespace prjProductiveLab_B.Models
         public virtual DbSet<CourseOfTreatment> CourseOfTreatments { get; set; } = null!;
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
+        public virtual DbSet<Function> Functions { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
         public virtual DbSet<IdentityServer> IdentityServers { get; set; } = null!;
         public virtual DbSet<JobTitle> JobTitles { get; set; } = null!;
+        public virtual DbSet<SubFunction> SubFunctions { get; set; } = null!;
         public virtual DbSet<Treatment> Treatments { get; set; } = null!;
         public virtual DbSet<TreatmentStatus> TreatmentStatuses { get; set; } = null!;
 
@@ -128,6 +130,15 @@ namespace prjProductiveLab_B.Models
                     .HasConstraintName("FK_Staff_Identity");
             });
 
+            modelBuilder.Entity<Function>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("Function");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<Gender>(entity =>
             {
                 entity.HasKey(e => e.SqlId);
@@ -154,6 +165,21 @@ namespace prjProductiveLab_B.Models
                 entity.ToTable("JobTitle");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<SubFunction>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("SubFunction");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Function)
+                    .WithMany(p => p.SubFunctions)
+                    .HasForeignKey(d => d.FunctionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SubFunction_Function");
             });
 
             modelBuilder.Entity<Treatment>(entity =>
