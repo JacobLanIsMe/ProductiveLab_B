@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using prjProductiveLab_B.Interfaces;
+using prjProductiveLab_B.Models;
+using prjProductiveLab_B.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,7 +11,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddDbContext<ReproductiveLabContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ReproductiveLabDatabase")));
+builder.Services.AddScoped<ILabMainPage, LabMainPageService>();
+builder.Services.AddScoped<IFunctionService, FunctionService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -17,7 +24,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
