@@ -18,7 +18,8 @@ namespace prjProductiveLab_B.Services
             new LabMainPageDto
             {
                 surgicalTime = x.SurgicalTime,
-                courseOfTreatmentId = x.SqlId,
+                courseOfTreatmentSqlId = x.SqlId,
+                courseOfTreatmentId = x.CourseOfTreatmentId.ToString(),
                 medicalRecordNumber = x.Customer.SqlId,
                 name = x.Customer.Name,
                 doctor = x.DoctorNavigation.Name,

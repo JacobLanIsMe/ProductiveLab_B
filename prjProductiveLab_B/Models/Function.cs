@@ -12,7 +12,7 @@ namespace prjProductiveLab_B.Models
 
         public int SqlId { get; set; }
         public string Name { get; set; } = null!;
-        public string? Icon { get; set; }
+        public string? Route { get; set; }
 
         public virtual ICollection<SubFunction> SubFunctions { get; set; }
     }

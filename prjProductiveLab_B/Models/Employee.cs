@@ -12,7 +12,7 @@ namespace prjProductiveLab_B.Models
         }
 
         public int SqlId { get; set; }
-        public Guid StaffId { get; set; }
+        public Guid EmployeeId { get; set; }
         public string Name { get; set; } = null!;
         public int JobTitleId { get; set; }
         public int GenderId { get; set; }

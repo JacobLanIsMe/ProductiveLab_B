@@ -18,8 +18,8 @@ namespace prjProductiveLab_B.Services
             {
                 functionId = x.SqlId,
                 name = x.Name,
-                icon = x.Icon,
-            }).ToListAsync();
+                route = x.Route,
+            }).AsNoTracking().ToListAsync();
             return functions;
         }
     }

@@ -40,13 +40,9 @@ namespace prjProductiveLab_B.Models
         {
             modelBuilder.Entity<CourseOfTreatment>(entity =>
             {
-                entity.HasKey(e => e.CourseOfTreatment1);
-
                 entity.ToTable("CourseOfTreatment");
 
-                entity.Property(e => e.CourseOfTreatment1)
-                    .HasColumnName("CourseOfTreatment")
-                    .HasDefaultValueSql("(newid())");
+                entity.Property(e => e.CourseOfTreatmentId).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
@@ -62,13 +58,13 @@ namespace prjProductiveLab_B.Models
                     .WithMany(p => p.CourseOfTreatmentDoctorNavigations)
                     .HasForeignKey(d => d.Doctor)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CourseOfTreatment_Staff");
+                    .HasConstraintName("FK_CourseOfTreatment_Employee");
 
                 entity.HasOne(d => d.EmbryologistNavigation)
                     .WithMany(p => p.CourseOfTreatmentEmbryologistNavigations)
                     .HasForeignKey(d => d.Embryologist)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CourseOfTreatment_Staff1");
+                    .HasConstraintName("FK_CourseOfTreatment_Employee1");
 
                 entity.HasOne(d => d.Treatment)
                     .WithMany(p => p.CourseOfTreatments)
@@ -108,12 +104,9 @@ namespace prjProductiveLab_B.Models
 
             modelBuilder.Entity<Employee>(entity =>
             {
-                entity.HasKey(e => e.StaffId)
-                    .HasName("PK_Staff");
-
                 entity.ToTable("Employee");
 
-                entity.Property(e => e.StaffId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.EmployeeId).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 

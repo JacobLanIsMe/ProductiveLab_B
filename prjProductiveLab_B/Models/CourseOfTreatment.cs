@@ -6,7 +6,7 @@ namespace prjProductiveLab_B.Models
     public partial class CourseOfTreatment
     {
         public int SqlId { get; set; }
-        public Guid CourseOfTreatment1 { get; set; }
+        public Guid CourseOfTreatmentId { get; set; }
         public Guid Doctor { get; set; }
         public Guid Embryologist { get; set; }
         public Guid CustomerId { get; set; }

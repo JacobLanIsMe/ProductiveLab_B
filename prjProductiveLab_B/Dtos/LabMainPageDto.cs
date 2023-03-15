@@ -6,8 +6,10 @@
         public string? treatmentDay { get; set; }
         // 手術日期時間
         public DateTime surgicalTime { get; set; }
+        // 療程 SqlId
+        public int courseOfTreatmentSqlId { get; set; }
         // 療程編號
-        public int courseOfTreatmentId { get; set; }
+        public string? courseOfTreatmentId { get; set; }
         //客戶病歷號碼
         public int medicalRecordNumber { get; set; }
         // 客戶姓名
