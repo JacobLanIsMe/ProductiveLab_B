@@ -20,9 +20,15 @@ namespace prjProductiveLab_B.Models
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
+        public virtual DbSet<FunctionType> FunctionTypes { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
         public virtual DbSet<IdentityServer> IdentityServers { get; set; } = null!;
+        public virtual DbSet<Incubator> Incubators { get; set; } = null!;
         public virtual DbSet<JobTitle> JobTitles { get; set; } = null!;
+        public virtual DbSet<Medium> Media { get; set; } = null!;
+        public virtual DbSet<OvumPickup> OvumPickups { get; set; } = null!;
+        public virtual DbSet<OvumPickupIncubator> OvumPickupIncubators { get; set; } = null!;
+        public virtual DbSet<OvumPickupMedium> OvumPickupMedia { get; set; } = null!;
         public virtual DbSet<SubFunction> SubFunctions { get; set; } = null!;
         public virtual DbSet<Treatment> Treatments { get; set; } = null!;
         public virtual DbSet<TreatmentStatus> TreatmentStatuses { get; set; } = null!;
@@ -55,16 +61,10 @@ namespace prjProductiveLab_B.Models
                     .HasConstraintName("FK_CourseOfTreatment_Customer");
 
                 entity.HasOne(d => d.DoctorNavigation)
-                    .WithMany(p => p.CourseOfTreatmentDoctorNavigations)
+                    .WithMany(p => p.CourseOfTreatments)
                     .HasForeignKey(d => d.Doctor)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CourseOfTreatment_Employee");
-
-                entity.HasOne(d => d.EmbryologistNavigation)
-                    .WithMany(p => p.CourseOfTreatmentEmbryologistNavigations)
-                    .HasForeignKey(d => d.Embryologist)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CourseOfTreatment_Employee1");
 
                 entity.HasOne(d => d.Treatment)
                     .WithMany(p => p.CourseOfTreatments)
@@ -130,6 +130,21 @@ namespace prjProductiveLab_B.Models
                 entity.ToTable("Function");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
+
+                entity.HasOne(d => d.FunctionType)
+                    .WithMany(p => p.Functions)
+                    .HasForeignKey(d => d.FunctionTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Function_FunctionType");
+            });
+
+            modelBuilder.Entity<FunctionType>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("FunctionType");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<Gender>(entity =>
@@ -150,6 +165,15 @@ namespace prjProductiveLab_B.Models
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
+            modelBuilder.Entity<Incubator>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("Incubator");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<JobTitle>(entity =>
             {
                 entity.HasKey(e => e.SqlId)
@@ -158,6 +182,92 @@ namespace prjProductiveLab_B.Models
                 entity.ToTable("JobTitle");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<Medium>(entity =>
+            {
+                entity.ToTable("Medium");
+
+                entity.Property(e => e.MediumId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.ExpirationDate).HasColumnType("date");
+
+                entity.Property(e => e.OpenDate).HasColumnType("date");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<OvumPickup>(entity =>
+            {
+                entity.ToTable("OvumPickup");
+
+                entity.Property(e => e.OvumPickupId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.CocGrade1).HasColumnName("COC_Grade1");
+
+                entity.Property(e => e.CocGrade2).HasColumnName("COC_Grade2");
+
+                entity.Property(e => e.CocGrade3).HasColumnName("COC_Grade3");
+
+                entity.Property(e => e.CocGrade4).HasColumnName("COC_Grade4");
+
+                entity.Property(e => e.CocGrade5).HasColumnName("COC_Grade5");
+
+                entity.Property(e => e.EndTime).HasColumnType("datetime");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.StartTime).HasColumnType("datetime");
+
+                entity.Property(e => e.TriggerTime).HasColumnType("datetime");
+
+                entity.HasOne(d => d.CourseOfTreatment)
+                    .WithMany(p => p.OvumPickups)
+                    .HasForeignKey(d => d.CourseOfTreatmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumPickup_CourseOfTreatment");
+
+                entity.HasOne(d => d.EmbryologistNavigation)
+                    .WithMany(p => p.OvumPickups)
+                    .HasForeignKey(d => d.Embryologist)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumPickup_Employee");
+            });
+
+            modelBuilder.Entity<OvumPickupIncubator>(entity =>
+            {
+                entity.ToTable("OvumPickupIncubator");
+
+                entity.Property(e => e.OvumPickupIncubatorId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.OvumPickup)
+                    .WithMany(p => p.OvumPickupIncubators)
+                    .HasForeignKey(d => d.OvumPickupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumPickupIncubator_OvumPickup");
+            });
+
+            modelBuilder.Entity<OvumPickupMedium>(entity =>
+            {
+                entity.ToTable("OvumPickupMedium");
+
+                entity.Property(e => e.OvumPickupMediumId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.Medium)
+                    .WithMany(p => p.OvumPickupMedia)
+                    .HasForeignKey(d => d.MediumId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumPickupMedium_Medium");
+
+                entity.HasOne(d => d.OvumPickup)
+                    .WithMany(p => p.OvumPickupMedia)
+                    .HasForeignKey(d => d.OvumPickupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumPickupMedium_OvumPickup");
             });
 
             modelBuilder.Entity<SubFunction>(entity =>

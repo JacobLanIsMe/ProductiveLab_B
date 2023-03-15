@@ -7,8 +7,8 @@ namespace prjProductiveLab_B.Models
     {
         public Employee()
         {
-            CourseOfTreatmentDoctorNavigations = new HashSet<CourseOfTreatment>();
-            CourseOfTreatmentEmbryologistNavigations = new HashSet<CourseOfTreatment>();
+            CourseOfTreatments = new HashSet<CourseOfTreatment>();
+            OvumPickups = new HashSet<OvumPickup>();
         }
 
         public int SqlId { get; set; }
@@ -20,7 +20,7 @@ namespace prjProductiveLab_B.Models
 
         public virtual IdentityServer IdentityServer { get; set; } = null!;
         public virtual JobTitle JobTitle { get; set; } = null!;
-        public virtual ICollection<CourseOfTreatment> CourseOfTreatmentDoctorNavigations { get; set; }
-        public virtual ICollection<CourseOfTreatment> CourseOfTreatmentEmbryologistNavigations { get; set; }
+        public virtual ICollection<CourseOfTreatment> CourseOfTreatments { get; set; }
+        public virtual ICollection<OvumPickup> OvumPickups { get; set; }
     }
 }

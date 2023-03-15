@@ -14,10 +14,15 @@ namespace prjProductiveLab_B.Controllers
         {
             this.functionService = functionService;
         }  
-        [HttpGet("GetFunctions")]
-        public async Task<List<FunctionDto>> GetFunctions()
+        [HttpGet("GetCommonFunctions")]
+        public async Task<List<FunctionDto>> GetCommonFunctions()
         {
-            return await functionService.GetFunctions();
+            return await functionService.GetCommonFunctions();
+        }
+        [HttpGet("GetCaseSpecificFunctions")]
+        public async Task<List<FunctionDto>> GetCaseSpecificFunctions()
+        {
+            return await functionService.GetCaseSpecificFunctions();
         }
     }
 }
