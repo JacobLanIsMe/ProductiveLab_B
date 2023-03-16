@@ -25,7 +25,7 @@ namespace prjProductiveLab_B.Models
         public virtual DbSet<IdentityServer> IdentityServers { get; set; } = null!;
         public virtual DbSet<Incubator> Incubators { get; set; } = null!;
         public virtual DbSet<JobTitle> JobTitles { get; set; } = null!;
-        public virtual DbSet<Medium> Media { get; set; } = null!;
+        public virtual DbSet<MediumInUse> MediumInUses { get; set; } = null!;
         public virtual DbSet<OvumPickup> OvumPickups { get; set; } = null!;
         public virtual DbSet<OvumPickupIncubator> OvumPickupIncubators { get; set; } = null!;
         public virtual DbSet<OvumPickupMedium> OvumPickupMedia { get; set; } = null!;
@@ -184,11 +184,11 @@ namespace prjProductiveLab_B.Models
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<Medium>(entity =>
+            modelBuilder.Entity<MediumInUse>(entity =>
             {
-                entity.ToTable("Medium");
+                entity.ToTable("MediumInUse");
 
-                entity.Property(e => e.MediumId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.MediumInUseId).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.ExpirationDate).HasColumnType("date");
 
@@ -242,6 +242,12 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
+                entity.HasOne(d => d.Incubator)
+                    .WithMany(p => p.OvumPickupIncubators)
+                    .HasForeignKey(d => d.IncubatorId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumPickupIncubator_Incubator");
+
                 entity.HasOne(d => d.OvumPickup)
                     .WithMany(p => p.OvumPickupIncubators)
                     .HasForeignKey(d => d.OvumPickupId)
@@ -257,11 +263,11 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
-                entity.HasOne(d => d.Medium)
+                entity.HasOne(d => d.MediumInUse)
                     .WithMany(p => p.OvumPickupMedia)
-                    .HasForeignKey(d => d.MediumId)
+                    .HasForeignKey(d => d.MediumInUseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickupMedium_Medium");
+                    .HasConstraintName("FK_OvumPickupMedium_MediumInUse");
 
                 entity.HasOne(d => d.OvumPickup)
                     .WithMany(p => p.OvumPickupMedia)

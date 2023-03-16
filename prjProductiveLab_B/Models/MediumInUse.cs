@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace prjProductiveLab_B.Models
 {
-    public partial class Medium
+    public partial class MediumInUse
     {
-        public Medium()
+        public MediumInUse()
         {
             OvumPickupMedia = new HashSet<OvumPickupMedium>();
         }
 
         public int SqlId { get; set; }
-        public Guid MediumId { get; set; }
+        public Guid MediumInUseId { get; set; }
         public string Name { get; set; } = null!;
         public DateTime OpenDate { get; set; }
         public DateTime ExpirationDate { get; set; }

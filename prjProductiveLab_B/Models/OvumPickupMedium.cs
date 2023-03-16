@@ -8,9 +8,9 @@ namespace prjProductiveLab_B.Models
         public int SqlId { get; set; }
         public Guid OvumPickupMediumId { get; set; }
         public Guid OvumPickupId { get; set; }
-        public Guid MediumId { get; set; }
+        public Guid MediumInUseId { get; set; }
 
-        public virtual Medium Medium { get; set; } = null!;
+        public virtual MediumInUse MediumInUse { get; set; } = null!;
         public virtual OvumPickup OvumPickup { get; set; } = null!;
     }
 }

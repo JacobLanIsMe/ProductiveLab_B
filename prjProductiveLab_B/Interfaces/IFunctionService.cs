@@ -4,7 +4,7 @@ namespace prjProductiveLab_B.Interfaces
 {
     public interface IFunctionService
     {
-        Task<List<FunctionDto>> GetCommonFunctions();
-        Task<List<FunctionDto>> GetCaseSpecificFunctions();
+        Task<IEnumerable<FunctionDto>> GetCommonFunctions();
+        Task<IEnumerable<FunctionDto>> GetCaseSpecificFunctions();
     }
 }
