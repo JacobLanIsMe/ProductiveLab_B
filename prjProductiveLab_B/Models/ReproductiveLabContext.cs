@@ -27,8 +27,7 @@ namespace prjProductiveLab_B.Models
         public virtual DbSet<JobTitle> JobTitles { get; set; } = null!;
         public virtual DbSet<MediumInUse> MediumInUses { get; set; } = null!;
         public virtual DbSet<OvumPickup> OvumPickups { get; set; } = null!;
-        public virtual DbSet<OvumPickupIncubator> OvumPickupIncubators { get; set; } = null!;
-        public virtual DbSet<OvumPickupMedium> OvumPickupMedia { get; set; } = null!;
+        public virtual DbSet<OvumPickupDetail> OvumPickupDetails { get; set; } = null!;
         public virtual DbSet<SubFunction> SubFunctions { get; set; } = null!;
         public virtual DbSet<Treatment> Treatments { get; set; } = null!;
         public virtual DbSet<TreatmentStatus> TreatmentStatuses { get; set; } = null!;
@@ -221,6 +220,8 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.TriggerTime).HasColumnType("datetime");
 
+                entity.Property(e => e.UpdateTime).HasColumnType("datetime");
+
                 entity.HasOne(d => d.CourseOfTreatment)
                     .WithMany(p => p.OvumPickups)
                     .HasForeignKey(d => d.CourseOfTreatmentId)
@@ -234,46 +235,31 @@ namespace prjProductiveLab_B.Models
                     .HasConstraintName("FK_OvumPickup_Employee");
             });
 
-            modelBuilder.Entity<OvumPickupIncubator>(entity =>
+            modelBuilder.Entity<OvumPickupDetail>(entity =>
             {
-                entity.ToTable("OvumPickupIncubator");
+                entity.ToTable("OvumPickupDetail");
 
-                entity.Property(e => e.OvumPickupIncubatorId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.OvumPickupDetailId).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.Incubator)
-                    .WithMany(p => p.OvumPickupIncubators)
+                    .WithMany(p => p.OvumPickupDetails)
                     .HasForeignKey(d => d.IncubatorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickupIncubator_Incubator");
-
-                entity.HasOne(d => d.OvumPickup)
-                    .WithMany(p => p.OvumPickupIncubators)
-                    .HasForeignKey(d => d.OvumPickupId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickupIncubator_OvumPickup");
-            });
-
-            modelBuilder.Entity<OvumPickupMedium>(entity =>
-            {
-                entity.ToTable("OvumPickupMedium");
-
-                entity.Property(e => e.OvumPickupMediumId).HasDefaultValueSql("(newid())");
-
-                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+                    .HasConstraintName("FK_OvumPickupDetail_Incubator");
 
                 entity.HasOne(d => d.MediumInUse)
-                    .WithMany(p => p.OvumPickupMedia)
+                    .WithMany(p => p.OvumPickupDetails)
                     .HasForeignKey(d => d.MediumInUseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickupMedium_MediumInUse");
+                    .HasConstraintName("FK_OvumPickupDetail_MediumInUse");
 
                 entity.HasOne(d => d.OvumPickup)
-                    .WithMany(p => p.OvumPickupMedia)
+                    .WithMany(p => p.OvumPickupDetails)
                     .HasForeignKey(d => d.OvumPickupId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickupMedium_OvumPickup");
+                    .HasConstraintName("FK_OvumPickupDetail_OvumPickup");
             });
 
             modelBuilder.Entity<SubFunction>(entity =>

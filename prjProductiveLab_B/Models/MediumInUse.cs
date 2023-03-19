@@ -7,7 +7,7 @@ namespace prjProductiveLab_B.Models
     {
         public MediumInUse()
         {
-            OvumPickupMedia = new HashSet<OvumPickupMedium>();
+            OvumPickupDetails = new HashSet<OvumPickupDetail>();
         }
 
         public int SqlId { get; set; }
@@ -16,7 +16,8 @@ namespace prjProductiveLab_B.Models
         public DateTime OpenDate { get; set; }
         public DateTime ExpirationDate { get; set; }
         public string LotNumber { get; set; } = null!;
+        public bool IsDeleted { get; set; }
 
-        public virtual ICollection<OvumPickupMedium> OvumPickupMedia { get; set; }
+        public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }
     }
 }

@@ -15,6 +15,9 @@ builder.Services.AddDbContext<ReproductiveLabContext>(options => options.UseSqlS
 builder.Services.AddScoped<ILabMainPage, LabMainPageService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IMediumService, MediumService>();
+builder.Services.AddScoped<IIncubatorService, IncubatorService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<ITreatmentService, TreatmentService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

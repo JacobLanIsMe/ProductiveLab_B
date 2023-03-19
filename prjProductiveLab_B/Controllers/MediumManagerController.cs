@@ -23,7 +23,12 @@ namespace prjProductiveLab_B.Controllers
         {
             return await mediumService.AddMedium(medium);            
         }
+        [HttpGet("GetInUseMedium")]
+        public async Task<InUseMediumDto> GetInUseMedium()
+        {
+            return await mediumService.GetInUseMedium();
+        }
 
-        
+
     }
 }

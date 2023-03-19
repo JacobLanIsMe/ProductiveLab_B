@@ -7,12 +7,12 @@ namespace prjProductiveLab_B.Models
     {
         public Incubator()
         {
-            OvumPickupIncubators = new HashSet<OvumPickupIncubator>();
+            OvumPickupDetails = new HashSet<OvumPickupDetail>();
         }
 
         public int SqlId { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<OvumPickupIncubator> OvumPickupIncubators { get; set; }
+        public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }
     }
 }

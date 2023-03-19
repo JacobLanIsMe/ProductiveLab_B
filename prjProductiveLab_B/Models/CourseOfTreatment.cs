@@ -17,6 +17,7 @@ namespace prjProductiveLab_B.Models
         public int TreatmentId { get; set; }
         public DateTime SurgicalTime { get; set; }
         public int TreatmentStatusId { get; set; }
+        public string? Memo { get; set; }
 
         public virtual Customer Customer { get; set; } = null!;
         public virtual Employee DoctorNavigation { get; set; } = null!;

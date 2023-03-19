@@ -7,8 +7,7 @@ namespace prjProductiveLab_B.Models
     {
         public OvumPickup()
         {
-            OvumPickupIncubators = new HashSet<OvumPickupIncubator>();
-            OvumPickupMedia = new HashSet<OvumPickupMedium>();
+            OvumPickupDetails = new HashSet<OvumPickupDetail>();
         }
 
         public int SqlId { get; set; }
@@ -17,17 +16,16 @@ namespace prjProductiveLab_B.Models
         public DateTime TriggerTime { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public int TotalOvumNumber { get; set; }
         public int CocGrade5 { get; set; }
         public int CocGrade4 { get; set; }
         public int CocGrade3 { get; set; }
         public int CocGrade2 { get; set; }
         public int CocGrade1 { get; set; }
         public Guid Embryologist { get; set; }
+        public DateTime UpdateTime { get; set; }
 
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual Employee EmbryologistNavigation { get; set; } = null!;
-        public virtual ICollection<OvumPickupIncubator> OvumPickupIncubators { get; set; }
-        public virtual ICollection<OvumPickupMedium> OvumPickupMedia { get; set; }
+        public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }
     }
 }
