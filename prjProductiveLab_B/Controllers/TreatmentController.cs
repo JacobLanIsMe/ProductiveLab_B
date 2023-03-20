@@ -15,7 +15,7 @@ namespace prjProductiveLab_B.Controllers
             this.treatmentService = customerService;
         }
         [HttpPost("AddOvumPickupNote")]
-        public BaseResponseDto AddOvumPickupNote([FromBody] AddOvumPickupNote ovumPickupNote)
+        public BaseResponseDto AddOvumPickupNote([FromBody] AddOvumPickupNoteDto ovumPickupNote)
         {
             return treatmentService.AddOvumPickupNote(ovumPickupNote);
         }
@@ -24,6 +24,12 @@ namespace prjProductiveLab_B.Controllers
         public async Task<BaseTreatmentInfoDto> GetBaseTreatmentInfo(Guid courseOfTreatmentId)
         {
             return await treatmentService.GetBaseTreatmentInfo(courseOfTreatmentId);
+        }
+
+        [HttpGet("GetTreatmentSummary")]
+        public async Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId)
+        {
+            return await treatmentService.GetTreatmentSummary(courseOfTreatmentId);
         }
 
     }

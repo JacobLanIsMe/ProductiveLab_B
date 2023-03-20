@@ -18,6 +18,8 @@ namespace prjProductiveLab_B.Models
         public DateTime SurgicalTime { get; set; }
         public int TreatmentStatusId { get; set; }
         public string? Memo { get; set; }
+        public Guid? OvumFromCourseOfTreatmentId { get; set; }
+        public Guid? SpermFromCourseOfTreatmentId { get; set; }
 
         public virtual Customer Customer { get; set; } = null!;
         public virtual Employee DoctorNavigation { get; set; } = null!;

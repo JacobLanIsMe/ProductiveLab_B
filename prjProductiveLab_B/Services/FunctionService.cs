@@ -12,30 +12,23 @@ namespace prjProductiveLab_B.Services
         {
             this.dbContext = dbContext;
         }
-        public async Task<IEnumerable<FunctionDto>> GetCommonFunctions()
-        {
-            
-            List<FunctionDto> allFunctions = await GetAllFunctions();
-            IEnumerable<FunctionDto> commonFunctions = allFunctions.Where(x => x.functionTypeId == 1);
-            return commonFunctions;
-        }
-
-        public async Task<IEnumerable<FunctionDto>> GetCaseSpecificFunctions()
-        {
-
-            List<FunctionDto> allFunctions = await GetAllFunctions();
-            IEnumerable<FunctionDto> caseSpecificFunctions = allFunctions.Where(x => x.functionTypeId == 2);
-            return caseSpecificFunctions;
-        }
 
         public async Task<List<FunctionDto>> GetAllFunctions()
         {
-            List<FunctionDto> allFunctions = await dbContext.Functions.Select(x => new FunctionDto
+            List<FunctionDto> allFunctions = await dbContext.Functions.Where(x=>x.ParentFunctionId == 0).Select(x => new FunctionDto
             {
                 functionId = x.SqlId,
                 name = x.Name,
                 route = x.Route,
-                functionTypeId = x.FunctionTypeId
+                functionTypeId = x.FunctionTypeId,
+                subFunctions = dbContext.Functions.Where(y=>y.ParentFunctionId == x.SqlId).Select(y=>new FunctionDto
+                {
+                    functionId = y.SqlId,
+                    name = y.Name,
+                    route= y.Route,
+                    functionTypeId = y.FunctionTypeId,
+                    subFunctions = null,
+                }).AsNoTracking().ToList()
             }).OrderBy(x=>x.functionId).AsNoTracking().ToListAsync();
             return allFunctions;
         }

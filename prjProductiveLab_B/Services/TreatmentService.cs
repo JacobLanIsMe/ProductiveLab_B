@@ -13,7 +13,7 @@ namespace prjProductiveLab_B.Services
         {
             this.dbContext = dbContext;
         }
-        public BaseResponseDto AddOvumPickupNote(AddOvumPickupNote ovumPickupNote)
+        public BaseResponseDto AddOvumPickupNote(AddOvumPickupNoteDto ovumPickupNote)
         {
             BaseResponseDto result = new BaseResponseDto();
             string errorMessage = OvumPickupNoteValidation(ovumPickupNote);
@@ -39,6 +39,20 @@ namespace prjProductiveLab_B.Services
                         };
                         dbContext.OvumPickups.Add(ovumPickup);
                         dbContext.SaveChanges();
+                        Guid latestOvumPickupId = dbContext.OvumPickups.OrderByDescending(x=>x.SqlId).Select(x=>x.OvumPickupId).FirstOrDefault();
+                        int ovumTotalNumber = ovumPickupNote.ovumPickupNumber.coc_Grade1 + ovumPickupNote.ovumPickupNumber.coc_Grade2 + ovumPickupNote.ovumPickupNumber.coc_Grade3 + ovumPickupNote.ovumPickupNumber.coc_Grade4 + ovumPickupNote.ovumPickupNumber.coc_Grade5;
+                        for (int i = 1; i<=ovumTotalNumber; i++)
+                        {
+                            OvumPickupDetail ovumPickupDetail = new OvumPickupDetail()
+                            {
+                                OvumPickupId = latestOvumPickupId,
+                                OvumNumber = i,
+                                OvumPickupDetailStatusId = 1,
+                                FertilizationStatusId = 1
+                            };
+                            dbContext.Add(ovumPickupDetail);
+                        }
+                        dbContext.SaveChanges();
                         scope.Complete();
                         
                     }
@@ -60,7 +74,7 @@ namespace prjProductiveLab_B.Services
 
         }
         // OvumPickupNote 表格的驗證，若有錯誤回傳錯誤訊息，若無錯誤回傳空字串。
-        public string OvumPickupNoteValidation(AddOvumPickupNote ovumPickupNote)
+        public string OvumPickupNoteValidation(AddOvumPickupNoteDto ovumPickupNote)
         {
             string errorMessage = "";
             if (!Guid.TryParse(ovumPickupNote.courseOfTreatmentId, out Guid transformedCourseId))
@@ -110,5 +124,19 @@ namespace prjProductiveLab_B.Services
             }).AsNoTracking().FirstOrDefaultAsync();
         }
 
+        public async Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId)
+        {
+            return await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new TreatmentSummaryDto
+            {
+                ovumPickupDetailId = x.OvumPickupDetailId,
+                originOfOvum = x.OvumPickup.CourseOfTreatment.Treatment.OvumFromNavigation.Origin,
+                ovumFromCourseOfTreatmentSqlId = dbContext.CourseOfTreatments.Where(z=>z.CourseOfTreatmentId == x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId).Select(z=>z.SqlId).FirstOrDefault(),
+                ovumPickupDetailStatus = x.OvumPickupDetailStatus.Name,
+                dateOfEmbryo = (DateTime.Now.Date - x.OvumPickup.CourseOfTreatment.SurgicalTime.Date).Days,
+                ovumNumber = x.OvumNumber,
+                fertilizationStatus = x.FertilizationStatus.Name,
+                observationNote = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId).OrderByDescending(y => y.SqlId).Select(y => y.Note).FirstOrDefault()
+            }).OrderBy(x=>x.ovumNumber).AsNoTracking().ToListAsync();
+        }
     }
 }

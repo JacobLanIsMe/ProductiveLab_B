@@ -4,7 +4,8 @@ namespace prjProductiveLab_B.Interfaces
 {
     public interface ITreatmentService
     {
-        BaseResponseDto AddOvumPickupNote(AddOvumPickupNote ovumPickupNote);
+        BaseResponseDto AddOvumPickupNote(AddOvumPickupNoteDto ovumPickupNote);
         Task<BaseTreatmentInfoDto> GetBaseTreatmentInfo(Guid courseOfTreatmentId);
+        Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId);
     }
 }
