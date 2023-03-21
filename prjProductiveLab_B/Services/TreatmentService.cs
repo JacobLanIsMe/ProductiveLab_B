@@ -129,7 +129,7 @@ namespace prjProductiveLab_B.Services
             return await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new TreatmentSummaryDto
             {
                 ovumPickupDetailId = x.OvumPickupDetailId,
-                originOfOvum = x.OvumPickup.CourseOfTreatment.Treatment.OvumFromNavigation.Origin,
+                courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
                 ovumFromCourseOfTreatmentSqlId = dbContext.CourseOfTreatments.Where(z=>z.CourseOfTreatmentId == x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId).Select(z=>z.SqlId).FirstOrDefault(),
                 ovumPickupDetailStatus = x.OvumPickupDetailStatus.Name,
                 dateOfEmbryo = (DateTime.Now.Date - x.OvumPickup.CourseOfTreatment.SurgicalTime.Date).Days,
