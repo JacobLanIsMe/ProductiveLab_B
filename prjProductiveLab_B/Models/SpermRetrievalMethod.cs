@@ -7,12 +7,12 @@ namespace prjProductiveLab_B.Models
     {
         public SpermRetrievalMethod()
         {
-            SpermPickups = new HashSet<SpermPickup>();
+            CourseOfTreatments = new HashSet<CourseOfTreatment>();
         }
 
         public int SqlId { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<SpermPickup> SpermPickups { get; set; }
+        public virtual ICollection<CourseOfTreatment> CourseOfTreatments { get; set; }
     }
 }

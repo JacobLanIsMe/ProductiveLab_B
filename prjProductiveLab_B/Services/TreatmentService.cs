@@ -110,7 +110,7 @@ namespace prjProductiveLab_B.Services
 
         public async Task<BaseTreatmentInfoDto> GetBaseTreatmentInfo(Guid courseOfTreatmentId)
         {
-            return await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseTreatmentInfoDto
+            var result = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseTreatmentInfoDto
             {
                 courseOfTreatmentSqlId = x.SqlId,
                 customerSqlId = x.Customer.SqlId,
@@ -122,6 +122,7 @@ namespace prjProductiveLab_B.Services
                 treatmentName = x.Treatment.Name,
                 memo = x.Memo
             }).AsNoTracking().FirstOrDefaultAsync();
+            return result;
         }
 
         public async Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId)
@@ -138,5 +139,6 @@ namespace prjProductiveLab_B.Services
                 observationNote = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId).OrderByDescending(y => y.SqlId).Select(y => y.Note).FirstOrDefault()
             }).OrderBy(x=>x.ovumNumber).AsNoTracking().ToListAsync();
         }
+       
     }
 }

@@ -32,8 +32,9 @@ namespace prjProductiveLab_B.Models
         public virtual DbSet<OvumPickupDetail> OvumPickupDetails { get; set; } = null!;
         public virtual DbSet<OvumPickupDetailStatus> OvumPickupDetailStatuses { get; set; } = null!;
         public virtual DbSet<SpermFreeze> SpermFreezes { get; set; } = null!;
-        public virtual DbSet<SpermPickup> SpermPickups { get; set; } = null!;
         public virtual DbSet<SpermRetrievalMethod> SpermRetrievalMethods { get; set; } = null!;
+        public virtual DbSet<SpermScore> SpermScores { get; set; } = null!;
+        public virtual DbSet<SpermScoreTimePoint> SpermScoreTimePoints { get; set; } = null!;
         public virtual DbSet<Treatment> Treatments { get; set; } = null!;
         public virtual DbSet<TreatmentStatus> TreatmentStatuses { get; set; } = null!;
 
@@ -69,6 +70,11 @@ namespace prjProductiveLab_B.Models
                     .HasForeignKey(d => d.Doctor)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CourseOfTreatment_Employee");
+
+                entity.HasOne(d => d.SpermRetrievalMethod)
+                    .WithMany(p => p.CourseOfTreatments)
+                    .HasForeignKey(d => d.SpermRetrievalMethodId)
+                    .HasConstraintName("FK_CourseOfTreatment_SpermRetrievalMethod");
 
                 entity.HasOne(d => d.Treatment)
                     .WithMany(p => p.CourseOfTreatments)
@@ -319,32 +325,11 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
-                entity.HasOne(d => d.SpermPickup)
+                entity.HasOne(d => d.SpermScore)
                     .WithMany(p => p.SpermFreezes)
-                    .HasForeignKey(d => d.SpermPickupId)
+                    .HasForeignKey(d => d.SpermScoreId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SpermFreeze_SpermPickup");
-            });
-
-            modelBuilder.Entity<SpermPickup>(entity =>
-            {
-                entity.ToTable("SpermPickup");
-
-                entity.Property(e => e.SpermPickupId).HasDefaultValueSql("(newid())");
-
-                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
-
-                entity.HasOne(d => d.CourseOfTreatment)
-                    .WithMany(p => p.SpermPickups)
-                    .HasForeignKey(d => d.CourseOfTreatmentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SpermPickup_CourseOfTreatment");
-
-                entity.HasOne(d => d.SpermRetrievalMethod)
-                    .WithMany(p => p.SpermPickups)
-                    .HasForeignKey(d => d.SpermRetrievalMethodId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SpermPickup_SpermRetrievalMethod");
+                    .HasConstraintName("FK_SpermFreeze_SpermScore");
             });
 
             modelBuilder.Entity<SpermRetrievalMethod>(entity =>
@@ -352,6 +337,58 @@ namespace prjProductiveLab_B.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("SpermRetrievalMethod");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<SpermScore>(entity =>
+            {
+                entity.ToTable("SpermScore");
+
+                entity.Property(e => e.SpermScoreId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.ActivityA).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.ActivityB).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.ActivityC).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.ActivityD).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.Concentration).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.Morphology).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.RecordTime).HasColumnType("datetime");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Volume).HasColumnType("decimal(18, 0)");
+
+                entity.HasOne(d => d.CourseOfTreatment)
+                    .WithMany(p => p.SpermScores)
+                    .HasForeignKey(d => d.CourseOfTreatmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermScore_CourseOfTreatment");
+
+                entity.HasOne(d => d.EmbryologistNavigation)
+                    .WithMany(p => p.SpermScores)
+                    .HasForeignKey(d => d.Embryologist)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermScore_Employee");
+
+                entity.HasOne(d => d.SpermScoreTimePoint)
+                    .WithMany(p => p.SpermScores)
+                    .HasForeignKey(d => d.SpermScoreTimePointId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermScore_SpermScoreTimePoint");
+            });
+
+            modelBuilder.Entity<SpermScoreTimePoint>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("SpermScoreTimePoint");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });

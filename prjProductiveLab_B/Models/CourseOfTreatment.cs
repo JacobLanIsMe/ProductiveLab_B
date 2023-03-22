@@ -8,7 +8,7 @@ namespace prjProductiveLab_B.Models
         public CourseOfTreatment()
         {
             OvumPickups = new HashSet<OvumPickup>();
-            SpermPickups = new HashSet<SpermPickup>();
+            SpermScores = new HashSet<SpermScore>();
         }
 
         public int SqlId { get; set; }
@@ -21,12 +21,14 @@ namespace prjProductiveLab_B.Models
         public string? Memo { get; set; }
         public Guid? OvumFromCourseOfTreatmentId { get; set; }
         public Guid? SpermFromCourseOfTreatmentId { get; set; }
+        public int? SpermRetrievalMethodId { get; set; }
 
         public virtual Customer Customer { get; set; } = null!;
         public virtual Employee DoctorNavigation { get; set; } = null!;
+        public virtual SpermRetrievalMethod? SpermRetrievalMethod { get; set; }
         public virtual Treatment Treatment { get; set; } = null!;
         public virtual TreatmentStatus TreatmentStatus { get; set; } = null!;
         public virtual ICollection<OvumPickup> OvumPickups { get; set; }
-        public virtual ICollection<SpermPickup> SpermPickups { get; set; }
+        public virtual ICollection<SpermScore> SpermScores { get; set; }
     }
 }

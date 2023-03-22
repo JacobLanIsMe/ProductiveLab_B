@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Interfaces;
+using prjProductiveLab_B.Models;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -10,9 +11,11 @@ namespace prjProductiveLab_B.Controllers
     public class TreatmentController : ControllerBase
     {
         public readonly ITreatmentService treatmentService;
-        public TreatmentController(ITreatmentService customerService) 
+        public readonly IOperateSpermService operateSpermService;
+        public TreatmentController(ITreatmentService customerService, IOperateSpermService operateSpermService) 
         {
             this.treatmentService = customerService;
+            this.operateSpermService = operateSpermService;
         }
         [HttpPost("AddOvumPickupNote")]
         public BaseResponseDto AddOvumPickupNote([FromBody] AddOvumPickupNoteDto ovumPickupNote)
@@ -31,6 +34,15 @@ namespace prjProductiveLab_B.Controllers
         {
             return await treatmentService.GetTreatmentSummary(courseOfTreatmentId);
         }
-
+        [HttpGet("GetOriginInfoOfSperm")]
+        public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
+        {
+            return await operateSpermService.GetOriginInfoOfSperm(courseOfTreatmentId);
+        }
+        [HttpPost("AddSpermScore")]
+        public BaseResponseDto AddSpermScore(AddSpermScoreDto addSpermScore)
+        {
+            return operateSpermService.AddSpermScore(addSpermScore);
+        }
     }
 }

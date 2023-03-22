@@ -7,9 +7,9 @@ namespace prjProductiveLab_B.Models
     {
         public int SqlId { get; set; }
         public Guid SpermFreezeId { get; set; }
-        public Guid SpermPickupId { get; set; }
         public int VialNumber { get; set; }
+        public Guid SpermScoreId { get; set; }
 
-        public virtual SpermPickup SpermPickup { get; set; } = null!;
+        public virtual SpermScore SpermScore { get; set; } = null!;
     }
 }
