@@ -27,14 +27,21 @@ namespace prjProductiveLab_B.Models
         public virtual DbSet<Incubator> Incubators { get; set; } = null!;
         public virtual DbSet<JobTitle> JobTitles { get; set; } = null!;
         public virtual DbSet<MediumInUse> MediumInUses { get; set; } = null!;
+        public virtual DbSet<MediumType> MediumTypes { get; set; } = null!;
         public virtual DbSet<ObservationNote> ObservationNotes { get; set; } = null!;
         public virtual DbSet<OvumPickup> OvumPickups { get; set; } = null!;
         public virtual DbSet<OvumPickupDetail> OvumPickupDetails { get; set; } = null!;
         public virtual DbSet<OvumPickupDetailStatus> OvumPickupDetailStatuses { get; set; } = null!;
         public virtual DbSet<SpermFreeze> SpermFreezes { get; set; } = null!;
+        public virtual DbSet<SpermFreezeOperationMethod> SpermFreezeOperationMethods { get; set; } = null!;
         public virtual DbSet<SpermRetrievalMethod> SpermRetrievalMethods { get; set; } = null!;
         public virtual DbSet<SpermScore> SpermScores { get; set; } = null!;
         public virtual DbSet<SpermScoreTimePoint> SpermScoreTimePoints { get; set; } = null!;
+        public virtual DbSet<StorageCaneBox> StorageCaneBoxes { get; set; } = null!;
+        public virtual DbSet<StorageShelf> StorageShelves { get; set; } = null!;
+        public virtual DbSet<StorageTank> StorageTanks { get; set; } = null!;
+        public virtual DbSet<StorageTankType> StorageTankTypes { get; set; } = null!;
+        public virtual DbSet<StorageUnit> StorageUnits { get; set; } = null!;
         public virtual DbSet<Treatment> Treatments { get; set; } = null!;
         public virtual DbSet<TreatmentStatus> TreatmentStatuses { get; set; } = null!;
 
@@ -215,6 +222,20 @@ namespace prjProductiveLab_B.Models
                 entity.Property(e => e.OpenDate).HasColumnType("date");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.MediumType)
+                    .WithMany(p => p.MediumInUses)
+                    .HasForeignKey(d => d.MediumTypeId)
+                    .HasConstraintName("FK_MediumInUse_MediumType");
+            });
+
+            modelBuilder.Entity<MediumType>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("MediumType");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<ObservationNote>(entity =>
@@ -323,13 +344,48 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.SpermFreezeId).HasDefaultValueSql("(newid())");
 
+                entity.Property(e => e.FreezeTime).HasColumnType("datetime");
+
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.EmbryologistNavigation)
+                    .WithMany(p => p.SpermFreezes)
+                    .HasForeignKey(d => d.Embryologist)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermFreeze_Employee");
+
+                entity.HasOne(d => d.MediumInUse)
+                    .WithMany(p => p.SpermFreezes)
+                    .HasForeignKey(d => d.MediumInUseId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermFreeze_MediumInUse");
+
+                entity.HasOne(d => d.SpermFreezeOperationMethod)
+                    .WithMany(p => p.SpermFreezes)
+                    .HasForeignKey(d => d.SpermFreezeOperationMethodId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermFreeze_SpermFreezeOperationMethod");
 
                 entity.HasOne(d => d.SpermScore)
                     .WithMany(p => p.SpermFreezes)
                     .HasForeignKey(d => d.SpermScoreId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SpermFreeze_SpermScore");
+
+                entity.HasOne(d => d.StorageUnit)
+                    .WithMany(p => p.SpermFreezes)
+                    .HasForeignKey(d => d.StorageUnitId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermFreeze_StorageUnit");
+            });
+
+            modelBuilder.Entity<SpermFreezeOperationMethod>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("SpermFreezeOperationMethod");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<SpermRetrievalMethod>(entity =>
@@ -391,6 +447,70 @@ namespace prjProductiveLab_B.Models
                 entity.ToTable("SpermScoreTimePoint");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<StorageCaneBox>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("StorageCaneBox");
+
+                entity.HasOne(d => d.StorageShelf)
+                    .WithMany(p => p.StorageCaneBoxes)
+                    .HasForeignKey(d => d.StorageShelfId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_StorageCaneBox_StorageShelf");
+            });
+
+            modelBuilder.Entity<StorageShelf>(entity =>
+            {
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_StorageStrip");
+
+                entity.ToTable("StorageShelf");
+
+                entity.HasOne(d => d.StorageTank)
+                    .WithMany(p => p.StorageShelves)
+                    .HasForeignKey(d => d.StorageTankId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_StorageStrip_StorageTank");
+            });
+
+            modelBuilder.Entity<StorageTank>(entity =>
+            {
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_Storage");
+
+                entity.ToTable("StorageTank");
+
+                entity.HasOne(d => d.StorageTankType)
+                    .WithMany(p => p.StorageTanks)
+                    .HasForeignKey(d => d.StorageTankTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_StorageTank_StorageTankType");
+            });
+
+            modelBuilder.Entity<StorageTankType>(entity =>
+            {
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_StorageType");
+
+                entity.ToTable("StorageTankType");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<StorageUnit>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("StorageUnit");
+
+                entity.HasOne(d => d.StorageCaneBox)
+                    .WithMany(p => p.StorageUnits)
+                    .HasForeignKey(d => d.StorageCaneBoxId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_StorageUnit_StorageCaneBox");
             });
 
             modelBuilder.Entity<Treatment>(entity =>

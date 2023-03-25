@@ -9,6 +9,7 @@ namespace prjProductiveLab_B.Models
         {
             CourseOfTreatments = new HashSet<CourseOfTreatment>();
             OvumPickups = new HashSet<OvumPickup>();
+            SpermFreezes = new HashSet<SpermFreeze>();
             SpermScores = new HashSet<SpermScore>();
         }
 
@@ -23,6 +24,7 @@ namespace prjProductiveLab_B.Models
         public virtual JobTitle JobTitle { get; set; } = null!;
         public virtual ICollection<CourseOfTreatment> CourseOfTreatments { get; set; }
         public virtual ICollection<OvumPickup> OvumPickups { get; set; }
+        public virtual ICollection<SpermFreeze> SpermFreezes { get; set; }
         public virtual ICollection<SpermScore> SpermScores { get; set; }
     }
 }

@@ -40,9 +40,19 @@ namespace prjProductiveLab_B.Controllers
             return await operateSpermService.GetOriginInfoOfSperm(courseOfTreatmentId);
         }
         [HttpPost("AddSpermScore")]
-        public BaseResponseDto AddSpermScore(AddSpermScoreDto addSpermScore)
+        public BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore)
         {
             return operateSpermService.AddSpermScore(addSpermScore);
+        }
+        [HttpGet("GetExistingSpermScore")]
+        public async Task<SpermScoreDto> GetExistingSpermScore(Guid spermFromCourseOfTreatmentId, int spermScoreTimePointId)
+        {
+            return await operateSpermService.GetExistingSpermScore(spermFromCourseOfTreatmentId, spermScoreTimePointId);
+        }
+        [HttpPut("UpdateExistingSpermScore")]
+        public async Task<BaseResponseDto> UpdateExistingSpermScore(SpermScoreDto addSpermScore)
+        {
+            return await operateSpermService.UpdateExistingSpermScore(addSpermScore);
         }
     }
 }

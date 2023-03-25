@@ -6,6 +6,8 @@ namespace prjProductiveLab_B.Interfaces
     public interface IOperateSpermService
     {
         Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId);
-        BaseResponseDto AddSpermScore(AddSpermScoreDto addSpermScore);
+        BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore);
+        Task<SpermScoreDto> GetExistingSpermScore(Guid spermFromCourseOfTreatmentId, int spermScoreTimePointId);
+        Task<BaseResponseDto> UpdateExistingSpermScore(SpermScoreDto addSpermScore);
     }
 }

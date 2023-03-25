@@ -19,6 +19,7 @@ builder.Services.AddScoped<IIncubatorService, IncubatorService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<ITreatmentService, TreatmentService>();
 builder.Services.AddScoped<IOperateSpermService, OperateSpermService>();
+builder.Services.AddScoped<IStorageService, StorageService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

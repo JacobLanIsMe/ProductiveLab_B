@@ -91,28 +91,15 @@ namespace prjProductiveLab_B.Services
             return result;
         }
 
-        public BaseResponseDto AddSpermScore(AddSpermScoreDto addSpermScore)
+        public BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore)
         {
             BaseResponseDto result = new BaseResponseDto();
             try
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    SpermScore spermScore = new SpermScore()
-                    {
-                        Volume = addSpermScore.volume,
-                        Concentration = addSpermScore.concentration,
-                        ActivityA = addSpermScore.activityA,
-                        ActivityB = addSpermScore.activityB,
-                        ActivityC = addSpermScore.activityC,
-                        ActivityD = addSpermScore.activityD,
-                        Morphology = addSpermScore.morphology,
-                        Abstinence = addSpermScore.abstinence,
-                        SpermScoreTimePointId = addSpermScore.spermScoreTimePointId,
-                        RecordTime = addSpermScore.recordTime,
-                        Embryologist = addSpermScore.embryologist,
-                        CourseOfTreatmentId = addSpermScore.courseOfTreatmentId
-                    };
+                    SpermScore spermScore = new SpermScore();
+                    spermScore = TransformSpermScoreDtoToSpermScore(addSpermScore, spermScore);
                     dbContext.SpermScores.Add(spermScore);
                     dbContext.SaveChanges();
                     scope.Complete();
@@ -125,6 +112,70 @@ namespace prjProductiveLab_B.Services
                 result.SetError(ex.Message);
             }
             return result;
+        }
+        public async Task<SpermScoreDto> GetExistingSpermScore(Guid spermFromCourseOfTreatmentId, int spermScoreTimePointId)
+        {
+            var existingSpermScore = await dbContext.SpermScores.Where(x => x.CourseOfTreatmentId == spermFromCourseOfTreatmentId && x.SpermScoreTimePointId == spermScoreTimePointId).Select(x => new SpermScoreDto
+            {
+                volume = x.Volume,
+                concentration = x.Concentration,
+                activityA = x.ActivityA,
+                activityB = x.ActivityB,
+                activityC = x.ActivityC,
+                activityD = x.ActivityD,
+                morphology = x.Morphology,
+                abstinence = x.Abstinence,
+                spermScoreTimePointId = x.SpermScoreTimePointId,
+                recordTime = x.RecordTime,
+                embryologist = x.Embryologist,
+                courseOfTreatmentId = x.CourseOfTreatmentId
+            }).OrderByDescending(x => x.recordTime).AsNoTracking().FirstOrDefaultAsync();
+            return existingSpermScore;
+        }
+        public async Task<BaseResponseDto> UpdateExistingSpermScore(SpermScoreDto addSpermScore)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            var existingSpermScore = await dbContext.SpermScores.Where(x => x.CourseOfTreatmentId == addSpermScore.courseOfTreatmentId && x.SpermScoreTimePointId == addSpermScore.spermScoreTimePointId).FirstOrDefaultAsync();
+            if (existingSpermScore != null) 
+            {
+                try
+                {
+                    using (TransactionScope scope = new TransactionScope())
+                    {
+                        existingSpermScore = TransformSpermScoreDtoToSpermScore(addSpermScore, existingSpermScore);
+                        dbContext.SaveChanges();
+                        scope.Complete();
+                    }
+                    result.SetSuccess();
+                }
+                catch(Exception ex)
+                {
+                    result.SetError(ex.Message);
+                }
+            }
+            else
+            {
+                result.SetError("找無此紀錄");
+            }
+            return result;
+        }
+
+        private SpermScore TransformSpermScoreDtoToSpermScore(SpermScoreDto spermScoreDto, SpermScore spermScore)
+        {
+
+            spermScore.Volume = spermScoreDto.volume;
+            spermScore.Concentration = spermScoreDto.concentration;
+            spermScore.ActivityA = spermScoreDto.activityA;
+            spermScore.ActivityB = spermScoreDto.activityB;
+            spermScore.ActivityC = spermScoreDto.activityC;
+            spermScore.ActivityD = spermScoreDto.activityD;
+            spermScore.Morphology = spermScoreDto.morphology;
+            spermScore.Abstinence = spermScoreDto.abstinence;
+            spermScore.SpermScoreTimePointId = spermScoreDto.spermScoreTimePointId;
+            spermScore.RecordTime = spermScoreDto.recordTime;
+            spermScore.Embryologist = spermScoreDto.embryologist;
+            spermScore.CourseOfTreatmentId = spermScoreDto.courseOfTreatmentId;
+            return spermScore;
         }
     }
 }
