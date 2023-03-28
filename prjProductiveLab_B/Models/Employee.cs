@@ -19,6 +19,7 @@ namespace prjProductiveLab_B.Models
         public int JobTitleId { get; set; }
         public int GenderId { get; set; }
         public int IdentityServerId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual IdentityServer IdentityServer { get; set; } = null!;
         public virtual JobTitle JobTitle { get; set; } = null!;

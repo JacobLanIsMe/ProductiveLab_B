@@ -348,29 +348,35 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
+                entity.HasOne(d => d.CourseOfTreatment)
+                    .WithMany(p => p.SpermFreezes)
+                    .HasForeignKey(d => d.CourseOfTreatmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermFreeze_CourseOfTreatment");
+
                 entity.HasOne(d => d.EmbryologistNavigation)
                     .WithMany(p => p.SpermFreezes)
                     .HasForeignKey(d => d.Embryologist)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SpermFreeze_Employee");
 
+                entity.HasOne(d => d.FreezeMediumInUse)
+                    .WithMany(p => p.SpermFreezeFreezeMediumInUses)
+                    .HasForeignKey(d => d.FreezeMediumInUseId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermFreeze_MediumInUse2");
+
                 entity.HasOne(d => d.MediumInUse)
-                    .WithMany(p => p.SpermFreezes)
+                    .WithMany(p => p.SpermFreezeMediumInUses)
                     .HasForeignKey(d => d.MediumInUseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SpermFreeze_MediumInUse");
+                    .HasConstraintName("FK_SpermFreeze_MediumInUse1");
 
                 entity.HasOne(d => d.SpermFreezeOperationMethod)
                     .WithMany(p => p.SpermFreezes)
                     .HasForeignKey(d => d.SpermFreezeOperationMethodId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SpermFreeze_SpermFreezeOperationMethod");
-
-                entity.HasOne(d => d.SpermScore)
-                    .WithMany(p => p.SpermFreezes)
-                    .HasForeignKey(d => d.SpermScoreId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SpermFreeze_SpermScore");
 
                 entity.HasOne(d => d.StorageUnit)
                     .WithMany(p => p.SpermFreezes)

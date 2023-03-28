@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using prjProductiveLab_B.Models;
 using prjProductiveLab_B.Services;
@@ -24,9 +26,9 @@ namespace prjProductiveLab_B.Controllers
             return await mediumService.AddMedium(medium);            
         }
         [HttpGet("GetInUseMedium")]
-        public async Task<InUseMediumDto> GetInUseMedium()
+        public async Task<InUseMediumDto> GetInUseMedium(MediumTypeEnum mediumType)
         {
-            return await mediumService.GetInUseMedium();
+            return await mediumService.GetInUseMedium(mediumType);
         }
 
 

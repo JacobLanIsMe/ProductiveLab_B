@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using prjProductiveLab_B.Models;
 
@@ -27,18 +28,18 @@ namespace prjProductiveLab_B.Services
             }
             return baseResponse;
         }
-        public async Task<InUseMediumDto> GetInUseMedium()
+        public async Task<InUseMediumDto> GetInUseMedium(MediumTypeEnum mediumType)
         {
             InUseMediumDto result = new InUseMediumDto();
-            List<InUseMedium> inUseMedium = await dbContext.MediumInUses.Where(x=>x.IsDeleted == false && x.ExpirationDate >= DateTime.Now).Select(x=> new InUseMedium
+            List<InUseMedium> inUseMedium = await dbContext.MediumInUses.Where(x => x.IsDeleted == false && x.ExpirationDate >= DateTime.Now && x.MediumTypeId == (int)mediumType).Select(x => new InUseMedium
             {
                 mediumInUseId = x.MediumInUseId.ToString(),
                 name = x.Name,
                 openDate = x.OpenDate,
                 expirationDate = x.ExpirationDate,
                 lotNumber = x.LotNumber,
-                isDeleted= x.IsDeleted,
-            }).OrderBy(x=>x.expirationDate).AsNoTracking().ToListAsync();
+                isDeleted = x.IsDeleted,
+            }).OrderBy(x => x.expirationDate).AsNoTracking().ToListAsync();
             if (inUseMedium.Count > 0)
             {
                 result.data = inUseMedium;
@@ -50,5 +51,6 @@ namespace prjProductiveLab_B.Services
             }
             return result;
         }
+
     }
 }

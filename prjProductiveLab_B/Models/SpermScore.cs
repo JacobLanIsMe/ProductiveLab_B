@@ -5,11 +5,6 @@ namespace prjProductiveLab_B.Models
 {
     public partial class SpermScore
     {
-        public SpermScore()
-        {
-            SpermFreezes = new HashSet<SpermFreeze>();
-        }
-
         public int SqlId { get; set; }
         public Guid SpermScoreId { get; set; }
         public decimal Volume { get; set; }
@@ -28,6 +23,5 @@ namespace prjProductiveLab_B.Models
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual Employee EmbryologistNavigation { get; set; } = null!;
         public virtual SpermScoreTimePoint SpermScoreTimePoint { get; set; } = null!;
-        public virtual ICollection<SpermFreeze> SpermFreezes { get; set; }
     }
 }

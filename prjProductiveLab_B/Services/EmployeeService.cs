@@ -14,7 +14,7 @@ namespace prjProductiveLab_B.Services
         }
         public async Task<List<EmployeeDto>> GetAllEmbryologist()
         {
-            List<EmployeeDto> embryologist = await dbContext.Employees.Where(x=>x.JobTitleId == 2).Select(x=>new EmployeeDto
+            List<EmployeeDto> embryologist = await dbContext.Employees.Where(x=>x.JobTitleId == 2 && !x.IsDeleted).Select(x=>new EmployeeDto
             {
                 employeeId = x.EmployeeId.ToString(),
                 name = x.Name

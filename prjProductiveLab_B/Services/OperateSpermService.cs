@@ -20,7 +20,7 @@ namespace prjProductiveLab_B.Services
             BaseOperateSpermInfo? baseOperateSpermInfo = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseOperateSpermInfo
             {
                 spermRetrievalMethod = x.SpermRetrievalMethod.Name,
-                spermFreezes = dbContext.SpermFreezes.Where(y => y.SpermScore.CourseOfTreatmentId == x.SpermFromCourseOfTreatmentId).Select(y => new SpermFreezeDto
+                spermFreezes = dbContext.SpermFreezes.Where(y => y.CourseOfTreatmentId == x.SpermFromCourseOfTreatmentId).Select(y => new SpermFreezeDto
                 {
                     spermFreezeId = y.SpermFreezeId,
                     vialNumber = y.VialNumber
@@ -176,6 +176,16 @@ namespace prjProductiveLab_B.Services
             spermScore.Embryologist = spermScoreDto.embryologist;
             spermScore.CourseOfTreatmentId = spermScoreDto.courseOfTreatmentId;
             return spermScore;
+        }
+
+        public async Task<List<SpermFreezeOperateMethodDto>> GetSpermFreezeOperationMethod()
+        {
+            var result = await dbContext.SpermFreezeOperationMethods.Select(x => new SpermFreezeOperateMethodDto
+            {
+                spermFreezeOperateMethodSqlId = x.SqlId,
+                name = x.Name
+            }).OrderBy(x => x.spermFreezeOperateMethodSqlId).AsNoTracking().ToListAsync();
+            return result;
         }
     }
 }

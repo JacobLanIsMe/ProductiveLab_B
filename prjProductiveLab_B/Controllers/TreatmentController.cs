@@ -54,5 +54,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await operateSpermService.UpdateExistingSpermScore(addSpermScore);
         }
+        [HttpGet("GetSpermFreezeOperationMethod")]
+        public async Task<List<SpermFreezeOperateMethodDto>> GetSpermFreezeOperationMethod()
+        {
+            return await operateSpermService.GetSpermFreezeOperationMethod();
+        }
     }
 }

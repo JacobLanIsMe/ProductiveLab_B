@@ -9,5 +9,6 @@ namespace prjProductiveLab_B.Interfaces
         BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore);
         Task<SpermScoreDto> GetExistingSpermScore(Guid spermFromCourseOfTreatmentId, int spermScoreTimePointId);
         Task<BaseResponseDto> UpdateExistingSpermScore(SpermScoreDto addSpermScore);
+        Task<List<SpermFreezeOperateMethodDto>> GetSpermFreezeOperationMethod();
     }
 }
