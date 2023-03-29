@@ -58,7 +58,13 @@ namespace prjProductiveLab_B.Models
         {
             modelBuilder.Entity<CourseOfTreatment>(entity =>
             {
+                entity.HasKey(e => e.CourseOfTreatmentId)
+                    .IsClustered(false);
+
                 entity.ToTable("CourseOfTreatment");
+
+                entity.HasIndex(e => e.SqlId, "IX_CourseOfTreatment")
+                    .IsClustered();
 
                 entity.Property(e => e.CourseOfTreatmentId).HasDefaultValueSql("(newid())");
 
@@ -98,7 +104,13 @@ namespace prjProductiveLab_B.Models
 
             modelBuilder.Entity<Customer>(entity =>
             {
+                entity.HasKey(e => e.CustomerId)
+                    .IsClustered(false);
+
                 entity.ToTable("Customer");
+
+                entity.HasIndex(e => e.SqlId, "IX_Customer")
+                    .IsClustered();
 
                 entity.Property(e => e.CustomerId).HasDefaultValueSql("(newid())");
 
@@ -121,7 +133,14 @@ namespace prjProductiveLab_B.Models
 
             modelBuilder.Entity<Employee>(entity =>
             {
+                entity.HasKey(e => e.EmployeeId)
+                    .HasName("PK_Staff")
+                    .IsClustered(false);
+
                 entity.ToTable("Employee");
+
+                entity.HasIndex(e => e.SqlId, "IX_Employee")
+                    .IsClustered();
 
                 entity.Property(e => e.EmployeeId).HasDefaultValueSql("(newid())");
 
@@ -213,7 +232,14 @@ namespace prjProductiveLab_B.Models
 
             modelBuilder.Entity<MediumInUse>(entity =>
             {
+                entity.HasKey(e => e.MediumInUseId)
+                    .HasName("PK_Medium")
+                    .IsClustered(false);
+
                 entity.ToTable("MediumInUse");
+
+                entity.HasIndex(e => e.SqlId, "IX_MediumInUse")
+                    .IsClustered();
 
                 entity.Property(e => e.MediumInUseId).HasDefaultValueSql("(newid())");
 
@@ -240,7 +266,13 @@ namespace prjProductiveLab_B.Models
 
             modelBuilder.Entity<ObservationNote>(entity =>
             {
+                entity.HasKey(e => e.ObservationNoteId)
+                    .IsClustered(false);
+
                 entity.ToTable("ObservationNote");
+
+                entity.HasIndex(e => e.SqlId, "IX_ObservationNote")
+                    .IsClustered();
 
                 entity.Property(e => e.ObservationNoteId).HasDefaultValueSql("(newid())");
 
@@ -255,7 +287,13 @@ namespace prjProductiveLab_B.Models
 
             modelBuilder.Entity<OvumPickup>(entity =>
             {
+                entity.HasKey(e => e.OvumPickupId)
+                    .IsClustered(false);
+
                 entity.ToTable("OvumPickup");
+
+                entity.HasIndex(e => e.SqlId, "IX_OvumPickup")
+                    .IsClustered();
 
                 entity.Property(e => e.OvumPickupId).HasDefaultValueSql("(newid())");
 
@@ -294,7 +332,13 @@ namespace prjProductiveLab_B.Models
 
             modelBuilder.Entity<OvumPickupDetail>(entity =>
             {
+                entity.HasKey(e => e.OvumPickupDetailId)
+                    .IsClustered(false);
+
                 entity.ToTable("OvumPickupDetail");
+
+                entity.HasIndex(e => e.SqlId, "IX_OvumPickupDetail")
+                    .IsClustered();
 
                 entity.Property(e => e.OvumPickupDetailId).HasDefaultValueSql("(newid())");
 
@@ -340,7 +384,13 @@ namespace prjProductiveLab_B.Models
 
             modelBuilder.Entity<SpermFreeze>(entity =>
             {
+                entity.HasKey(e => e.SpermFreezeId)
+                    .IsClustered(false);
+
                 entity.ToTable("SpermFreeze");
+
+                entity.HasIndex(e => e.SqlId, "IX_SpermFreeze")
+                    .IsClustered();
 
                 entity.Property(e => e.SpermFreezeId).HasDefaultValueSql("(newid())");
 
@@ -366,11 +416,21 @@ namespace prjProductiveLab_B.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SpermFreeze_MediumInUse2");
 
-                entity.HasOne(d => d.MediumInUse)
-                    .WithMany(p => p.SpermFreezeMediumInUses)
-                    .HasForeignKey(d => d.MediumInUseId)
+                entity.HasOne(d => d.MediumInUseId1Navigation)
+                    .WithMany(p => p.SpermFreezeMediumInUseId1Navigations)
+                    .HasForeignKey(d => d.MediumInUseId1)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SpermFreeze_MediumInUse1");
+
+                entity.HasOne(d => d.MediumInUseId2Navigation)
+                    .WithMany(p => p.SpermFreezeMediumInUseId2Navigations)
+                    .HasForeignKey(d => d.MediumInUseId2)
+                    .HasConstraintName("FK_SpermFreeze_MediumInUse");
+
+                entity.HasOne(d => d.MediumInUseId3Navigation)
+                    .WithMany(p => p.SpermFreezeMediumInUseId3Navigations)
+                    .HasForeignKey(d => d.MediumInUseId3)
+                    .HasConstraintName("FK_SpermFreeze_MediumInUse3");
 
                 entity.HasOne(d => d.SpermFreezeOperationMethod)
                     .WithMany(p => p.SpermFreezes)
@@ -405,7 +465,13 @@ namespace prjProductiveLab_B.Models
 
             modelBuilder.Entity<SpermScore>(entity =>
             {
+                entity.HasKey(e => e.SpermScoreId)
+                    .IsClustered(false);
+
                 entity.ToTable("SpermScore");
+
+                entity.HasIndex(e => e.SqlId, "IX_SpermScore")
+                    .IsClustered();
 
                 entity.Property(e => e.SpermScoreId).HasDefaultValueSql("(newid())");
 

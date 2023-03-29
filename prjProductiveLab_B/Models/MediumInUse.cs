@@ -9,7 +9,9 @@ namespace prjProductiveLab_B.Models
         {
             OvumPickupDetails = new HashSet<OvumPickupDetail>();
             SpermFreezeFreezeMediumInUses = new HashSet<SpermFreeze>();
-            SpermFreezeMediumInUses = new HashSet<SpermFreeze>();
+            SpermFreezeMediumInUseId1Navigations = new HashSet<SpermFreeze>();
+            SpermFreezeMediumInUseId2Navigations = new HashSet<SpermFreeze>();
+            SpermFreezeMediumInUseId3Navigations = new HashSet<SpermFreeze>();
         }
 
         public int SqlId { get; set; }
@@ -24,6 +26,8 @@ namespace prjProductiveLab_B.Models
         public virtual MediumType? MediumType { get; set; }
         public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }
         public virtual ICollection<SpermFreeze> SpermFreezeFreezeMediumInUses { get; set; }
-        public virtual ICollection<SpermFreeze> SpermFreezeMediumInUses { get; set; }
+        public virtual ICollection<SpermFreeze> SpermFreezeMediumInUseId1Navigations { get; set; }
+        public virtual ICollection<SpermFreeze> SpermFreezeMediumInUseId2Navigations { get; set; }
+        public virtual ICollection<SpermFreeze> SpermFreezeMediumInUseId3Navigations { get; set; }
     }
 }

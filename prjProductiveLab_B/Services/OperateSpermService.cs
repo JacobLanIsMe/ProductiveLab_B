@@ -187,5 +187,76 @@ namespace prjProductiveLab_B.Services
             }).OrderBy(x => x.spermFreezeOperateMethodSqlId).AsNoTracking().ToListAsync();
             return result;
         }
+
+        public async Task<BaseResponseDto> AddSpermFreeze(AddSpermFreezeDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            string errorMessage = AddSpermFreezeValidation(input);
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                result.SetError(errorMessage);
+                return result;
+            }
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    for (int i = 0; i < input.storageUnitId.Count; i++)
+                    {
+                        SpermFreeze spermFreeze = new SpermFreeze()
+                        {
+                            VialNumber = i + 1,
+                            CourseOfTreatmentId = input.courseOfTreatmentId,
+                            MediumInUseId1 = input.mediumInUseArray[0],
+                            StorageUnitId = input.storageUnitId[i],
+                            Embryologist = input.embryologist,
+                            FreezeTime = input.freezeTime,
+                            SpermFreezeOperationMethodId = input.spermFreezeOperationMethodId,
+                            FreezeMediumInUseId = input.freezeMedium,
+                        };
+                        if (input.mediumInUseArray.Count > 1)
+                        {
+                            spermFreeze.MediumInUseId2 = input.mediumInUseArray[1];
+                        }
+                        if (input.mediumInUseArray.Count > 2)
+                        {
+                            spermFreeze.MediumInUseId3 = input.mediumInUseArray[2];
+                        }
+                        dbContext.SpermFreezes.Add(spermFreeze);
+                        var storageUnit = dbContext.StorageUnits.FirstOrDefault(x => x.SqlId == input.storageUnitId[i]);
+                        if (storageUnit != null && storageUnit.IsOccupied == false)
+                        {
+                            storageUnit.IsOccupied = true;
+                        }
+                        else
+                        {
+                            throw new Exception("儲位資訊有誤");
+                        }
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch(Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
+
+        private string AddSpermFreezeValidation(AddSpermFreezeDto input)
+        {
+            string errorMessage = "";
+            if (input.mediumInUseArray == null || input.mediumInUseArray.Count == 0 || input.mediumInUseArray.Count > 3)
+            {
+                errorMessage += "培養液資訊有誤\n";
+            }
+            if(input.storageUnitId == null || input.storageUnitId.Count == 0) 
+            {
+                errorMessage += "儲位資訊有誤\n";
+            }
+            return errorMessage;
+        }
     }
 }
