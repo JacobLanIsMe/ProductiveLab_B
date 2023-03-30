@@ -7,5 +7,6 @@ namespace prjProductiveLab_B.Interfaces
         BaseResponseDto AddOvumPickupNote(AddOvumPickupNoteDto ovumPickupNote);
         Task<BaseTreatmentInfoDto> GetBaseTreatmentInfo(Guid courseOfTreatmentId);
         Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId);
+        Task<List<TreatmentDto>> GetAllTreatment();
     }
 }

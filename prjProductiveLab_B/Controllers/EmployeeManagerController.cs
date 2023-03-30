@@ -19,5 +19,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await employeeService.GetAllEmbryologist();
         }
+        [HttpGet("GetAllDoctor")]
+        public async Task<List<EmployeeDto>> GetAllDoctor()
+        {
+            return await employeeService.GetAllDoctor();
+        }
     }
 }

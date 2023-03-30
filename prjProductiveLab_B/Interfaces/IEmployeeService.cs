@@ -5,5 +5,6 @@ namespace prjProductiveLab_B.Interfaces
     public interface IEmployeeService
     {
         Task<List<EmployeeDto>> GetAllEmbryologist();
+        Task<List<EmployeeDto>> GetAllDoctor();
     }
 }

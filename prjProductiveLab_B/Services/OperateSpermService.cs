@@ -20,18 +20,21 @@ namespace prjProductiveLab_B.Services
             BaseOperateSpermInfo? baseOperateSpermInfo = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseOperateSpermInfo
             {
                 spermRetrievalMethod = x.SpermRetrievalMethod.Name,
-                spermFreezes = dbContext.SpermFreezes.Where(y => y.CourseOfTreatmentId == x.SpermFromCourseOfTreatmentId).Select(y => new SpermFreezeDto
+                spermFreezes = dbContext.SpermFreezes.Where(y => y.CourseOfTreatmentId == x.SpermFromCourseOfTreatmentId && y.IsThawed == false).Select(y => new SpermFreezeDto
                 {
                     spermFreezeId = y.SpermFreezeId,
-                    vialNumber = y.VialNumber
+                    vialNumber = y.VialNumber,
+                    storageUnitName = y.StorageUnit.UnitName,
+                    storageCaneBoxName = y.StorageUnit.StorageCaneBox.CaneBoxName,
+                    storageShelfName = y.StorageUnit.StorageCaneBox.StorageShelf.ShelfName,
+                    storageTankName = y.StorageUnit.StorageCaneBox.StorageShelf.StorageTank.TankName,
+                    storageUnitId = y.StorageUnitId
                 }).OrderBy(y=>y.vialNumber).ToList(),
                 treatmentId = x.TreatmentId,
                 spermFromCourseOfTreatmentId = x.SpermFromCourseOfTreatmentId,
                 treatmentIdOfSpermFromCourseOfTreatmentId = dbContext.CourseOfTreatments.Where(y => y.CourseOfTreatmentId == x.SpermFromCourseOfTreatmentId).Select(y => y.TreatmentId).FirstOrDefault()
             }).AsNoTracking().FirstOrDefaultAsync();
 
-
-            
             if (baseOperateSpermInfo != null)
             {
                 if (baseOperateSpermInfo.spermFromCourseOfTreatmentId == courseOfTreatmentId)
@@ -213,6 +216,7 @@ namespace prjProductiveLab_B.Services
                             FreezeTime = input.freezeTime,
                             SpermFreezeOperationMethodId = input.spermFreezeOperationMethodId,
                             FreezeMediumInUseId = input.freezeMedium,
+                            IsThawed = false
                         };
                         if (input.mediumInUseArray.Count > 1)
                         {
@@ -232,6 +236,39 @@ namespace prjProductiveLab_B.Services
                         {
                             throw new Exception("儲位資訊有誤");
                         }
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch(Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
+
+        public async Task<BaseResponseDto> SelectSpermFreeze(List<int> unitIds)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    foreach (var i in unitIds)
+                    {
+                        var unit = dbContext.StorageUnits.Where(x => x.SqlId == i).Include(x => x.SpermFreezes).FirstOrDefault();
+                        if (unit == null || unit.IsOccupied == false)
+                        {
+                            throw new Exception("儲位資訊有誤");
+                        }
+                        else
+                        {
+                            unit.IsOccupied = false;
+                            unit.SpermFreezes.FirstOrDefault().IsThawed = true;
+                        }
+                        
                     }
                     dbContext.SaveChanges();
                     scope.Complete();

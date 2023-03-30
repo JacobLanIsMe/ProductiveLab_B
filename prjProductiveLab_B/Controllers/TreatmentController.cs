@@ -12,11 +12,17 @@ namespace prjProductiveLab_B.Controllers
     {
         public readonly ITreatmentService treatmentService;
         public readonly IOperateSpermService operateSpermService;
-        public TreatmentController(ITreatmentService customerService, IOperateSpermService operateSpermService) 
+        public TreatmentController(ITreatmentService treatmentService, IOperateSpermService operateSpermService) 
         {
-            this.treatmentService = customerService;
+            this.treatmentService = treatmentService;
             this.operateSpermService = operateSpermService;
         }
+        [HttpGet("GetAllTreatment")]
+        public async Task<List<TreatmentDto>> GetAllTreatment()
+        {
+            return await this.treatmentService.GetAllTreatment();
+        }
+
         [HttpPost("AddOvumPickupNote")]
         public BaseResponseDto AddOvumPickupNote([FromBody] AddOvumPickupNoteDto ovumPickupNote)
         {
@@ -63,6 +69,11 @@ namespace prjProductiveLab_B.Controllers
         public async Task<BaseResponseDto> AddSpermFreeze(AddSpermFreezeDto input)
         {
             return await operateSpermService.AddSpermFreeze(input);
+        }
+        [HttpPut("SelectSpermFreeze")]
+        public async Task<BaseResponseDto> SelectSpermFreeze(List<int> unitIds)
+        {
+            return await operateSpermService.SelectSpermFreeze(unitIds);
         }
     }
 }

@@ -11,5 +11,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<BaseResponseDto> UpdateExistingSpermScore(SpermScoreDto addSpermScore);
         Task<List<SpermFreezeOperateMethodDto>> GetSpermFreezeOperationMethod();
         Task<BaseResponseDto> AddSpermFreeze(AddSpermFreezeDto input);
+        Task<BaseResponseDto> SelectSpermFreeze(List<int> unitIds);
     }
 }

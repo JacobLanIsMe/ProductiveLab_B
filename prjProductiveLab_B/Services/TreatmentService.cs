@@ -139,6 +139,15 @@ namespace prjProductiveLab_B.Services
                 observationNote = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId).OrderByDescending(y => y.SqlId).Select(y => y.Note).FirstOrDefault()
             }).OrderBy(x=>x.ovumNumber).AsNoTracking().ToListAsync();
         }
-       
+
+        public async Task<List<TreatmentDto>> GetAllTreatment()
+        {
+            var treatments = await dbContext.Treatments.Select(x => new TreatmentDto
+            {
+                treatmentId = x.SqlId,
+                name = x.Name
+            }).OrderBy(x => x.treatmentId).AsNoTracking().ToListAsync();
+            return treatments;
+        }
     }
 }

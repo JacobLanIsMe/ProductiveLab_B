@@ -17,6 +17,7 @@ namespace prjProductiveLab_B.Models
         public Guid FreezeMediumInUseId { get; set; }
         public Guid? MediumInUseId2 { get; set; }
         public Guid? MediumInUseId3 { get; set; }
+        public bool IsThawed { get; set; }
 
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual Employee EmbryologistNavigation { get; set; } = null!;

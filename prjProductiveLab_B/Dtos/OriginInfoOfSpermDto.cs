@@ -16,6 +16,11 @@
     {
         public Guid? spermFreezeId { get; set; }
         public int vialNumber { get; set; }
+        public string? storageUnitName { get; set; }
+        public string? storageCaneBoxName { get; set; }
+        public string? storageShelfName { get; set; }
+        public string? storageTankName { get; set; }
+        public int storageUnitId { get; set; }
     }
 
     public class BaseOperateSpermInfo : BaseOperateSpermInfoDto

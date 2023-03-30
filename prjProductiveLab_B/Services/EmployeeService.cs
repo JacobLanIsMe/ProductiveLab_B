@@ -21,5 +21,14 @@ namespace prjProductiveLab_B.Services
             }).AsNoTracking().ToListAsync();
             return embryologist;
         }
+        public async Task<List<EmployeeDto>> GetAllDoctor()
+        {
+            var doctors = await dbContext.Employees.Where(x => x.JobTitleId == 1 && !x.IsDeleted).Select(x => new EmployeeDto
+            {
+                employeeId = x.EmployeeId.ToString(),
+                name = x.Name
+            }).AsNoTracking().ToListAsync();
+            return doctors;
+        }
     }
 }
