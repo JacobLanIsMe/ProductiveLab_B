@@ -475,23 +475,23 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.SpermScoreId).HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.ActivityA).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.ActivityA).HasColumnType("decimal(18, 2)");
 
-                entity.Property(e => e.ActivityB).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.ActivityB).HasColumnType("decimal(18, 2)");
 
-                entity.Property(e => e.ActivityC).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.ActivityC).HasColumnType("decimal(18, 2)");
 
-                entity.Property(e => e.ActivityD).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.ActivityD).HasColumnType("decimal(18, 2)");
 
-                entity.Property(e => e.Concentration).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.Concentration).HasColumnType("decimal(18, 2)");
 
-                entity.Property(e => e.Morphology).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.Morphology).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.RecordTime).HasColumnType("datetime");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
-                entity.Property(e => e.Volume).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.Volume).HasColumnType("decimal(18, 2)");
 
                 entity.HasOne(d => d.CourseOfTreatment)
                     .WithMany(p => p.SpermScores)

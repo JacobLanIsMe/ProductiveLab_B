@@ -44,40 +44,7 @@ namespace prjProductiveLab_B.Controllers
         {
             return await treatmentService.GetTreatmentSummary(courseOfTreatmentId);
         }
-        [HttpGet("GetOriginInfoOfSperm")]
-        public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
-        {
-            return await operateSpermService.GetOriginInfoOfSperm(courseOfTreatmentId);
-        }
-        [HttpPost("AddSpermScore")]
-        public BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore)
-        {
-            return operateSpermService.AddSpermScore(addSpermScore);
-        }
-        [HttpGet("GetExistingSpermScore")]
-        public async Task<SpermScoreDto> GetExistingSpermScore(Guid spermFromCourseOfTreatmentId, int spermScoreTimePointId)
-        {
-            return await operateSpermService.GetExistingSpermScore(spermFromCourseOfTreatmentId, spermScoreTimePointId);
-        }
-        [HttpPut("UpdateExistingSpermScore")]
-        public async Task<BaseResponseDto> UpdateExistingSpermScore(SpermScoreDto addSpermScore)
-        {
-            return await operateSpermService.UpdateExistingSpermScore(addSpermScore);
-        }
-        [HttpGet("GetSpermFreezeOperationMethod")]
-        public async Task<List<SpermFreezeOperateMethodDto>> GetSpermFreezeOperationMethod()
-        {
-            return await operateSpermService.GetSpermFreezeOperationMethod();
-        }
-        [HttpPost("AddSpermFreeze")]
-        public async Task<BaseResponseDto> AddSpermFreeze(AddSpermFreezeDto input)
-        {
-            return await operateSpermService.AddSpermFreeze(input);
-        }
-        [HttpPut("SelectSpermFreeze")]
-        public async Task<BaseResponseDto> SelectSpermFreeze(List<int> unitIds)
-        {
-            return await operateSpermService.SelectSpermFreeze(unitIds);
-        }
+       
+        
     }
 }
