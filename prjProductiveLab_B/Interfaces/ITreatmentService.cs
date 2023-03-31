@@ -8,5 +8,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<BaseTreatmentInfoDto> GetBaseTreatmentInfo(Guid courseOfTreatmentId);
         Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId);
         Task<List<TreatmentDto>> GetAllTreatment();
+        Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input);
     }
 }

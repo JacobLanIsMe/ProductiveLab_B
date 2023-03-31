@@ -149,5 +149,34 @@ namespace prjProductiveLab_B.Services
             }).OrderBy(x => x.treatmentId).AsNoTracking().ToListAsync();
             return treatments;
         }
+
+        public async Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    CourseOfTreatment course = new CourseOfTreatment
+                    {
+                        Doctor = input.doctorId,
+                        CustomerId = input.customerId,
+                        TreatmentId = input.treatmentId,
+                        SurgicalTime = input.surgicalTime,
+                        TreatmentStatusId = 1,
+                        Memo = input.memo,
+                    };
+                    dbContext.CourseOfTreatments.Add(course);
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch(Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
     }
 }

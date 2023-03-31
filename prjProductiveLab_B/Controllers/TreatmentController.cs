@@ -22,7 +22,11 @@ namespace prjProductiveLab_B.Controllers
         {
             return await this.treatmentService.GetAllTreatment();
         }
-
+        [HttpPost("AddCourseOfTreatment")]
+        public async Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input)
+        {
+            return await this.treatmentService.AddCourseOfTreatment(input);
+        }
         [HttpPost("AddOvumPickupNote")]
         public BaseResponseDto AddOvumPickupNote([FromBody] AddOvumPickupNoteDto ovumPickupNote)
         {
