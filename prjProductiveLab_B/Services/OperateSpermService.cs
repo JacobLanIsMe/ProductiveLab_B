@@ -22,24 +22,7 @@ namespace prjProductiveLab_B.Services
                 spermRetrievalMethod = x.SpermRetrievalMethod.Name,
                 treatmentId = x.TreatmentId,
                 spermFromCourseOfTreatmentId = x.SpermFromCourseOfTreatmentId,
-                treatmentIdOfSpermFromCourseOfTreatmentId = dbContext.CourseOfTreatments.Where(y => y.CourseOfTreatmentId == x.SpermFromCourseOfTreatmentId).Select(y => y.TreatmentId).FirstOrDefault(),
-                existingSpermScores = dbContext.SpermScores.Where(y => y.CourseOfTreatmentId == x.SpermFromCourseOfTreatmentId).Select(y => new SpermScoreDto
-                {
-                    volume = y.Volume,
-                    concentration = y.Concentration,
-                    activityA = y.ActivityA,
-                    activityB = y.ActivityB,
-                    activityC = y.ActivityC,
-                    activityD = y.ActivityD,
-                    morphology = y.Morphology,
-                    abstinence = y.Abstinence,
-                    spermScoreTimePointId = y.SpermScoreTimePointId,
-                    spermScoreTimePoint = y.SpermScoreTimePoint.TimePoint,
-                    recordTime = y.RecordTime,
-                    embryologist = y.Embryologist,
-                    embryologistName = y.EmbryologistNavigation.Name,
-                    courseOfTreatmentId = y.CourseOfTreatmentId
-                }).OrderBy(y => y.spermScoreTimePointId).ThenBy(y=>y.recordTime).ToList()
+                treatmentIdOfSpermFromCourseOfTreatmentId = dbContext.CourseOfTreatments.Where(y => y.CourseOfTreatmentId == x.SpermFromCourseOfTreatmentId).Select(y => y.TreatmentId).FirstOrDefault()
             }).AsNoTracking().FirstOrDefaultAsync();
             if (baseOperateSpermInfo != null)
             {
@@ -94,8 +77,7 @@ namespace prjProductiveLab_B.Services
                 isFresh = baseOperateSpermInfo.isFresh,
                 spermRetrievalMethod = baseOperateSpermInfo.spermRetrievalMethod,
                 spermOwner = baseOperateSpermInfo.spermOwner,
-                spermFromCourseOfTreatmentId = baseOperateSpermInfo.spermFromCourseOfTreatmentId,
-                existingSpermScores = baseOperateSpermInfo.existingSpermScores
+                spermFromCourseOfTreatmentId = baseOperateSpermInfo.spermFromCourseOfTreatmentId
             };
             return result;
         }
@@ -125,11 +107,13 @@ namespace prjProductiveLab_B.Services
                 activityD = x.ActivityD,
                 morphology = x.Morphology,
                 abstinence = x.Abstinence,
+                spermScoreTimePointId = x.SpermScoreTimePointId,
                 spermScoreTimePoint = x.SpermScoreTimePoint.TimePoint,
                 recordTime = x.RecordTime,
+                embryologist = x.Embryologist,
                 embryologistName = x.EmbryologistNavigation.Name,
                 courseOfTreatmentId = x.CourseOfTreatmentId
-            }).OrderBy(x => x.recordTime).ToListAsync();
+            }).OrderBy(x => x.spermScoreTimePointId).ThenBy(x=>x.recordTime).ToListAsync();
         }
         public BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore)
         {
@@ -153,25 +137,7 @@ namespace prjProductiveLab_B.Services
             }
             return result;
         }
-        public async Task<SpermScoreDto> GetExistingSpermScore(Guid spermFromCourseOfTreatmentId, int spermScoreTimePointId)
-        {
-            var existingSpermScore = await dbContext.SpermScores.Where(x => x.CourseOfTreatmentId == spermFromCourseOfTreatmentId && x.SpermScoreTimePointId == spermScoreTimePointId).Select(x => new SpermScoreDto
-            {
-                volume = x.Volume,
-                concentration = x.Concentration,
-                activityA = x.ActivityA,
-                activityB = x.ActivityB,
-                activityC = x.ActivityC,
-                activityD = x.ActivityD,
-                morphology = x.Morphology,
-                abstinence = x.Abstinence,
-                spermScoreTimePointId = x.SpermScoreTimePointId,
-                recordTime = x.RecordTime,
-                embryologist = x.Embryologist,
-                courseOfTreatmentId = x.CourseOfTreatmentId
-            }).OrderByDescending(x => x.recordTime).AsNoTracking().FirstOrDefaultAsync();
-            return existingSpermScore;
-        }
+       
         public async Task<BaseResponseDto> UpdateExistingSpermScore(SpermScoreDto addSpermScore)
         {
             BaseResponseDto result = new BaseResponseDto();

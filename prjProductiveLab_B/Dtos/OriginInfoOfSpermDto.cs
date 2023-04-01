@@ -7,8 +7,6 @@
         public string? spermRetrievalMethod { get; set; }
         public BaseCustomerInfoDto? spermOwner { get; set; }
         public Guid? spermFromCourseOfTreatmentId { get; set; }
-        public List<SpermScoreDto>? existingSpermScores { get; set; }
-
     }
 
     
