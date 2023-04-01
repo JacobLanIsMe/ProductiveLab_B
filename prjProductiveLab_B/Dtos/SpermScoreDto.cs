@@ -10,10 +10,10 @@
         public decimal activityD { get; set; }
         public decimal? morphology { get; set; }
         public int? abstinence { get; set; }
-        public int? spermScoreTimePointId { get; set; }
+        public int spermScoreTimePointId { get; set; }
         public string? spermScoreTimePoint { get; set; }
         public DateTime recordTime { get; set; }
-        public Guid? embryologist { get; set; }
+        public Guid embryologist { get; set; }
         public string? embryologistName { get; set; }
         public Guid courseOfTreatmentId { get; set; }
     }

@@ -15,10 +15,10 @@ namespace prjProductiveLab_B.Models
         public decimal ActivityD { get; set; }
         public decimal? Morphology { get; set; }
         public int? Abstinence { get; set; }
-        public int? SpermScoreTimePointId { get; set; }
+        public int SpermScoreTimePointId { get; set; }
         public Guid CourseOfTreatmentId { get; set; }
         public DateTime RecordTime { get; set; }
-        public Guid? Embryologist { get; set; }
+        public Guid Embryologist { get; set; }
 
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual Employee EmbryologistNavigation { get; set; } = null!;

@@ -23,6 +23,9 @@ namespace prjProductiveLab_B.Models
         public int CocGrade1 { get; set; }
         public Guid Embryologist { get; set; }
         public DateTime UpdateTime { get; set; }
+        public Guid MediumInUseId1 { get; set; }
+        public Guid? MediumInUseId2 { get; set; }
+        public Guid? MediumInUseId3 { get; set; }
 
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual Employee EmbryologistNavigation { get; set; } = null!;
