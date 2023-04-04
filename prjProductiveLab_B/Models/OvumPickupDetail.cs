@@ -17,9 +17,9 @@ namespace prjProductiveLab_B.Models
         public int? IncubatorId { get; set; }
         public Guid? MediumInUseId { get; set; }
         public int OvumPickupDetailStatusId { get; set; }
-        public int FertilizationStatusId { get; set; }
+        public int FertilisationStatusId { get; set; }
 
-        public virtual FertilizationStatus FertilizationStatus { get; set; } = null!;
+        public virtual FertilisationStatus FertilisationStatus { get; set; } = null!;
         public virtual Incubator? Incubator { get; set; }
         public virtual MediumInUse? MediumInUse { get; set; }
         public virtual OvumPickup OvumPickup { get; set; } = null!;

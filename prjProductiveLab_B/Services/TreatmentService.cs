@@ -35,8 +35,17 @@ namespace prjProductiveLab_B.Services
                             CocGrade2 = ovumPickupNote.ovumPickupNumber.coc_Grade2,
                             CocGrade1 = ovumPickupNote.ovumPickupNumber.coc_Grade1,
                             Embryologist = Guid.Parse(ovumPickupNote.embryologist),
-                            UpdateTime = DateTime.Now
+                            UpdateTime = DateTime.Now,
+                            MediumInUseId1 = ovumPickupNote.mediumInUse[0]
                         };
+                        if (ovumPickupNote.mediumInUse.Count > 1)
+                        {
+                            ovumPickup.MediumInUseId2 = ovumPickupNote.mediumInUse[1];
+                        }
+                        if (ovumPickupNote.mediumInUse.Count > 2)
+                        {
+                            ovumPickup.MediumInUseId3 = ovumPickupNote.mediumInUse[2];
+                        }
                         dbContext.OvumPickups.Add(ovumPickup);
                         dbContext.SaveChanges();
                         Guid latestOvumPickupId = dbContext.OvumPickups.OrderByDescending(x=>x.SqlId).Select(x=>x.OvumPickupId).FirstOrDefault();
@@ -48,7 +57,7 @@ namespace prjProductiveLab_B.Services
                                 OvumPickupId = latestOvumPickupId,
                                 OvumNumber = i,
                                 OvumPickupDetailStatusId = 1,
-                                FertilizationStatusId = 1
+                                FertilisationStatusId = 1
                             };
                             dbContext.Add(ovumPickupDetail);
                         }
@@ -105,6 +114,10 @@ namespace prjProductiveLab_B.Services
             {
                 errorMessage += "胚胎師選項有誤。\n";
             }
+            if (ovumPickupNote.mediumInUse == null || ovumPickupNote.mediumInUse.Count <= 0)
+            {
+                errorMessage += "培養液資訊有誤。\n";
+            }
             return errorMessage;
         }
 
@@ -135,8 +148,8 @@ namespace prjProductiveLab_B.Services
                 ovumPickupDetailStatus = x.OvumPickupDetailStatus.Name,
                 dateOfEmbryo = (DateTime.Now.Date - x.OvumPickup.CourseOfTreatment.SurgicalTime.Date).Days,
                 ovumNumber = x.OvumNumber,
-                fertilizationStatus = x.FertilizationStatus.Name,
-                observationNote = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId).OrderByDescending(y => y.SqlId).Select(y => y.Note).FirstOrDefault()
+                fertilizationStatus = x.FertilisationStatus.Name,
+                observationNote = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId).OrderByDescending(y => y.SqlId).Select(y => y.Memo).FirstOrDefault()
             }).OrderBy(x=>x.ovumNumber).AsNoTracking().ToListAsync();
         }
 

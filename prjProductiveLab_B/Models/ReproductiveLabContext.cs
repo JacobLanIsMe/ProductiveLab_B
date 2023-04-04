@@ -16,10 +16,18 @@ namespace prjProductiveLab_B.Models
         {
         }
 
+        public virtual DbSet<BlastocystScoreExpantion> BlastocystScoreExpantions { get; set; } = null!;
+        public virtual DbSet<BlastocystScoreIce> BlastocystScoreIces { get; set; } = null!;
+        public virtual DbSet<BlastocystScoreTe> BlastocystScoreTes { get; set; } = null!;
+        public virtual DbSet<BlastomereScoreC> BlastomereScoreCs { get; set; } = null!;
+        public virtual DbSet<BlastomereScoreF> BlastomereScoreFs { get; set; } = null!;
+        public virtual DbSet<BlastomereScoreG> BlastomereScoreGs { get; set; } = null!;
         public virtual DbSet<CourseOfTreatment> CourseOfTreatments { get; set; } = null!;
         public virtual DbSet<Customer> Customers { get; set; } = null!;
+        public virtual DbSet<EmbryoStatus> EmbryoStatuses { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
-        public virtual DbSet<FertilizationStatus> FertilizationStatuses { get; set; } = null!;
+        public virtual DbSet<FertilisationResult> FertilisationResults { get; set; } = null!;
+        public virtual DbSet<FertilisationStatus> FertilisationStatuses { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
         public virtual DbSet<FunctionType> FunctionTypes { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
@@ -29,6 +37,11 @@ namespace prjProductiveLab_B.Models
         public virtual DbSet<MediumInUse> MediumInUses { get; set; } = null!;
         public virtual DbSet<MediumType> MediumTypes { get; set; } = null!;
         public virtual DbSet<ObservationNote> ObservationNotes { get; set; } = null!;
+        public virtual DbSet<ObservationNotePhoto> ObservationNotePhotos { get; set; } = null!;
+        public virtual DbSet<ObservationType> ObservationTypes { get; set; } = null!;
+        public virtual DbSet<OperationType> OperationTypes { get; set; } = null!;
+        public virtual DbSet<OvumAbnormality> OvumAbnormalities { get; set; } = null!;
+        public virtual DbSet<OvumMaturation> OvumMaturations { get; set; } = null!;
         public virtual DbSet<OvumPickup> OvumPickups { get; set; } = null!;
         public virtual DbSet<OvumPickupDetail> OvumPickupDetails { get; set; } = null!;
         public virtual DbSet<OvumPickupDetailStatus> OvumPickupDetailStatuses { get; set; } = null!;
@@ -56,6 +69,60 @@ namespace prjProductiveLab_B.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<BlastocystScoreExpantion>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("BlastocystScore_Expantion");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<BlastocystScoreIce>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("BlastocystScore_ICE");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<BlastocystScoreTe>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("BlastocystScore_TE");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<BlastomereScoreC>(entity =>
+            {
+                entity.HasKey(e => e.SlqId);
+
+                entity.ToTable("BlastomereScore_C");
+
+                entity.Property(e => e.SlqId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<BlastomereScoreF>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("BlastomereScore_F");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<BlastomereScoreG>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("BlastomereScore_G");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<CourseOfTreatment>(entity =>
             {
                 entity.HasKey(e => e.CourseOfTreatmentId)
@@ -131,6 +198,15 @@ namespace prjProductiveLab_B.Models
                     .HasConstraintName("FK_Customer_Customer");
             });
 
+            modelBuilder.Entity<EmbryoStatus>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("EmbryoStatus");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<Employee>(entity =>
             {
                 entity.HasKey(e => e.EmployeeId)
@@ -159,12 +235,21 @@ namespace prjProductiveLab_B.Models
                     .HasConstraintName("FK_Staff_Identity");
             });
 
-            modelBuilder.Entity<FertilizationStatus>(entity =>
+            modelBuilder.Entity<FertilisationResult>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("FertilisationResult");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<FertilisationStatus>(entity =>
             {
                 entity.HasKey(e => e.SqlId)
                     .HasName("PK_FertilizationStatus_1");
 
-                entity.ToTable("FertilizationStatus");
+                entity.ToTable("FertilisationStatus");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
@@ -276,13 +361,170 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.ObservationNoteId).HasDefaultValueSql("(newid())");
 
+                entity.Property(e => e.BlastocystScoreExpantionId).HasColumnName("BlastocystScore_Expantion_Id");
+
+                entity.Property(e => e.BlastocystScoreIceId).HasColumnName("BlastocystScore_ICE_Id");
+
+                entity.Property(e => e.BlastocystScoreTeId).HasColumnName("BlastocystScore_TE_Id");
+
+                entity.Property(e => e.BlastomereScoreCId).HasColumnName("BlastomereScore_C_Id");
+
+                entity.Property(e => e.BlastomereScoreFId).HasColumnName("BlastomereScore_F_Id");
+
+                entity.Property(e => e.BlastomereScoreGId).HasColumnName("BlastomereScore_G_Id");
+
+                entity.Property(e => e.Kidscore).HasColumnName("KIDScore");
+
+                entity.Property(e => e.ObservationTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Pgtanumber).HasColumnName("PGTANumber");
+
+                entity.Property(e => e.Pgtaresult).HasColumnName("PGTAResult");
+
+                entity.Property(e => e.Pgtmresult).HasColumnName("PGTMResult");
+
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.BlastocystScoreExpantion)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.BlastocystScoreExpantionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_BlastocystScore_Expantion");
+
+                entity.HasOne(d => d.BlastocystScoreIce)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.BlastocystScoreIceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_BlastocystScore_ICE");
+
+                entity.HasOne(d => d.BlastocystScoreTe)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.BlastocystScoreTeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_BlastocystScore_TE");
+
+                entity.HasOne(d => d.BlastomereScoreC)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.BlastomereScoreCId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_BlastomereScore_C");
+
+                entity.HasOne(d => d.BlastomereScoreF)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.BlastomereScoreFId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_BlastomereScore_F");
+
+                entity.HasOne(d => d.BlastomereScoreG)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.BlastomereScoreGId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_BlastomereScore_G");
+
+                entity.HasOne(d => d.EmbrologistNavigation)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.Embrologist)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_Employee");
+
+                entity.HasOne(d => d.EmbryoStatus)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.EmbryoStatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_EmbryoStatus");
+
+                entity.HasOne(d => d.FertilisationResult)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.FertilisationResultId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_FertilisationResult");
+
+                entity.HasOne(d => d.ObservationType)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.ObservationTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_ObservationType");
+
+                entity.HasOne(d => d.OperationType)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.OperationTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_OperationType");
+
+                entity.HasOne(d => d.OvumAbnormality)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.OvumAbnormalityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_OvumAbnormality");
+
+                entity.HasOne(d => d.OvumMaturation)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.OvumMaturationId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_OvumMaturation");
 
                 entity.HasOne(d => d.OvumPickupDetail)
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.OvumPickupDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ObservationNote_OvumPickupDetail");
+            });
+
+            modelBuilder.Entity<ObservationNotePhoto>(entity =>
+            {
+                entity.HasKey(e => e.ObservationNotePhotoId)
+                    .IsClustered(false);
+
+                entity.ToTable("ObservationNotePhoto");
+
+                entity.HasIndex(e => e.SqlId, "IX_ObservationNotePhoto")
+                    .IsClustered();
+
+                entity.Property(e => e.ObservationNotePhotoId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.ObservationNote)
+                    .WithMany(p => p.ObservationNotePhotos)
+                    .HasForeignKey(d => d.ObservationNoteId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNotePhoto_ObservationNote");
+            });
+
+            modelBuilder.Entity<ObservationType>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("ObservationType");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<OperationType>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("OperationType");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<OvumAbnormality>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("OvumAbnormality");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<OvumMaturation>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("OvumMaturation");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<OvumPickup>(entity =>
@@ -344,11 +586,11 @@ namespace prjProductiveLab_B.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
-                entity.HasOne(d => d.FertilizationStatus)
+                entity.HasOne(d => d.FertilisationStatus)
                     .WithMany(p => p.OvumPickupDetails)
-                    .HasForeignKey(d => d.FertilizationStatusId)
+                    .HasForeignKey(d => d.FertilisationStatusId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickupDetail_FertilizationStatus");
+                    .HasConstraintName("FK_OvumPickupDetail_FertilisationStatus");
 
                 entity.HasOne(d => d.Incubator)
                     .WithMany(p => p.OvumPickupDetails)
