@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Interfaces;
-using prjProductiveLab_B.Models;
 using prjProductiveLab_B.Services;
+using ReproductiveLabDB.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

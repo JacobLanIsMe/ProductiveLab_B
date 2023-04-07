@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Interfaces;
-using prjProductiveLab_B.Models;
+using ReproductiveLabDB.Models;
+
 namespace prjProductiveLab_B.Services
 {
     public class IncubatorService : IIncubatorService

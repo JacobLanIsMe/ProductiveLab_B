@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "prjProductiveLab_B", "prjProductiveLab_B\prjProductiveLab_B.csproj", "{0003AF62-8CBF-43FA-B089-44B2F7B184F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "prjProductiveLab_B", "prjProductiveLab_B\prjProductiveLab_B.csproj", "{0003AF62-8CBF-43FA-B089-44B2F7B184F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer", "IdentityServer\IdentityServer.csproj", "{749988BA-2BCA-441B-AE6D-F3E3AE452B4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer", "IdentityServer\IdentityServer.csproj", "{749988BA-2BCA-441B-AE6D-F3E3AE452B4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReproductiveLabDB", "ReproductiveLabDB\ReproductiveLabDB.csproj", "{4D95A058-5DE0-4D26-B910-1666E839C9C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{507EDF34-A0A9-4692-8CAD-230EB1222E57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{749988BA-2BCA-441B-AE6D-F3E3AE452B4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{749988BA-2BCA-441B-AE6D-F3E3AE452B4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{749988BA-2BCA-441B-AE6D-F3E3AE452B4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D95A058-5DE0-4D26-B910-1666E839C9C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D95A058-5DE0-4D26-B910-1666E839C9C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D95A058-5DE0-4D26-B910-1666E839C9C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D95A058-5DE0-4D26-B910-1666E839C9C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{507EDF34-A0A9-4692-8CAD-230EB1222E57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{507EDF34-A0A9-4692-8CAD-230EB1222E57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{507EDF34-A0A9-4692-8CAD-230EB1222E57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{507EDF34-A0A9-4692-8CAD-230EB1222E57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

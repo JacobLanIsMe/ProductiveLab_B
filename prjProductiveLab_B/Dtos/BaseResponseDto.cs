@@ -3,6 +3,7 @@
     public class BaseResponseDto
     {
         public bool isSuccess { get; set; }
+        public string? successMessage { get; set; } = null;
         public string? errorMessage { get; set; }
         public void SetSuccess()
         {

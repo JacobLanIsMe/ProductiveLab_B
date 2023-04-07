@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
-using prjProductiveLab_B.Models;
-using prjProductiveLab_B.Services;
+using ReproductiveLabDB.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

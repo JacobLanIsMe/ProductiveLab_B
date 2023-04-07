@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Interfaces;
-using prjProductiveLab_B.Models;
+using ReproductiveLabDB.Models;
 using System.Transactions;
 
 namespace prjProductiveLab_B.Services

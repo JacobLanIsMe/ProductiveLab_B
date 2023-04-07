@@ -1,6 +1,6 @@
 ﻿using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Enums;
-using prjProductiveLab_B.Models;
+using ReproductiveLabDB.Models;
 
 namespace prjProductiveLab_B.Interfaces
 {

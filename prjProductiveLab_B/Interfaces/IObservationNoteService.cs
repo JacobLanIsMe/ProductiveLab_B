@@ -5,5 +5,15 @@ namespace prjProductiveLab_B.Interfaces
     public interface IObservationNoteService
     {
         Task<List<ObservationNoteDto>> GetObservationNote(Guid courseOfTreatmentId);
+        Task<List<CommonDto>> GetOvumMaturation();
+        Task<List<CommonDto>> GetObservationType();
+        Task<List<CommonDto>> GetOvumAbnormality();
+        Task<List<CommonDto>> GetFertilisationResult();
+        Task<BlastomereScoreDto> GetBlastomereScore();
+        Task<List<CommonDto>> GetEmbryoStatus();
+        Task<BlastocystScoreDto> GetBlastocystScore();
+        Task<List<CommonDto>> GetOperationType();
+        Task<BaseResponseDto> AddObservationNote(AddObservationNoteDto input);
+        Task<GetObservationNoteDto?> GetExistingObservationNote(Guid observationNoteId);
     }
 }
