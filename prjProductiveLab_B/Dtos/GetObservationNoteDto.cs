@@ -2,10 +2,10 @@
 {
     public class GetObservationNoteDto : AddObservationNoteDto
     {
-        public List<observationNotePhotoDto>? observationNotePhotos { get; set; }
+        public List<ObservationNotePhotoDto>? observationNotePhotos { get; set; }
     }
 
-    public class observationNotePhotoDto
+    public class ObservationNotePhotoDto
     {
         public Guid observationNotePhotoId { get; set; }
         public string? route { get; set; }

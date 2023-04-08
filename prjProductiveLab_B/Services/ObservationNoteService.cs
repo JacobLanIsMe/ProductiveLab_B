@@ -314,7 +314,7 @@ namespace prjProductiveLab_B.Services
                 pgtmResult = x.Pgtmresult,
                 operationTypeId = x.OperationTypeId.ToString(),
                 day = x.Day,
-                observationNotePhotos = x.ObservationNotePhotos.Select(y=>new observationNotePhotoDto
+                observationNotePhotos = x.ObservationNotePhotos.Select(y=>new ObservationNotePhotoDto
                 {
                     observationNotePhotoId = y.ObservationNotePhotoId,
                     route = y.Route,
@@ -329,18 +329,112 @@ namespace prjProductiveLab_B.Services
             {
                 if (result.observationNotePhotos!=null && result.observationNotePhotos.Count != 0)
                 {
-                    foreach (var i in result.observationNotePhotos)
-                    {
-                        string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", i.route);
-                        if (File.Exists(path))
-                        {
-                            i.imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
-                        }
-                    }
+                    GetObservationNotePhotoBase64String(result.observationNotePhotos);
                 }
                 return result;
             }
             
+        }
+        public async Task<GetObservationNoteNameDto?> GetExistingObservationNoteName(Guid observationNoteId)
+        {
+            var result = await dbContext.ObservationNotes.Where(x => x.ObservationNoteId == observationNoteId).Include(x => x.ObservationNotePhotos).Select(x => new GetObservationNoteNameDto
+            {
+                ovumPickupDetailId = x.OvumPickupDetailId,
+                observationTime = x.ObservationTime,
+                memo = x.Memo,
+                kidScore = x.Kidscore,
+                pgtaNumber = x.Pgtanumber,
+                pgtaResult = x.Pgtaresult,
+                pgtmResult = x.Pgtmresult,
+                day = x.Day,
+                embryologist = x.EmbryologistNavigation.Name,
+                ovumMaturationName = x.OvumMaturation.Name,
+                observationTypeName = x.ObservationType.Name,
+                ovumAbnormalityName = x.OvumAbnormality.Name,
+                fertilisationResultName = x.FertilisationResult.Name,
+                blastomereScore_C_Name = x.BlastomereScoreC.Name,
+                blastomereScore_G_Name = x.BlastomereScoreG.Name,
+                blastomereScore_F_Name = x.BlastomereScoreF.Name,
+                embryoStatusName = x.EmbryoStatus.Name,
+                blastocystScore_Expansion_Name = x.BlastocystScoreExpansion.Name,
+                blastocystScore_ICE_Name = x.BlastocystScoreIce.Name,
+                blastocystScore_TE_Name = x.BlastocystScoreTe.Name,
+                operationTypeName = x.OperationType.Name,
+                observationNotePhotos = x.ObservationNotePhotos.Select(y => new ObservationNotePhotoDto
+                {
+                    observationNotePhotoId = y.ObservationNotePhotoId,
+                    route = y.Route,
+                    isMainPhoto = y.IsMainPhoto
+                }).ToList()
+            }).AsNoTracking().FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return null;
+            }
+            else
+            {
+                if (result.observationNotePhotos != null && result.observationNotePhotos.Count != 0)
+                {
+                    GetObservationNotePhotoBase64String(result.observationNotePhotos);
+                }
+                return result;
+            }
+        }
+        private void GetObservationNotePhotoBase64String(List<ObservationNotePhotoDto> observationNotePhotos)
+        {
+            foreach (var i in observationNotePhotos)
+            {
+                string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", i.route);
+                if (File.Exists(path))
+                {
+                    i.imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
+                }
+            }
+        }
+
+        public async Task<BaseResponseDto> DeleteObservationNote(Guid observationNoteId)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    var observationNote = dbContext.ObservationNotes.Where(x => x.ObservationNoteId == observationNoteId).FirstOrDefault();
+                    if (observationNote == null)
+                    {
+                        throw new Exception("找不到此筆觀察紀錄");
+                    }
+                    else if (observationNote.IsDeleted == true)
+                    {
+                        throw new Exception("此筆觀察紀錄異常");
+                    }
+                    else
+                    {
+                        observationNote.IsDeleted = true;
+                    }
+                    var observationNotePhotos = dbContext.ObservationNotePhotos.Where(x => x.ObservationNoteId == observationNoteId).ToList();
+                    foreach (var i in observationNotePhotos)
+                    {
+                        if (i.IsDeleted == true)
+                        {
+                            throw new Exception("此筆觀察紀錄的圖片狀態異常");
+                        }
+                        else
+                        {
+                            i.IsDeleted = true;
+                        }
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch(Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            
+            return result;
         }
     }
 }

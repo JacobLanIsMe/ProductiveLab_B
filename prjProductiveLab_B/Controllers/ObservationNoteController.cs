@@ -69,5 +69,15 @@ namespace prjProductiveLab_B.Controllers
         {
             return await observationNoteService.GetExistingObservationNote(observationNoteId);
         }
+        [HttpGet("GetExistingObservationNoteName")]
+        public async Task<GetObservationNoteNameDto?> GetExistingObservationNoteName(Guid observationNoteId)
+        {
+            return await observationNoteService.GetExistingObservationNoteName(observationNoteId);
+        }
+        [HttpGet("DeleteObservationNote")]
+        public async Task<BaseResponseDto> DeleteObservationNote(Guid observationNoteId)
+        {
+            return await observationNoteService.DeleteObservationNote(observationNoteId);
+        }
     }
 }
