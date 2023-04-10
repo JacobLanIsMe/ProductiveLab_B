@@ -374,7 +374,9 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.BlastomereScoreGId).HasColumnName("BlastomereScore_G_Id");
 
-                entity.Property(e => e.Kidscore).HasColumnName("KIDScore");
+                entity.Property(e => e.Kidscore)
+                    .HasColumnType("decimal(18, 1)")
+                    .HasColumnName("KIDScore");
 
                 entity.Property(e => e.ObservationTime).HasColumnType("datetime");
 

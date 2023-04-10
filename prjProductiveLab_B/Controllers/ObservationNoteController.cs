@@ -79,5 +79,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await observationNoteService.DeleteObservationNote(observationNoteId);
         }
+        [HttpPost("UpdateObservationNote")]
+        public async Task<BaseResponseDto> UpdateObservationNote([FromForm] UpdateObservationNoteDto input)
+        {
+            return await observationNoteService.UpdateObservationNote(input);
+        }
     }
 }

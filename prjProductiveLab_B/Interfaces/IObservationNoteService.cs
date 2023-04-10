@@ -17,5 +17,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<GetObservationNoteDto?> GetExistingObservationNote(Guid observationNoteId);
         Task<GetObservationNoteNameDto?> GetExistingObservationNoteName(Guid observationNoteId);
         Task<BaseResponseDto> DeleteObservationNote(Guid observationNoteId);
+        Task<BaseResponseDto> UpdateObservationNote(UpdateObservationNoteDto input);
     }
 }
