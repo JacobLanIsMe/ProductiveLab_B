@@ -2,6 +2,7 @@
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
+using System.Text.Json;
 using System.Transactions;
 
 namespace prjProductiveLab_B.Services
@@ -29,7 +30,7 @@ namespace prjProductiveLab_B.Services
                     observationType = y.ObservationType.Name,
                     day = y.Day,
                     observationTime = y.ObservationTime,
-                    mainPhoto = y.ObservationNotePhotos.Where(z=>z.IsMainPhoto == true && z.IsDeleted == false).Select(z=>z.Route).FirstOrDefault()
+                    mainPhoto = y.ObservationNotePhotos.Where(z=>z.IsMainPhoto == true && z.IsDeleted == false).Select(z=>z.PhotoName).FirstOrDefault()
                 }).ToList()
             }).OrderBy(x => x.ovumNumber).AsNoTracking().ToListAsync();
             foreach (var i in result)
@@ -167,32 +168,7 @@ namespace prjProductiveLab_B.Services
                     dbContext.ObservationNotes.Add(observationNote);
                     dbContext.SaveChanges();
                     Guid latestObservationNoteId = dbContext.ObservationNotes.OrderByDescending(x => x.SqlId).Select(x => x.ObservationNoteId).FirstOrDefault();
-                    if (input.photos != null)
-                    {
-                        int mainPhotoIndex = 0;
-                        if (!Int32.TryParse(input.mainPhotoIndex, out mainPhotoIndex))
-                        {
-                            throw new FormatException("主照片選項有誤");
-                        }
-                        for (int i = 0; i < input.photos.Count; i++)
-                        {
-                            string pName = Guid.NewGuid() + ".png";
-                            string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", pName);
-                            using (FileStream stream = new FileStream(path, FileMode.Create))
-                            {
-                                input.photos[i].CopyTo(stream);
-                            }
-                            ObservationNotePhoto photo = new ObservationNotePhoto
-                            {
-                                ObservationNoteId = latestObservationNoteId,
-                                Route = pName,
-                                IsMainPhoto = mainPhotoIndex == i ? true : false,
-                                IsDeleted = false
-                            };
-                            dbContext.ObservationNotePhotos.Add(photo);
-                        }
-                    }
-                    dbContext.SaveChanges();
+                    AddObservationNotePhoto(input.photos, input.mainPhotoIndex, latestObservationNoteId, false);
                     scope.Complete();
                 }
                 result.SetSuccess();
@@ -207,6 +183,8 @@ namespace prjProductiveLab_B.Services
             }
             return result;
         }
+
+        
 
         private ObservationNote GenerateObservationNote(ObservationNote observationNote, AddObservationNoteDto input)
         {
@@ -340,7 +318,47 @@ namespace prjProductiveLab_B.Services
             }
             return observationNote;
         }
+        private void AddObservationNotePhoto(List<IFormFile>? photos, string inputMainPhotoIndex, Guid observationNoteId, bool hasAlreadyMainPhotoIndex)
+        {
+            if (photos != null)
+            {
+                int mainPhotoIndex = 0;
+                if (!hasAlreadyMainPhotoIndex)
+                {
+                    if (!Int32.TryParse(inputMainPhotoIndex, out mainPhotoIndex))
+                    {
+                        throw new FormatException("主照片選項有誤");
+                    }
+                }
+                for (int i = 0; i < photos.Count; i++)
+                {
+                    string pName = Guid.NewGuid() + ".png";
+                    string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", pName);
+                    using (FileStream stream = new FileStream(path, FileMode.Create))
+                    {
+                        photos[i].CopyTo(stream);
+                    }
+                    ObservationNotePhoto photo = new ObservationNotePhoto
+                    {
+                        ObservationNoteId = observationNoteId,
+                        PhotoName = pName,
+                        IsDeleted = false
+                    };
+                    if (hasAlreadyMainPhotoIndex)
+                    {
+                        photo.IsMainPhoto = false;
+                    }
+                    else
+                    {
+                        photo.IsMainPhoto = mainPhotoIndex == i ? true : false;
+                    }
+                    dbContext.ObservationNotePhotos.Add(photo);
+                }
+                dbContext.SaveChanges();
+            }
+        }
 
+        
         public async Task<BaseResponseDto> UpdateObservationNote(UpdateObservationNoteDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
@@ -353,6 +371,53 @@ namespace prjProductiveLab_B.Services
                 {
                     using (TransactionScope scope = new TransactionScope())
                     {
+                        var existingPhotos = dbContext.ObservationNotePhotos.Where(x => x.ObservationNoteId == input.observationNoteId && x.IsDeleted == false);
+                        if (input.existingPhotos != null)
+                        {           
+                            List<ObservationNotePhotoDto> inputExistingPhotos = JsonSerializer.Deserialize<List<ObservationNotePhotoDto>>(input.existingPhotos);
+                            
+                            foreach (var i in existingPhotos)
+                            {
+                                var q = inputExistingPhotos.FirstOrDefault(x => x.photoName == i.PhotoName);
+                                if (q != null)
+                                {
+                                    i.IsMainPhoto = q.isMainPhoto;
+                                }
+                                else
+                                {
+                                    i.IsMainPhoto = false;
+                                    i.IsDeleted = true;
+                                }
+                            }
+                            dbContext.SaveChanges();
+                            var modifiedPhotos = dbContext.ObservationNotePhotos.Where(x => x.ObservationNoteId == input.observationNoteId && x.IsDeleted == false);
+                            if (!modifiedPhotos.Any(x=>x.IsMainPhoto == true) && input.photos == null)
+                            {
+                                var q = modifiedPhotos.FirstOrDefault();
+                                if (q != null)
+                                {
+                                    q.IsMainPhoto = true;
+                                }
+                            }
+                            else if (!modifiedPhotos.Any(x => x.IsMainPhoto == true) && input.photos != null)
+                            {
+                                AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
+                            }
+                            else if (modifiedPhotos.Any(x => x.IsMainPhoto == true) && input.photos != null)
+                            {
+                                AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, true);
+                            }
+                        }
+                        else
+                        {
+                            foreach (var i in existingPhotos)
+                            {
+                                i.IsMainPhoto = false;
+                                i.IsDeleted = true;
+                            }
+                            dbContext.SaveChanges();
+                            AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
+                        }
                         dbContext.SaveChanges();
                         scope.Complete();
                     }
@@ -396,10 +461,10 @@ namespace prjProductiveLab_B.Services
                 pgtmResult = x.Pgtmresult,
                 operationTypeId = x.OperationTypeId.ToString(),
                 day = x.Day,
-                observationNotePhotos = x.ObservationNotePhotos.Select(y=>new ObservationNotePhotoDto
+                observationNotePhotos = x.ObservationNotePhotos.Where(y=>y.IsDeleted == false).Select(y=>new ObservationNotePhotoDto
                 {
                     observationNotePhotoId = y.ObservationNotePhotoId,
-                    route = y.Route,
+                    photoName = y.PhotoName,
                     isMainPhoto = y.IsMainPhoto
                 }).ToList()
             }).AsNoTracking().FirstOrDefaultAsync();
@@ -442,10 +507,10 @@ namespace prjProductiveLab_B.Services
                 blastocystScore_ICE_Name = x.BlastocystScoreIce.Name,
                 blastocystScore_TE_Name = x.BlastocystScoreTe.Name,
                 operationTypeName = x.OperationType.Name,
-                observationNotePhotos = x.ObservationNotePhotos.Select(y => new ObservationNotePhotoDto
+                observationNotePhotos = x.ObservationNotePhotos.Where(y=>y.IsDeleted == false).Select(y => new ObservationNotePhotoDto
                 {
                     observationNotePhotoId = y.ObservationNotePhotoId,
-                    route = y.Route,
+                    photoName = y.PhotoName,
                     isMainPhoto = y.IsMainPhoto
                 }).ToList()
             }).AsNoTracking().FirstOrDefaultAsync();
@@ -466,7 +531,7 @@ namespace prjProductiveLab_B.Services
         {
             foreach (var i in observationNotePhotos)
             {
-                string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", i.route);
+                string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", i.photoName);
                 if (File.Exists(path))
                 {
                     i.imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
