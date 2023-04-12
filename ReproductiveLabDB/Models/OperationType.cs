@@ -7,12 +7,12 @@ namespace ReproductiveLabDB.Models
     {
         public OperationType()
         {
-            ObservationNotes = new HashSet<ObservationNote>();
+            ObservationNoteOperations = new HashSet<ObservationNoteOperation>();
         }
 
         public int SqlId { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<ObservationNote> ObservationNotes { get; set; }
+        public virtual ICollection<ObservationNoteOperation> ObservationNoteOperations { get; set; }
     }
 }

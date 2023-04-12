@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
 using System.Text.Json;
@@ -168,6 +169,9 @@ namespace prjProductiveLab_B.Services
                     dbContext.ObservationNotes.Add(observationNote);
                     dbContext.SaveChanges();
                     Guid latestObservationNoteId = dbContext.ObservationNotes.OrderByDescending(x => x.SqlId).Select(x => x.ObservationNoteId).FirstOrDefault();
+                    AddObservationNoteEmbryoStatus(latestObservationNoteId, input);
+                    AddObservationNoteOvumAbnormality(latestObservationNoteId, input);
+                    AddObservationNoteOperation(latestObservationNoteId, input);
                     AddObservationNotePhoto(input.photos, input.mainPhotoIndex, latestObservationNoteId, false);
                     scope.Complete();
                 }
@@ -225,14 +229,6 @@ namespace prjProductiveLab_B.Services
             {
                 observationNote.ObservationTypeId = null;
             }
-            if (Int32.TryParse(input.ovumAbnormalityId, out int ovumAbnormalityId))
-            {
-                observationNote.OvumAbnormalityId = ovumAbnormalityId;
-            }
-            else
-            {
-                observationNote.OvumAbnormalityId = null;
-            }
             if (Int32.TryParse(input.fertilisationResultId, out int fertilisationResultId))
             {
                 observationNote.FertilisationResultId = fertilisationResultId;
@@ -265,14 +261,7 @@ namespace prjProductiveLab_B.Services
             {
                 observationNote.BlastomereScoreFId = null;
             }
-            if (Int32.TryParse(input.embryoStatusId, out int embryoStatusId))
-            {
-                observationNote.EmbryoStatusId = embryoStatusId;
-            }
-            else
-            {
-                observationNote.EmbryoStatusId = null;
-            }
+            
             if (Int32.TryParse(input.blastocystScore_Expansion_Id, out int blastocystScore_Expansion_Id))
             {
                 observationNote.BlastocystScoreExpansionId = blastocystScore_Expansion_Id;
@@ -297,14 +286,7 @@ namespace prjProductiveLab_B.Services
             {
                 observationNote.BlastocystScoreTeId = null;
             }
-            if (Int32.TryParse(input.operationTypeId, out int operationTypeId))
-            {
-                observationNote.OperationTypeId = operationTypeId;
-            }
-            else
-            {
-                observationNote.OperationTypeId = null;
-            }
+            
             if (decimal.TryParse(input.kidScore, out decimal kidScore))
             {
                 if (kidScore >= 0 && kidScore <= Convert.ToDecimal(9.9))
@@ -317,6 +299,105 @@ namespace prjProductiveLab_B.Services
                 observationNote.Kidscore = null;
             }
             return observationNote;
+        }
+        private void deleteObservationNoteOvumAbnormality(Guid observationNoteId)
+        {
+            var q = dbContext.ObservationNoteOvumAbnormalities.Where(x => x.ObservationNoteId == observationNoteId);
+            foreach (var i in q)
+            {
+                i.IsDeleted = true;
+            }
+            dbContext.SaveChanges();
+        }
+        private void AddObservationNoteOvumAbnormality(Guid observationNoteId, AddObservationNoteDto input)
+        {
+            try
+            {
+                List<int> ovumAbnormalityIds = JsonSerializer.Deserialize<List<int>>(input.ovumAbnormalityId);
+                foreach (var i in ovumAbnormalityIds)
+                {
+                    ObservationNoteOvumAbnormality ovumAbnormality = new ObservationNoteOvumAbnormality
+                    {
+                        ObservationNoteId = observationNoteId,
+                        ForeignKeyId = i,
+                        IsDeleted = false
+                    };
+                    dbContext.ObservationNoteOvumAbnormalities.Add(ovumAbnormality);
+                }
+                dbContext.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        private void deleteObservationNoteOperation(Guid observationNoteId)
+        {
+            var q = dbContext.ObservationNoteOperations.Where(x => x.ObservationNoteId == observationNoteId);
+            foreach (var i in q)
+            {
+                i.IsDeleted = true;
+            }
+            dbContext.SaveChanges();
+        }
+        private void AddObservationNoteOperation(Guid observationNoteId, AddObservationNoteDto input)
+        {
+            try
+            {
+                List<int> operationTypeIds = JsonSerializer.Deserialize<List<int>>(input.operationTypeId);
+                foreach (var i in operationTypeIds)
+                {
+                    ObservationNoteOperation operation = new ObservationNoteOperation
+                    {
+                        ObservationNoteId = observationNoteId,
+                        ForeignKeyId = i,
+                        IsDeleted = false
+                    };
+                    if (i == (int)OperationTypeEnum.Spindle && input.spindleResult != "null")
+                    {
+                        operation.SpindleResult = input.spindleResult;
+                    }
+                    dbContext.ObservationNoteOperations.Add(operation);
+                }
+                dbContext.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            
+        }
+        private void deleteObservationNoteEmbryoStatus(Guid observationNoteId)
+        {
+            var q = dbContext.ObservationNoteEmbryoStatuses.Where(x => x.ObservationNoteId == observationNoteId);
+            foreach (var i in q)
+            {
+                i.IsDeleted = true;
+            }
+            dbContext.SaveChanges();
+        }
+        private void AddObservationNoteEmbryoStatus(Guid observationNoteId, AddObservationNoteDto input)
+        {
+            try
+            {
+                List<int> embryoStatusIds = JsonSerializer.Deserialize<List<int>>(input.embryoStatusId);
+                foreach (var i in embryoStatusIds)
+                {
+                    ObservationNoteEmbryoStatus embryoStatus = new ObservationNoteEmbryoStatus
+                    {
+                        ObservationNoteId = observationNoteId,
+                        ForeignKeyId = i,
+                        IsDeleted = false
+                    };
+                    dbContext.ObservationNoteEmbryoStatuses.Add(embryoStatus);
+                }
+                dbContext.SaveChanges();
+            }
+            catch(Exception ex) 
+            {
+                throw new Exception(ex.Message);
+            }
+            
         }
         private void AddObservationNotePhoto(List<IFormFile>? photos, string inputMainPhotoIndex, Guid observationNoteId, bool hasAlreadyMainPhotoIndex)
         {
@@ -365,12 +446,19 @@ namespace prjProductiveLab_B.Services
             var existingObservationNote = dbContext.ObservationNotes.FirstOrDefault(x => x.ObservationNoteId == input.observationNoteId);
             if (existingObservationNote != null)
             {
-                AddObservationNoteDto inputTemp = (AddObservationNoteDto)input;
-                GenerateObservationNote(existingObservationNote, inputTemp);
                 try
                 {
                     using (TransactionScope scope = new TransactionScope())
                     {
+                        AddObservationNoteDto inputTemp = (AddObservationNoteDto)input;
+                        GenerateObservationNote(existingObservationNote, inputTemp);
+                        dbContext.SaveChanges();
+                        deleteObservationNoteEmbryoStatus(input.observationNoteId);
+                        AddObservationNoteEmbryoStatus(input.observationNoteId, inputTemp);
+                        deleteObservationNoteOperation(input.observationNoteId);
+                        AddObservationNoteOperation(input.observationNoteId, inputTemp);
+                        deleteObservationNoteOvumAbnormality(input.observationNoteId);
+                        AddObservationNoteOvumAbnormality(input.observationNoteId, inputTemp);
                         var existingPhotos = dbContext.ObservationNotePhotos.Where(x => x.ObservationNoteId == input.observationNoteId && x.IsDeleted == false);
                         if (input.existingPhotos != null)
                         {           
@@ -438,19 +526,19 @@ namespace prjProductiveLab_B.Services
 
         public async Task<GetObservationNoteDto?> GetExistingObservationNote(Guid observationNoteId)
         {
-            var result = await dbContext.ObservationNotes.Where(x=>x.ObservationNoteId== observationNoteId).Include(x=>x.ObservationNotePhotos).Select(x=>new GetObservationNoteDto
+            var result = await dbContext.ObservationNotes.Where(x => x.ObservationNoteId == observationNoteId).Include(x => x.ObservationNotePhotos).Include(x => x.ObservationNoteOperations).Include(x => x.ObservationNoteEmbryoStatuses).Include(x => x.ObservationNoteOvumAbnormalities).Select(x => new GetObservationNoteDto
             {
                 ovumPickupDetailId = x.OvumPickupDetailId,
-                observationTime= x.ObservationTime,
+                observationTime = x.ObservationTime,
                 embryologist = x.Embryologist,
                 ovumMaturationId = x.OvumMaturationId.ToString(),
                 observationTypeId = x.ObservationTypeId.ToString(),
-                ovumAbnormalityId = x.OvumAbnormalityId.ToString(),
+                ovumAbnormalityIds = x.ObservationNoteOvumAbnormalities.Where(y => y.IsDeleted == false).Select(y => y.ForeignKeyId).ToList(),
                 fertilisationResultId = x.FertilisationResultId.ToString(),
                 blastomereScore_C_Id = x.BlastomereScoreCId.ToString(),
                 blastomereScore_G_Id = x.BlastomereScoreGId.ToString(),
                 blastomereScore_F_Id = x.BlastomereScoreFId.ToString(),
-                embryoStatusId = x.EmbryoStatusId.ToString(),
+                embryoStatusIds = x.ObservationNoteEmbryoStatuses.Where(y => y.IsDeleted == false).Select(y => y.ForeignKeyId).ToList(),
                 blastocystScore_Expansion_Id = x.BlastocystScoreExpansionId.ToString(),
                 blastocystScore_ICE_Id = x.BlastocystScoreIceId.ToString(),
                 blastocystScore_TE_Id = x.BlastocystScoreTeId.ToString(),
@@ -459,9 +547,10 @@ namespace prjProductiveLab_B.Services
                 pgtaNumber = x.Pgtanumber,
                 pgtaResult = x.Pgtaresult,
                 pgtmResult = x.Pgtmresult,
-                operationTypeId = x.OperationTypeId.ToString(),
+                operationTypeIds = x.ObservationNoteOperations.Where(y => y.IsDeleted == false).Select(y => y.ForeignKeyId).ToList(),
+                spindleResult = x.ObservationNoteOperations.Where(y => y.ForeignKeyId == (int)OperationTypeEnum.Spindle && y.SpindleResult != null && y.IsDeleted == false).Select(y => y.SpindleResult).FirstOrDefault(),
                 day = x.Day,
-                observationNotePhotos = x.ObservationNotePhotos.Where(y=>y.IsDeleted == false).Select(y=>new ObservationNotePhotoDto
+                observationNotePhotos = x.ObservationNotePhotos.Where(y => y.IsDeleted == false).Select(y => new ObservationNotePhotoDto
                 {
                     observationNotePhotoId = y.ObservationNotePhotoId,
                     photoName = y.PhotoName,
@@ -474,13 +563,16 @@ namespace prjProductiveLab_B.Services
             }
             else
             {
-                if (result.observationNotePhotos!=null && result.observationNotePhotos.Count != 0)
+                result.ovumAbnormalityId = JsonSerializer.Serialize(result.ovumAbnormalityIds);
+                result.embryoStatusId = JsonSerializer.Serialize(result.embryoStatusIds);
+                result.operationTypeId = JsonSerializer.Serialize(result.operationTypeIds);
+                if (result.observationNotePhotos != null && result.observationNotePhotos.Count != 0)
                 {
                     GetObservationNotePhotoBase64String(result.observationNotePhotos);
                 }
                 return result;
             }
-            
+
         }
         public async Task<GetObservationNoteNameDto?> GetExistingObservationNoteName(Guid observationNoteId)
         {
@@ -497,16 +589,15 @@ namespace prjProductiveLab_B.Services
                 embryologist = x.EmbryologistNavigation.Name,
                 ovumMaturationName = x.OvumMaturation.Name,
                 observationTypeName = x.ObservationType.Name,
-                ovumAbnormalityName = x.OvumAbnormality.Name,
+                ovumAbnormalityName = dbContext.ObservationNoteOvumAbnormalities.Where(y=>y.ObservationNoteId == observationNoteId && y.IsDeleted == false).Select(y=>y.ForeignKey.Name).ToList(),
                 fertilisationResultName = x.FertilisationResult.Name,
                 blastomereScore_C_Name = x.BlastomereScoreC.Name,
                 blastomereScore_G_Name = x.BlastomereScoreG.Name,
                 blastomereScore_F_Name = x.BlastomereScoreF.Name,
-                embryoStatusName = x.EmbryoStatus.Name,
+                embryoStatusName = dbContext.ObservationNoteEmbryoStatuses.Where(y=>y.ObservationNoteId == observationNoteId && y.IsDeleted == false).Select(y=>y.ForeignKey.Name).ToList(),
                 blastocystScore_Expansion_Name = x.BlastocystScoreExpansion.Name,
                 blastocystScore_ICE_Name = x.BlastocystScoreIce.Name,
                 blastocystScore_TE_Name = x.BlastocystScoreTe.Name,
-                operationTypeName = x.OperationType.Name,
                 observationNotePhotos = x.ObservationNotePhotos.Where(y=>y.IsDeleted == false).Select(y => new ObservationNotePhotoDto
                 {
                     observationNotePhotoId = y.ObservationNotePhotoId,
@@ -520,6 +611,14 @@ namespace prjProductiveLab_B.Services
             }
             else
             {
+                var q = dbContext.ObservationNoteOperations.Where(x => x.ObservationNoteId == observationNoteId && x.IsDeleted == false).Select(x => new
+                {
+                    operationTypeName = x.ForeignKey.Name,
+                    foreignKeyId = x.ForeignKeyId,
+                    spindleResult = x.SpindleResult
+                }).ToList();
+                result.operationTypeName = q.Select(x => x.operationTypeName).ToList();
+                result.spindleResult = q.Where(x => x.foreignKeyId == (int)OperationTypeEnum.Spindle && x.spindleResult != null).Select(x => x.spindleResult).FirstOrDefault();
                 if (result.observationNotePhotos != null && result.observationNotePhotos.Count != 0)
                 {
                     GetObservationNotePhotoBase64String(result.observationNotePhotos);
@@ -562,16 +661,12 @@ namespace prjProductiveLab_B.Services
                     var observationNotePhotos = dbContext.ObservationNotePhotos.Where(x => x.ObservationNoteId == observationNoteId).ToList();
                     foreach (var i in observationNotePhotos)
                     {
-                        if (i.IsDeleted == true)
-                        {
-                            throw new Exception("此筆觀察紀錄的圖片狀態異常");
-                        }
-                        else
-                        {
-                            i.IsDeleted = true;
-                        }
+                        i.IsDeleted = true;
                     }
                     dbContext.SaveChanges();
+                    deleteObservationNoteOperation(observationNoteId);
+                    deleteObservationNoteOvumAbnormality(observationNoteId);
+                    deleteObservationNoteEmbryoStatus(observationNoteId);
                     scope.Complete();
                 }
                 result.SetSuccess();

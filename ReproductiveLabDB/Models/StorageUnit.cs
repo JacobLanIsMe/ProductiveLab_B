@@ -7,6 +7,7 @@ namespace ReproductiveLabDB.Models
     {
         public StorageUnit()
         {
+            OvumFreezes = new HashSet<OvumFreeze>();
             SpermFreezes = new HashSet<SpermFreeze>();
         }
 
@@ -16,6 +17,7 @@ namespace ReproductiveLabDB.Models
         public bool IsOccupied { get; set; }
 
         public virtual StorageCaneBox StorageCaneBox { get; set; } = null!;
+        public virtual ICollection<OvumFreeze> OvumFreezes { get; set; }
         public virtual ICollection<SpermFreeze> SpermFreezes { get; set; }
     }
 }

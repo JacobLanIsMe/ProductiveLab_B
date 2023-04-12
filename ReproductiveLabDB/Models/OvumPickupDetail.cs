@@ -8,6 +8,7 @@ namespace ReproductiveLabDB.Models
         public OvumPickupDetail()
         {
             ObservationNotes = new HashSet<ObservationNote>();
+            OvumFreezes = new HashSet<OvumFreeze>();
         }
 
         public int SqlId { get; set; }
@@ -25,5 +26,6 @@ namespace ReproductiveLabDB.Models
         public virtual OvumPickup OvumPickup { get; set; } = null!;
         public virtual OvumPickupDetailStatus OvumPickupDetailStatus { get; set; } = null!;
         public virtual ICollection<ObservationNote> ObservationNotes { get; set; }
+        public virtual ICollection<OvumFreeze> OvumFreezes { get; set; }
     }
 }

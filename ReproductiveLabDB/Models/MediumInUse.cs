@@ -7,6 +7,7 @@ namespace ReproductiveLabDB.Models
     {
         public MediumInUse()
         {
+            OvumFreezes = new HashSet<OvumFreeze>();
             OvumPickupDetails = new HashSet<OvumPickupDetail>();
             SpermFreezeFreezeMediumInUses = new HashSet<SpermFreeze>();
             SpermFreezeMediumInUseId1Navigations = new HashSet<SpermFreeze>();
@@ -24,6 +25,7 @@ namespace ReproductiveLabDB.Models
         public int? MediumTypeId { get; set; }
 
         public virtual MediumType? MediumType { get; set; }
+        public virtual ICollection<OvumFreeze> OvumFreezes { get; set; }
         public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }
         public virtual ICollection<SpermFreeze> SpermFreezeFreezeMediumInUses { get; set; }
         public virtual ICollection<SpermFreeze> SpermFreezeMediumInUseId1Navigations { get; set; }
