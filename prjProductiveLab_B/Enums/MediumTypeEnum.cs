@@ -4,5 +4,7 @@
     {
         medium = 1,
         freezeMedium = 2,
+        ovumFreezeMedium = 3,
+        other = 10
     }
 }

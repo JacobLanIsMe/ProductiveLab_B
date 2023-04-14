@@ -54,8 +54,8 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<SpermRetrievalMethod> SpermRetrievalMethods { get; set; } = null!;
         public virtual DbSet<SpermScore> SpermScores { get; set; } = null!;
         public virtual DbSet<SpermScoreTimePoint> SpermScoreTimePoints { get; set; } = null!;
-        public virtual DbSet<StorageCaneBox> StorageCaneBoxes { get; set; } = null!;
-        public virtual DbSet<StorageShelf> StorageShelves { get; set; } = null!;
+        public virtual DbSet<StorageCanist> StorageCanists { get; set; } = null!;
+        public virtual DbSet<StorageStripBox> StorageStripBoxes { get; set; } = null!;
         public virtual DbSet<StorageTank> StorageTanks { get; set; } = null!;
         public virtual DbSet<StorageTankType> StorageTankTypes { get; set; } = null!;
         public virtual DbSet<StorageUnit> StorageUnits { get; set; } = null!;
@@ -607,11 +607,26 @@ namespace ReproductiveLabDB.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumFreeze_MediumInUse");
 
-                entity.HasOne(d => d.OvumPickupDetail)
-                    .WithMany(p => p.OvumFreezes)
-                    .HasForeignKey(d => d.OvumPickupDetailId)
+                entity.HasOne(d => d.OvumPickupDetailId1Navigation)
+                    .WithMany(p => p.OvumFreezeOvumPickupDetailId1Navigations)
+                    .HasForeignKey(d => d.OvumPickupDetailId1)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumFreeze_OvumPickupDetail");
+
+                entity.HasOne(d => d.OvumPickupDetailId2Navigation)
+                    .WithMany(p => p.OvumFreezeOvumPickupDetailId2Navigations)
+                    .HasForeignKey(d => d.OvumPickupDetailId2)
+                    .HasConstraintName("FK_OvumFreeze_OvumPickupDetail1");
+
+                entity.HasOne(d => d.OvumPickupDetailId3Navigation)
+                    .WithMany(p => p.OvumFreezeOvumPickupDetailId3Navigations)
+                    .HasForeignKey(d => d.OvumPickupDetailId3)
+                    .HasConstraintName("FK_OvumFreeze_OvumPickupDetail2");
+
+                entity.HasOne(d => d.OvumPickupDetailId4Navigation)
+                    .WithMany(p => p.OvumFreezeOvumPickupDetailId4Navigations)
+                    .HasForeignKey(d => d.OvumPickupDetailId4)
+                    .HasConstraintName("FK_OvumFreeze_OvumPickupDetail3");
 
                 entity.HasOne(d => d.StorageUnit)
                     .WithMany(p => p.OvumFreezes)
@@ -865,31 +880,32 @@ namespace ReproductiveLabDB.Models
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<StorageCaneBox>(entity =>
-            {
-                entity.HasKey(e => e.SqlId);
-
-                entity.ToTable("StorageCaneBox");
-
-                entity.HasOne(d => d.StorageShelf)
-                    .WithMany(p => p.StorageCaneBoxes)
-                    .HasForeignKey(d => d.StorageShelfId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_StorageCaneBox_StorageShelf");
-            });
-
-            modelBuilder.Entity<StorageShelf>(entity =>
+            modelBuilder.Entity<StorageCanist>(entity =>
             {
                 entity.HasKey(e => e.SqlId)
                     .HasName("PK_StorageStrip");
 
-                entity.ToTable("StorageShelf");
+                entity.ToTable("StorageCanist");
 
                 entity.HasOne(d => d.StorageTank)
-                    .WithMany(p => p.StorageShelves)
+                    .WithMany(p => p.StorageCanists)
                     .HasForeignKey(d => d.StorageTankId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_StorageStrip_StorageTank");
+            });
+
+            modelBuilder.Entity<StorageStripBox>(entity =>
+            {
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_StorageCaneBox");
+
+                entity.ToTable("StorageStripBox");
+
+                entity.HasOne(d => d.StorageCanist)
+                    .WithMany(p => p.StorageStripBoxes)
+                    .HasForeignKey(d => d.StorageCanistId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_StorageCaneBox_StorageShelf");
             });
 
             modelBuilder.Entity<StorageTank>(entity =>
@@ -922,9 +938,9 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("StorageUnit");
 
-                entity.HasOne(d => d.StorageCaneBox)
+                entity.HasOne(d => d.StorageStripBox)
                     .WithMany(p => p.StorageUnits)
-                    .HasForeignKey(d => d.StorageCaneBoxId)
+                    .HasForeignKey(d => d.StorageStripBoxId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_StorageUnit_StorageCaneBox");
             });

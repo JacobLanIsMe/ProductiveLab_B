@@ -13,10 +13,10 @@ namespace ReproductiveLabDB.Models
 
         public int SqlId { get; set; }
         public string UnitName { get; set; } = null!;
-        public int StorageCaneBoxId { get; set; }
+        public int StorageStripBoxId { get; set; }
         public bool IsOccupied { get; set; }
 
-        public virtual StorageCaneBox StorageCaneBox { get; set; } = null!;
+        public virtual StorageStripBox StorageStripBox { get; set; } = null!;
         public virtual ICollection<OvumFreeze> OvumFreezes { get; set; }
         public virtual ICollection<SpermFreeze> SpermFreezes { get; set; }
     }

@@ -3,8 +3,8 @@
     public class StorageAddNewTankDto : StorageTankDto
     {
         
-        public int shelfAmount { get; set; }
-        public int caneBoxAmount { get; set; }
+        public int canistAmount { get; set; }
+        public int stripBoxAmount { get; set; }
         public int unitAmount { get; set; }
     }
 }

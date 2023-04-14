@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace ReproductiveLabDB.Models
 {
-    public partial class StorageShelf
+    public partial class StorageCanist
     {
-        public StorageShelf()
+        public StorageCanist()
         {
-            StorageCaneBoxes = new HashSet<StorageCaneBox>();
+            StorageStripBoxes = new HashSet<StorageStripBox>();
         }
 
         public int SqlId { get; set; }
-        public string ShelfName { get; set; } = null!;
+        public string CanistName { get; set; } = null!;
         public int StorageTankId { get; set; }
 
         public virtual StorageTank StorageTank { get; set; } = null!;
-        public virtual ICollection<StorageCaneBox> StorageCaneBoxes { get; set; }
+        public virtual ICollection<StorageStripBox> StorageStripBoxes { get; set; }
     }
 }

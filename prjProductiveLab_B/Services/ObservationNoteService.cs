@@ -160,12 +160,13 @@ namespace prjProductiveLab_B.Services
         public async Task<BaseResponseDto> AddObservationNote(AddObservationNoteDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
-            ObservationNote observationNote = GenerateObservationNote(new ObservationNote(), input);
+            
             
             try
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
+                    ObservationNote observationNote = GenerateObservationNote(new ObservationNote(), input);
                     dbContext.ObservationNotes.Add(observationNote);
                     dbContext.SaveChanges();
                     Guid latestObservationNoteId = dbContext.ObservationNotes.OrderByDescending(x => x.SqlId).Select(x => x.ObservationNoteId).FirstOrDefault();
@@ -292,6 +293,10 @@ namespace prjProductiveLab_B.Services
                 if (kidScore >= 0 && kidScore <= Convert.ToDecimal(9.9))
                 {
                     observationNote.Kidscore = kidScore;
+                }
+                else
+                {
+                    throw new Exception("KID Score 數值需落在 0 - 9.9");
                 }
             }
             else
@@ -677,6 +682,13 @@ namespace prjProductiveLab_B.Services
             }
             
             return result;
+        }
+        public async Task GetFreezeObservationNotes(List<Guid> ovumPickupDetailIds)
+        {
+            var q = await dbContext.ObservationNotes.Where(x => ovumPickupDetailIds.Contains(x.OvumPickupDetailId) && x.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(x => new FreezeObservationNoteDto
+            {
+
+            }).ToListAsync();
         }
     }
 }

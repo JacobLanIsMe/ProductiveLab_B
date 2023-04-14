@@ -8,7 +8,7 @@
         public void SetSuccess()
         {
             this.isSuccess = true;
-            this.errorMessage = string.Empty;
+            this.errorMessage = null;
         }
         public void SetError(string error)
         {

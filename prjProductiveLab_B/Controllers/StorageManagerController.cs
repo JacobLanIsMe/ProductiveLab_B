@@ -20,9 +20,9 @@ namespace prjProductiveLab_B.Controllers
             return await storageService.GetStorageTankStatus();
         }
         [HttpGet("GetStorageUnitStatus")]
-        public async Task<List<StorageUnitStatusDto>> GetStorageUnitStatus(int tankId, int shelfId)
+        public async Task<List<StorageUnitStatusDto>> GetStorageUnitStatus(int tankId, int canistId)
         {
-            return await storageService.GetStorageUnitStatus(tankId, shelfId);
+            return await storageService.GetStorageUnitStatus(tankId, canistId);
         }
 
         [HttpPost("AddStorageTank")]

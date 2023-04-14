@@ -12,11 +12,18 @@ namespace ReproductiveLabDB.Models
         public int StorageUnitId { get; set; }
         public Guid MediumInUseId { get; set; }
         public string? Memo { get; set; }
-        public Guid OvumPickupDetailId { get; set; }
+        public Guid OvumPickupDetailId1 { get; set; }
+        public string? OtherMediumName { get; set; }
+        public Guid? OvumPickupDetailId2 { get; set; }
+        public Guid? OvumPickupDetailId3 { get; set; }
+        public Guid? OvumPickupDetailId4 { get; set; }
 
         public virtual Employee EmbryologistNavigation { get; set; } = null!;
         public virtual MediumInUse MediumInUse { get; set; } = null!;
-        public virtual OvumPickupDetail OvumPickupDetail { get; set; } = null!;
+        public virtual OvumPickupDetail OvumPickupDetailId1Navigation { get; set; } = null!;
+        public virtual OvumPickupDetail? OvumPickupDetailId2Navigation { get; set; }
+        public virtual OvumPickupDetail? OvumPickupDetailId3Navigation { get; set; }
+        public virtual OvumPickupDetail? OvumPickupDetailId4Navigation { get; set; }
         public virtual StorageUnit StorageUnit { get; set; } = null!;
     }
 }

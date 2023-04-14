@@ -16,7 +16,7 @@ namespace prjProductiveLab_B.Services
 
         public async Task<List<StorageTankStatusDot>> GetStorageTankStatus()
         {
-            var result = await dbContext.StorageUnits.GroupBy(x => new { x.StorageCaneBox.StorageShelf.StorageTankId, x.StorageCaneBox.StorageShelfId }).Select(y => new StorageTankStatusDot
+            var result = await dbContext.StorageUnits.GroupBy(x => new { x.StorageStripBox.StorageCanist.StorageTankId, x.StorageStripBox.StorageCanistId }).Select(y => new StorageTankStatusDot
             {
                 tankId = y.Key.StorageTankId,
                 tankInfo = dbContext.StorageTanks.Where(z => z.SqlId == y.Key.StorageTankId).Select(z => new StorageTankDto
@@ -24,29 +24,29 @@ namespace prjProductiveLab_B.Services
                     tankName = z.TankName,
                     tankTypeId = z.StorageTankTypeId
                 }).FirstOrDefault(),
-                shelfId = y.Key.StorageShelfId,
-                shelfName = dbContext.StorageShelves.Where(z => z.SqlId == y.Key.StorageShelfId).Select(z => z.ShelfName).FirstOrDefault(),
+                canistId = y.Key.StorageCanistId,
+                canistName = dbContext.StorageCanists.Where(z => z.SqlId == y.Key.StorageCanistId).Select(z => z.CanistName).FirstOrDefault(),
                 emptyAmount = y.Where(z => z.IsOccupied == false).Count(),
                 occupiedAmount = y.Where(z => z.IsOccupied == true).Count(),
                 totalAmount = y.Count()
-            }).OrderBy(x=>x.tankId).ThenBy(x=>x.shelfId).ToListAsync();
+            }).OrderBy(x=>x.tankId).ThenBy(x=>x.canistId).ToListAsync();
             return result;
         }
 
-        public async Task<List<StorageUnitStatusDto>> GetStorageUnitStatus(int tankId, int shelfId)
+        public async Task<List<StorageUnitStatusDto>> GetStorageUnitStatus(int tankId, int canistId)
         {
-            var result = await dbContext.StorageUnits.Where(x => x.StorageCaneBox.StorageShelf.StorageTankId == tankId && x.StorageCaneBox.StorageShelfId == shelfId).GroupBy(x => x.StorageCaneBoxId).Select(y => new StorageUnitStatusDto
+            var result = await dbContext.StorageUnits.Where(x => x.StorageStripBox.StorageCanist.StorageTankId == tankId && x.StorageStripBox.StorageCanistId == canistId).GroupBy(x => x.StorageStripBoxId).Select(y => new StorageUnitStatusDto
             {
-                caneIdOrBoxId = y.Key,
-                caneNameOrBoxName = dbContext.StorageCaneBoxes.Where(z=>z.SqlId == y.Key).Select(z=>z.CaneBoxName).FirstOrDefault(),
-                caneBoxEmptyUnit = y.Where(z=>z.IsOccupied == false).Count(),
+                stripIdOrBoxId = y.Key,
+                stripNameOrBoxName = dbContext.StorageStripBoxes.Where(z=>z.SqlId == y.Key).Select(z=>z.StripBoxName).FirstOrDefault(),
+                stripBoxEmptyUnit = y.Where(z=>z.IsOccupied == false).Count(),
                 storageUnitInfo = y.Select(z => new StorageUnitDto
                 {
                     storageUnitId = z.SqlId,
                     unitName = z.UnitName,
                     isOccupied = z.IsOccupied,
                 }).OrderBy(z => z.storageUnitId).ToList()
-            }).OrderBy(y => y.caneIdOrBoxId).ToListAsync();
+            }).OrderBy(y => y.stripIdOrBoxId).ToListAsync();
             return result;
         }
 
@@ -76,32 +76,32 @@ namespace prjProductiveLab_B.Services
                     dbContext.StorageTanks.Add(storageTank);
                     dbContext.SaveChanges();
                     int latestStorageTankId = dbContext.StorageTanks.Select(x => x.SqlId).OrderByDescending(x => x).FirstOrDefault();
-                    for (int i = 1; i <= storageAddNewTankDto.shelfAmount; i++)
+                    for (int i = 1; i <= storageAddNewTankDto.canistAmount; i++)
                     {
-                        StorageShelf storageShelf = new StorageShelf()
+                        StorageCanist storageCanist = new StorageCanist()
                         {
-                            ShelfName = i.ToString(),
+                            CanistName = i.ToString(),
                             StorageTankId = latestStorageTankId
                         };
-                        dbContext.StorageShelves.Add(storageShelf);
+                        dbContext.StorageCanists.Add(storageCanist);
                         dbContext.SaveChanges();
-                        int latestStorageShelfId = dbContext.StorageShelves.Select(y => y.SqlId).OrderByDescending(y => y).FirstOrDefault();
-                        for (int j = 1; j <= storageAddNewTankDto.caneBoxAmount; j++)
+                        int latestStorageCanistId = dbContext.StorageCanists.Select(y => y.SqlId).OrderByDescending(y => y).FirstOrDefault();
+                        for (int j = 1; j <= storageAddNewTankDto.stripBoxAmount; j++)
                         {
-                            StorageCaneBox storageCaneBox = new StorageCaneBox()
+                            StorageStripBox storageStripBox = new StorageStripBox()
                             {
-                                CaneBoxName = j.ToString(),
-                                StorageShelfId = latestStorageShelfId
+                                StripBoxName = j.ToString(),
+                                StorageCanistId = latestStorageCanistId
                             };
-                            dbContext.StorageCaneBoxes.Add(storageCaneBox);
+                            dbContext.StorageStripBoxes.Add(storageStripBox);
                             dbContext.SaveChanges();
-                            int latestStorageCanBoxId = dbContext.StorageCaneBoxes.Select(z => z.SqlId).OrderByDescending(z => z).FirstOrDefault();
+                            int latestStorageStripBoxId = dbContext.StorageStripBoxes.Select(z => z.SqlId).OrderByDescending(z => z).FirstOrDefault();
                             for (int k = 1; k <= storageAddNewTankDto.unitAmount; k++)
                             {
                                 StorageUnit storageUnit = new StorageUnit()
                                 {
                                     UnitName = k.ToString(),
-                                    StorageCaneBoxId = latestStorageCanBoxId,
+                                    StorageStripBoxId = latestStorageStripBoxId,
                                     IsOccupied = false
                                 };
                                 dbContext.StorageUnits.Add(storageUnit);

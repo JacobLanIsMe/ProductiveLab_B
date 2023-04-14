@@ -7,7 +7,7 @@ namespace ReproductiveLabDB.Models
     {
         public StorageTank()
         {
-            StorageShelves = new HashSet<StorageShelf>();
+            StorageCanists = new HashSet<StorageCanist>();
         }
 
         public int SqlId { get; set; }
@@ -15,6 +15,6 @@ namespace ReproductiveLabDB.Models
         public int StorageTankTypeId { get; set; }
 
         public virtual StorageTankType StorageTankType { get; set; } = null!;
-        public virtual ICollection<StorageShelf> StorageShelves { get; set; }
+        public virtual ICollection<StorageCanist> StorageCanists { get; set; }
     }
 }

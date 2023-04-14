@@ -87,9 +87,9 @@ namespace prjProductiveLab_B.Services
                 spermFreezeId = x.SpermFreezeId,
                 vialNumber = x.VialNumber,
                 storageUnitName = x.StorageUnit.UnitName,
-                storageCaneBoxName = x.StorageUnit.StorageCaneBox.CaneBoxName,
-                storageShelfName = x.StorageUnit.StorageCaneBox.StorageShelf.ShelfName,
-                storageTankName = x.StorageUnit.StorageCaneBox.StorageShelf.StorageTank.TankName,
+                storageStripBoxId = x.StorageUnit.StorageStripBoxId,
+                storageCanistName = x.StorageUnit.StorageStripBox.StorageCanist.CanistName,
+                storageTankName = x.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
                 storageUnitId = x.StorageUnitId
             }).OrderBy(x => x.vialNumber).ToListAsync();
         }

@@ -2,9 +2,9 @@
 {
     public class StorageUnitStatusDto
     {
-        public int caneIdOrBoxId { get; set; }
-        public string? caneNameOrBoxName { get; set; }
-        public int caneBoxEmptyUnit { get; set; }
+        public int stripIdOrBoxId { get; set; }
+        public string? stripNameOrBoxName { get; set; }
+        public int stripBoxEmptyUnit { get; set; }
         public List<StorageUnitDto>? storageUnitInfo { get; set; }
     }
 }
