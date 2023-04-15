@@ -194,10 +194,17 @@ namespace prjProductiveLab_B.Services
         private ObservationNote GenerateObservationNote(ObservationNote observationNote, AddObservationNoteDto input)
         {
             observationNote.OvumPickupDetailId = input.ovumPickupDetailId;
-            observationNote.ObservationTime = input.observationTime;
             observationNote.Embryologist = input.embryologist;
             observationNote.Day = input.day;
             observationNote.IsDeleted = false;
+            if (DateTime.TryParse(input.observationTime.ToString(), out DateTime nowTime))
+            {
+                observationNote.ObservationTime = nowTime;
+            }
+            else
+            {
+                throw new Exception("時間資訊有誤");
+            }
             if (input.memo != "null")
             {
                 observationNote.Memo = input.memo;
@@ -683,12 +690,26 @@ namespace prjProductiveLab_B.Services
             
             return result;
         }
-        public async Task GetFreezeObservationNotes(List<Guid> ovumPickupDetailIds)
+        public async Task<List<GetObservationNoteNameDto>> GetFreezeObservationNotes(List<Guid> ovumPickupDetailIds)
         {
-            var q = await dbContext.ObservationNotes.Where(x => ovumPickupDetailIds.Contains(x.OvumPickupDetailId) && x.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(x => new FreezeObservationNoteDto
+            return await dbContext.ObservationNotes.Where(x => ovumPickupDetailIds.Contains(x.OvumPickupDetailId) && x.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(x => new GetObservationNoteNameDto
             {
+                ovumNumber = x.OvumPickupDetail.OvumNumber,
+                day = x.Day,
+                fertilisationResultName = x.FertilisationResult.Name,
+                observationTime = x.ObservationTime,
+                pgtaNumber = x.Pgtanumber,
+                pgtaResult = x.Pgtaresult,
+                kidScore = x.Kidscore.ToString(),
+                ovumMaturationName = x.OvumMaturation.Name,
+                blastomereScore_C_Name = x.BlastomereScoreC.Name,
+                blastomereScore_G_Name = x.BlastomereScoreG.Name,
+                blastomereScore_F_Name = x.BlastomereScoreF.Name,
+                blastocystScore_Expansion_Name = x.BlastocystScoreExpansion.Name,
+                blastocystScore_ICE_Name = x.BlastocystScoreIce.Name,
+                blastocystScore_TE_Name = x.BlastocystScoreTe.Name
+            }).OrderBy(x=>x.ovumNumber).AsNoTracking().ToListAsync();
 
-            }).ToListAsync();
         }
     }
 }

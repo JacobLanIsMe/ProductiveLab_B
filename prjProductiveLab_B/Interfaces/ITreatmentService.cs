@@ -9,5 +9,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId);
         Task<List<TreatmentDto>> GetAllTreatment();
         Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input);
+        Task<BaseResponseDto> AddOvumFreeze(AddOvumFreezeDto input);
     }
 }

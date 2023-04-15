@@ -42,7 +42,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await treatmentService.GetTreatmentSummary(courseOfTreatmentId);
         }
-       
-        
+        [HttpPost("AddOvumFreeze")]
+        public async Task<BaseResponseDto> AddOvumFreeze(AddOvumFreezeDto input)
+        {
+            return await treatmentService.AddOvumFreeze(input);
+        }
     }
 }

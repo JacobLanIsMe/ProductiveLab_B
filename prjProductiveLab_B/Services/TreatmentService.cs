@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
 using System.Transactions;
@@ -191,7 +193,77 @@ namespace prjProductiveLab_B.Services
             }
             return result;
         }
-
-         
+        public async Task<BaseResponseDto> AddOvumFreeze(AddOvumFreezeDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                AddOvumFreezeValidation(input);
+                using(TransactionScope scope = new TransactionScope())
+                {
+                    OvumFreeze ovumFreeze = new OvumFreeze
+                    {
+                        FreezeTime = input.freezeTime,
+                        Embryologist = input.embryologist,
+                        StorageUnitId = input.storageUnitId,
+                        MediumInUseId = input.mediumInUseId,
+                        OtherMediumName = input.otherMediumName,
+                        Memo = input.memo,
+                        OvumMorphologyA = input.ovumMorphology_A,
+                        OvumMorphologyB = input.ovumMorphology_B,
+                        OvumMorphologyC = input.ovumMorphology_C,
+                    };
+                    if (input.ovumPickupDetailId.Count > 0)
+                    {
+                        ovumFreeze.OvumPickupDetailId1 = input.ovumPickupDetailId[0];
+                    }
+                    if (input.ovumPickupDetailId.Count > 1)
+                    {
+                        ovumFreeze.OvumPickupDetailId2 = input.ovumPickupDetailId[1];
+                    }
+                    if (input.ovumPickupDetailId.Count > 2)
+                    {
+                        ovumFreeze.OvumPickupDetailId3 = input.ovumPickupDetailId[2];
+                    }
+                    if (input.ovumPickupDetailId.Count > 3)
+                    {
+                        ovumFreeze.OvumPickupDetailId4 = input.ovumPickupDetailId[3];
+                    }
+                    dbContext.OvumFreezes.Add(ovumFreeze);
+                    dbContext.SaveChanges();
+                    var ovumPickupDetails = dbContext.OvumPickupDetails.Where(x => input.ovumPickupDetailId.Contains(x.OvumPickupDetailId));
+                    foreach(var i in ovumPickupDetails)
+                    {
+                        i.OvumPickupDetailStatusId = (int)OvumPickupDetailStatusEnum.Freeze;
+                    }
+                    dbContext.SaveChanges();
+                    var storageUnit = dbContext.StorageUnits.FirstOrDefault(x => x.SqlId == input.storageUnitId);
+                    if (storageUnit != null)
+                    {
+                        storageUnit.IsOccupied = true;
+                    }
+                    else
+                    {
+                        throw new Exception("儲位資訊有誤");
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch(Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
+        private void AddOvumFreezeValidation(AddOvumFreezeDto input)
+        {
+            if (input.ovumPickupDetailId.Count <= 0 || input.ovumPickupDetailId.Count > 4)
+            {
+                throw new Exception("卵子數量請介於 1-4");
+            }
+            
+        }
     }
 }

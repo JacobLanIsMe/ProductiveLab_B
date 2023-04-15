@@ -84,5 +84,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await observationNoteService.UpdateObservationNote(input);
         }
+        [HttpPost("GetFreezeObservationNotes")]
+        public async Task<List<GetObservationNoteNameDto>> GetFreezeObservationNotes(List<Guid> ovumPickupDetailIds)
+        {
+            return await observationNoteService.GetFreezeObservationNotes(ovumPickupDetailIds);
+        }
     }
 }

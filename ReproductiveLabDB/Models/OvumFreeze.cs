@@ -17,6 +17,9 @@ namespace ReproductiveLabDB.Models
         public Guid? OvumPickupDetailId2 { get; set; }
         public Guid? OvumPickupDetailId3 { get; set; }
         public Guid? OvumPickupDetailId4 { get; set; }
+        public int OvumMorphologyA { get; set; }
+        public int OvumMorphologyB { get; set; }
+        public int OvumMorphologyC { get; set; }
 
         public virtual Employee EmbryologistNavigation { get; set; } = null!;
         public virtual MediumInUse MediumInUse { get; set; } = null!;

@@ -593,6 +593,12 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.FreezeTime).HasColumnType("datetime");
 
+                entity.Property(e => e.OvumMorphologyA).HasColumnName("OvumMorphology_A");
+
+                entity.Property(e => e.OvumMorphologyB).HasColumnName("OvumMorphology_B");
+
+                entity.Property(e => e.OvumMorphologyC).HasColumnName("OvumMorphology_C");
+
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.EmbryologistNavigation)
