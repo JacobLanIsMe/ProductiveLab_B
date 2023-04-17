@@ -160,8 +160,6 @@ namespace prjProductiveLab_B.Services
         public async Task<BaseResponseDto> AddObservationNote(AddObservationNoteDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
-            
-            
             try
             {
                 using (TransactionScope scope = new TransactionScope())

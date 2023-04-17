@@ -8,10 +8,6 @@ namespace ReproductiveLabDB.Models
         public OvumPickupDetail()
         {
             ObservationNotes = new HashSet<ObservationNote>();
-            OvumFreezeOvumPickupDetailId1Navigations = new HashSet<OvumFreeze>();
-            OvumFreezeOvumPickupDetailId2Navigations = new HashSet<OvumFreeze>();
-            OvumFreezeOvumPickupDetailId3Navigations = new HashSet<OvumFreeze>();
-            OvumFreezeOvumPickupDetailId4Navigations = new HashSet<OvumFreeze>();
         }
 
         public int SqlId { get; set; }
@@ -22,16 +18,14 @@ namespace ReproductiveLabDB.Models
         public Guid? MediumInUseId { get; set; }
         public int OvumPickupDetailStatusId { get; set; }
         public int FertilisationStatusId { get; set; }
+        public Guid? OvumFreezeId { get; set; }
 
         public virtual FertilisationStatus FertilisationStatus { get; set; } = null!;
         public virtual Incubator? Incubator { get; set; }
         public virtual MediumInUse? MediumInUse { get; set; }
+        public virtual OvumFreeze? OvumFreeze { get; set; }
         public virtual OvumPickup OvumPickup { get; set; } = null!;
         public virtual OvumPickupDetailStatus OvumPickupDetailStatus { get; set; } = null!;
         public virtual ICollection<ObservationNote> ObservationNotes { get; set; }
-        public virtual ICollection<OvumFreeze> OvumFreezeOvumPickupDetailId1Navigations { get; set; }
-        public virtual ICollection<OvumFreeze> OvumFreezeOvumPickupDetailId2Navigations { get; set; }
-        public virtual ICollection<OvumFreeze> OvumFreezeOvumPickupDetailId3Navigations { get; set; }
-        public virtual ICollection<OvumFreeze> OvumFreezeOvumPickupDetailId4Navigations { get; set; }
     }
 }

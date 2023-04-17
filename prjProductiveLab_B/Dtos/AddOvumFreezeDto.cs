@@ -12,5 +12,6 @@
         public int ovumMorphology_B { get; set; }
         public int ovumMorphology_C { get; set; }
         public string? memo { get; set; }
+        public int topColorId { get; set; }
     }
 }

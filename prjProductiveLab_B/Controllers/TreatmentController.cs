@@ -52,5 +52,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await treatmentService.GetOvumOwnerInfo(courseOfTreatmentId);
         }
+        [HttpGet("GetTopColors")]
+        public async Task<List<CommonDto>> GetTopColors()
+        {
+            return await treatmentService.GetTopColors();
+        }
     }
 }

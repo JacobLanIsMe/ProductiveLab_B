@@ -12,5 +12,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<BaseResponseDto> AddOvumFreeze(AddOvumFreezeDto input);
         Task<Guid> GetOvumOwnerCustomerId(Guid courseOfTreatmentId);
         Task<BaseCustomerInfoDto> GetOvumOwnerInfo(Guid courseOfTreatmentId);
+        Task<List<CommonDto>> GetTopColors();
     }
 }

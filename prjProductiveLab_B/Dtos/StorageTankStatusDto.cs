@@ -16,6 +16,8 @@
         public string? canistName { get; set; }
         public int stripBoxId { get; set; }
         public string? stripBoxName { get; set; }
+        public string? topColorName { get; set; }
+        public StorageUnitDto? unitInfo { get; set; }
     }
 
     public class OvumFreezeStorageDto : BaseStorage

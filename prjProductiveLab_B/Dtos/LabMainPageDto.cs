@@ -21,11 +21,13 @@
         // 療程狀態
         public string? treatmentStatus { get; set; }
         
-        
-        
-        
-       
-        
-        
+        public Guid? ovumFromCourseOfTreatmentId { get; set; }
+        public Guid? spermFromCourseOfTreatmentId { get; set; }
+
+
+
+
+
+
     }
 }

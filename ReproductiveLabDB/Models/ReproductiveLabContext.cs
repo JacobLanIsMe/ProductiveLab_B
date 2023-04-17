@@ -59,6 +59,7 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<StorageTank> StorageTanks { get; set; } = null!;
         public virtual DbSet<StorageTankType> StorageTankTypes { get; set; } = null!;
         public virtual DbSet<StorageUnit> StorageUnits { get; set; } = null!;
+        public virtual DbSet<TopColor> TopColors { get; set; } = null!;
         public virtual DbSet<Treatment> Treatments { get; set; } = null!;
         public virtual DbSet<TreatmentStatus> TreatmentStatuses { get; set; } = null!;
 
@@ -613,32 +614,17 @@ namespace ReproductiveLabDB.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumFreeze_MediumInUse");
 
-                entity.HasOne(d => d.OvumPickupDetailId1Navigation)
-                    .WithMany(p => p.OvumFreezeOvumPickupDetailId1Navigations)
-                    .HasForeignKey(d => d.OvumPickupDetailId1)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumFreeze_OvumPickupDetail");
-
-                entity.HasOne(d => d.OvumPickupDetailId2Navigation)
-                    .WithMany(p => p.OvumFreezeOvumPickupDetailId2Navigations)
-                    .HasForeignKey(d => d.OvumPickupDetailId2)
-                    .HasConstraintName("FK_OvumFreeze_OvumPickupDetail1");
-
-                entity.HasOne(d => d.OvumPickupDetailId3Navigation)
-                    .WithMany(p => p.OvumFreezeOvumPickupDetailId3Navigations)
-                    .HasForeignKey(d => d.OvumPickupDetailId3)
-                    .HasConstraintName("FK_OvumFreeze_OvumPickupDetail2");
-
-                entity.HasOne(d => d.OvumPickupDetailId4Navigation)
-                    .WithMany(p => p.OvumFreezeOvumPickupDetailId4Navigations)
-                    .HasForeignKey(d => d.OvumPickupDetailId4)
-                    .HasConstraintName("FK_OvumFreeze_OvumPickupDetail3");
-
                 entity.HasOne(d => d.StorageUnit)
                     .WithMany(p => p.OvumFreezes)
                     .HasForeignKey(d => d.StorageUnitId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumFreeze_StorageUnit");
+
+                entity.HasOne(d => d.TopColor)
+                    .WithMany(p => p.OvumFreezes)
+                    .HasForeignKey(d => d.TopColorId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumFreeze_TopColor");
             });
 
             modelBuilder.Entity<OvumMaturation>(entity =>
@@ -724,6 +710,11 @@ namespace ReproductiveLabDB.Models
                     .WithMany(p => p.OvumPickupDetails)
                     .HasForeignKey(d => d.MediumInUseId)
                     .HasConstraintName("FK_OvumPickupDetail_MediumInUse");
+
+                entity.HasOne(d => d.OvumFreeze)
+                    .WithMany(p => p.OvumPickupDetails)
+                    .HasForeignKey(d => d.OvumFreezeId)
+                    .HasConstraintName("FK_OvumPickupDetail_OvumFreeze");
 
                 entity.HasOne(d => d.OvumPickupDetailStatus)
                     .WithMany(p => p.OvumPickupDetails)
@@ -949,6 +940,15 @@ namespace ReproductiveLabDB.Models
                     .HasForeignKey(d => d.StorageStripBoxId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_StorageUnit_StorageCaneBox");
+            });
+
+            modelBuilder.Entity<TopColor>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("TopColor");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<Treatment>(entity =>

@@ -158,20 +158,19 @@ namespace prjProductiveLab_B.Services
             {
                 return new List<OvumFreezeStorageDto>();
             }
-            var result = await dbContext.OvumFreezes.Where(x => x.OvumPickupDetailId1Navigation.OvumPickup.CourseOfTreatment.CustomerId == customerId).GroupBy(x=>x.StorageUnit.StorageStripBoxId).Select(x => new OvumFreezeStorageDto
+            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null).GroupBy(x => x.OvumFreeze.StorageUnit.StorageStripBoxId).Select(x => new OvumFreezeStorageDto
             {
                 stripBoxId = x.Key,
-                tankId = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanist.StorageTankId).FirstOrDefault(),
+                tankId = x.Select(y => y.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTankId).FirstOrDefault(),
                 tankInfo = new StorageTankDto
                 {
-                    tankName = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName).FirstOrDefault(),
-                    tankTypeId = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId).FirstOrDefault()
+                    tankName = x.Select(y => y.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName).FirstOrDefault(),
+                    tankTypeId = x.Select(y => y.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId).FirstOrDefault()
                 },
-                canistId = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanistId).FirstOrDefault(),
-                canistName = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanist.CanistName).FirstOrDefault(),
-                stripBoxName = x.Select(y=>y.StorageUnit.StorageStripBox.StripBoxName).FirstOrDefault(),
-                stripBoxEmptyUnit = dbContext.StorageUnits.Where(y=>y.StorageStripBoxId == x.Key && y.IsOccupied == false).Count(),
-                storageUnitInfo = dbContext.StorageUnits.Where(y=>y.StorageStripBoxId == x.Key).Select(y=>new StorageUnitDto
+                canistId = x.Select(y => y.OvumFreeze.StorageUnit.StorageStripBox.StorageCanistId).FirstOrDefault(),
+                canistName = x.Select(y => y.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.CanistName).FirstOrDefault(),
+                stripBoxName = x.Select(y => y.OvumFreeze.StorageUnit.StorageStripBox.StripBoxName).FirstOrDefault(),
+                storageUnitInfo = dbContext.StorageUnits.Where(y => y.StorageStripBoxId == x.Key).Select(y => new StorageUnitDto
                 {
                     storageUnitId = y.SqlId,
                     unitName = y.UnitName,

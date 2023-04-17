@@ -212,29 +212,16 @@ namespace prjProductiveLab_B.Services
                         OvumMorphologyA = input.ovumMorphology_A,
                         OvumMorphologyB = input.ovumMorphology_B,
                         OvumMorphologyC = input.ovumMorphology_C,
+                        TopColorId = input.topColorId
                     };
-                    if (input.ovumPickupDetailId.Count > 0)
-                    {
-                        ovumFreeze.OvumPickupDetailId1 = input.ovumPickupDetailId[0];
-                    }
-                    if (input.ovumPickupDetailId.Count > 1)
-                    {
-                        ovumFreeze.OvumPickupDetailId2 = input.ovumPickupDetailId[1];
-                    }
-                    if (input.ovumPickupDetailId.Count > 2)
-                    {
-                        ovumFreeze.OvumPickupDetailId3 = input.ovumPickupDetailId[2];
-                    }
-                    if (input.ovumPickupDetailId.Count > 3)
-                    {
-                        ovumFreeze.OvumPickupDetailId4 = input.ovumPickupDetailId[3];
-                    }
                     dbContext.OvumFreezes.Add(ovumFreeze);
                     dbContext.SaveChanges();
+                    Guid latestOvumFreezeId = dbContext.OvumFreezes.OrderByDescending(x=>x.SqlId).Select(x=>x.OvumFreezeId).FirstOrDefault();
                     var ovumPickupDetails = dbContext.OvumPickupDetails.Where(x => input.ovumPickupDetailId.Contains(x.OvumPickupDetailId));
                     foreach(var i in ovumPickupDetails)
                     {
                         i.OvumPickupDetailStatusId = (int)OvumPickupDetailStatusEnum.Freeze;
+                        i.OvumFreezeId = latestOvumFreezeId;
                     }
                     dbContext.SaveChanges();
                     var storageUnit = dbContext.StorageUnits.FirstOrDefault(x => x.SqlId == input.storageUnitId);
@@ -302,6 +289,14 @@ namespace prjProductiveLab_B.Services
                 return new BaseCustomerInfoDto();
             }
             return result;
+        }
+        public async Task<List<CommonDto>> GetTopColors()
+        {
+            return await dbContext.TopColors.Select(x=>new CommonDto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).ToListAsync();
         }
     }
 }
