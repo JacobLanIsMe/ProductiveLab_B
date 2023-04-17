@@ -9,7 +9,7 @@
         // 客戶出生年月日
         public DateTime? birthday { get; set; }
         public BaseCustomerInfoDto() { }
-        public BaseCustomerInfoDto(int customerSqlId, string customerName, DateTime birthdy) 
+        public BaseCustomerInfoDto(int customerSqlId, string customerName, DateTime birthday) 
         {
             this.customerSqlId = customerSqlId;
             this.customerName = customerName;

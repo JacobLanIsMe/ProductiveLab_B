@@ -15,7 +15,7 @@ namespace prjProductiveLab_B.Controllers
             this.storageService = storageService;
         }
         [HttpGet("GetStorageTankStatus")]
-        public async Task<List<StorageTankStatusDot>> GetStorageTankStatus()
+        public async Task<List<StorageTankStatusDto>> GetStorageTankStatus()
         {
             return await storageService.GetStorageTankStatus();
         }
@@ -28,13 +28,18 @@ namespace prjProductiveLab_B.Controllers
         [HttpPost("AddStorageTank")]
         public async Task<BaseResponseDto> AddStorageTank(StorageAddNewTankDto storageAddNewTankDto)
         {
-            return await this.storageService.AddStorageTank(storageAddNewTankDto);
+            return await storageService.AddStorageTank(storageAddNewTankDto);
         }
 
         [HttpGet("GetStorageTankType")]
         public async Task<List<StorageTankTypeDto>> GetStorageTankType()
         {
-            return await this.storageService.GetStorageTankType();
+            return await storageService.GetStorageTankType();
+        }
+        [HttpGet("GetOvumFreezeStorageInfo")]
+        public async Task<List<OvumFreezeStorageDto>> GetOvumFreezeStorageInfo(Guid courseOfTreatmentId)
+        {
+            return await storageService.GetOvumFreezeStorageInfo(courseOfTreatmentId);
         }
     }
 }

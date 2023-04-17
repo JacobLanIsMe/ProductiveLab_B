@@ -2,6 +2,7 @@
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
+using System.Text;
 using System.Transactions;
 
 namespace prjProductiveLab_B.Services
@@ -9,14 +10,16 @@ namespace prjProductiveLab_B.Services
     public class StorageService : IStorageService
     {
         private readonly ReproductiveLabContext dbContext;
-        public StorageService(ReproductiveLabContext dbContext)
-        { 
+        private readonly ITreatmentService treatmentService;
+        public StorageService(ReproductiveLabContext dbContext, ITreatmentService treatmentService)
+        {
             this.dbContext = dbContext;
+            this.treatmentService = treatmentService;
         }
 
-        public async Task<List<StorageTankStatusDot>> GetStorageTankStatus()
+        public async Task<List<StorageTankStatusDto>> GetStorageTankStatus()
         {
-            var result = await dbContext.StorageUnits.GroupBy(x => new { x.StorageStripBox.StorageCanist.StorageTankId, x.StorageStripBox.StorageCanistId }).Select(y => new StorageTankStatusDot
+            var result = await dbContext.StorageUnits.GroupBy(x => new { x.StorageStripBox.StorageCanist.StorageTankId, x.StorageStripBox.StorageCanistId }).Select(y => new StorageTankStatusDto
             {
                 tankId = y.Key.StorageTankId,
                 tankInfo = dbContext.StorageTanks.Where(z => z.SqlId == y.Key.StorageTankId).Select(z => new StorageTankDto
@@ -28,7 +31,19 @@ namespace prjProductiveLab_B.Services
                 canistName = dbContext.StorageCanists.Where(z => z.SqlId == y.Key.StorageCanistId).Select(z => z.CanistName).FirstOrDefault(),
                 emptyAmount = y.Where(z => z.IsOccupied == false).Count(),
                 occupiedAmount = y.Where(z => z.IsOccupied == true).Count(),
-                totalAmount = y.Count()
+                totalAmount = y.Count(),
+                unitInfos = y.GroupBy(z=>z.StorageStripBoxId).Select(a=>new StorageUnitStatusDto
+                {
+                    stripIdOrBoxId = a.Key,
+                    stripNameOrBoxName = dbContext.StorageStripBoxes.Where(b=>b.SqlId == a.Key).Select(b=>b.StripBoxName).FirstOrDefault(),
+                    stripBoxEmptyUnit = a.Where(b=>b.IsOccupied == false).Count(),
+                    storageUnitInfo = a.Select(b=> new StorageUnitDto
+                    {
+                        storageUnitId = b.SqlId,
+                        unitName = b.UnitName,
+                        isOccupied = b.IsOccupied
+                    }).OrderBy(b=>b.storageUnitId).ToList()
+                }).OrderBy(a=>a.stripIdOrBoxId).ToList()
             }).OrderBy(x=>x.tankId).ThenBy(x=>x.canistId).ToListAsync();
             return result;
         }
@@ -135,6 +150,47 @@ namespace prjProductiveLab_B.Services
             return await dbContext.StorageTanks.AnyAsync(x=>x.TankName == tankName);
         }
 
-
+        
+        public async Task<List<OvumFreezeStorageDto>> GetOvumFreezeStorageInfo(Guid courseOfTreatmentId)
+        {
+            Guid customerId = await treatmentService.GetOvumOwnerCustomerId(courseOfTreatmentId);
+            if (customerId == default(Guid))
+            {
+                return new List<OvumFreezeStorageDto>();
+            }
+            var result = await dbContext.OvumFreezes.Where(x => x.OvumPickupDetailId1Navigation.OvumPickup.CourseOfTreatment.CustomerId == customerId).GroupBy(x=>x.StorageUnit.StorageStripBoxId).Select(x => new OvumFreezeStorageDto
+            {
+                stripBoxId = x.Key,
+                tankId = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanist.StorageTankId).FirstOrDefault(),
+                tankInfo = new StorageTankDto
+                {
+                    tankName = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName).FirstOrDefault(),
+                    tankTypeId = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId).FirstOrDefault()
+                },
+                canistId = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanistId).FirstOrDefault(),
+                canistName = x.Select(y=>y.StorageUnit.StorageStripBox.StorageCanist.CanistName).FirstOrDefault(),
+                stripBoxName = x.Select(y=>y.StorageUnit.StorageStripBox.StripBoxName).FirstOrDefault(),
+                stripBoxEmptyUnit = dbContext.StorageUnits.Where(y=>y.StorageStripBoxId == x.Key && y.IsOccupied == false).Count(),
+                storageUnitInfo = dbContext.StorageUnits.Where(y=>y.StorageStripBoxId == x.Key).Select(y=>new StorageUnitDto
+                {
+                    storageUnitId = y.SqlId,
+                    unitName = y.UnitName,
+                    isOccupied = y.IsOccupied
+                }).ToList()
+            }).ToListAsync();
+            foreach (var i in result)
+            {
+                int count = 0;
+                foreach (var j in i.storageUnitInfo)
+                {
+                    if (j.isOccupied == false)
+                    {
+                        count++;
+                    }
+                }
+                i.stripBoxEmptyUnit = count;
+            }
+            return result;
+        }
     }
 }

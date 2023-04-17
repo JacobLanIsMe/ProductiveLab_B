@@ -265,5 +265,43 @@ namespace prjProductiveLab_B.Services
             }
             
         }
+        public async Task<Guid> GetOvumOwnerCustomerId(Guid courseOfTreatmentId)
+        {
+            Guid customerId = default(Guid);
+            var courseOfTreatment = await dbContext.CourseOfTreatments.FirstOrDefaultAsync(x => x.CourseOfTreatmentId == courseOfTreatmentId);
+            if (courseOfTreatment == null)
+            {
+                return customerId;
+            }
+            if (courseOfTreatment.OvumFromCourseOfTreatmentId == courseOfTreatmentId)
+            {
+                customerId = courseOfTreatment.CustomerId;
+            }
+            else
+            {
+                customerId = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatment.OvumFromCourseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefaultAsync();
+            }
+            return customerId;
+        }
+
+        public async Task<BaseCustomerInfoDto> GetOvumOwnerInfo(Guid courseOfTreatmentId)
+        {
+            Guid customerId = await GetOvumOwnerCustomerId(courseOfTreatmentId);
+            if (customerId == default(Guid))
+            {
+                return new BaseCustomerInfoDto();
+            }
+            var result = await dbContext.Customers.Where(x=>x.CustomerId == customerId).Select(x=>new BaseCustomerInfoDto
+            {
+                birthday = x.Birthday,
+                customerName = x.Name,
+                customerSqlId = x.SqlId
+            }).FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return new BaseCustomerInfoDto();
+            }
+            return result;
+        }
     }
 }
