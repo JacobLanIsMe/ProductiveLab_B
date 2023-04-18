@@ -44,6 +44,10 @@ namespace prjProductiveLab_B.Services
                         photoName = z.PhotoName,
                         isMainPhoto = true
                     }).ToList(),
+                    kidScore = y.Kidscore.ToString(),
+                    pgtaNumber = y.Pgtanumber.ToString(),
+                    pgtaResult = y.Pgtaresult,
+                    pgtmResult = y.Pgtmresult
                 }).FirstOrDefault(),
                 freezeStorageInfo = new BaseStorage
                 {

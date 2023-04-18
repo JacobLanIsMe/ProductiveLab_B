@@ -207,10 +207,6 @@ namespace prjProductiveLab_B.Services
             {
                 observationNote.Memo = input.memo;
             }
-            if (input.pgtaNumber != "null")
-            {
-                observationNote.Pgtanumber = input.pgtaNumber;
-            }
             if (input.pgtaResult != "null")
             {
                 observationNote.Pgtaresult = input.pgtaResult;
@@ -218,6 +214,14 @@ namespace prjProductiveLab_B.Services
             if (input.pgtmResult != "null")
             {
                 observationNote.Pgtmresult = input.pgtmResult;
+            }
+            if (Int32.TryParse(input.pgtaNumber, out int pgtaNumber))
+            {
+                observationNote.Pgtanumber = pgtaNumber;
+            }
+            else
+            {
+                observationNote.Pgtanumber = null;
             }
             if (Int32.TryParse(input.ovumMaturationId, out int ovumMaturationId))
             {
@@ -554,7 +558,7 @@ namespace prjProductiveLab_B.Services
                 blastocystScore_TE_Id = x.BlastocystScoreTeId.ToString(),
                 memo = x.Memo,
                 kidScore = x.Kidscore.ToString(),
-                pgtaNumber = x.Pgtanumber,
+                pgtaNumber = x.Pgtanumber.ToString(),
                 pgtaResult = x.Pgtaresult,
                 pgtmResult = x.Pgtmresult,
                 operationTypeIds = x.ObservationNoteOperations.Where(y => y.IsDeleted == false).Select(y => y.ForeignKeyId).ToList(),
@@ -592,7 +596,7 @@ namespace prjProductiveLab_B.Services
                 observationTime = x.ObservationTime,
                 memo = x.Memo,
                 kidScore = x.Kidscore.ToString(),
-                pgtaNumber = x.Pgtanumber,
+                pgtaNumber = x.Pgtanumber.ToString(),
                 pgtaResult = x.Pgtaresult,
                 pgtmResult = x.Pgtmresult,
                 day = x.Day,
@@ -696,7 +700,7 @@ namespace prjProductiveLab_B.Services
                 day = x.Day,
                 fertilisationResultName = x.FertilisationResult.Name,
                 observationTime = x.ObservationTime,
-                pgtaNumber = x.Pgtanumber,
+                pgtaNumber = x.Pgtanumber.ToString(),
                 pgtaResult = x.Pgtaresult,
                 kidScore = x.Kidscore.ToString(),
                 ovumMaturationName = x.OvumMaturation.Name,
