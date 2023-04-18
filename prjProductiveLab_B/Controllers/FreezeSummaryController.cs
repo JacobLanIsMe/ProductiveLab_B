@@ -15,9 +15,9 @@ namespace prjProductiveLab_B.Controllers
             this.freezeSummaryService = freezeSummaryService;
         }
         [HttpGet("GetOvumFreezeSummary")]
-        public async Task<GetOvumFreezeSummaryDto> GetOvumFreezeSummary(Guid courseOfTreatmentId)
+        public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummarys(Guid courseOfTreatmentId)
         {
-            return await freezeSummaryService.GetOvumFreezeSummary(courseOfTreatmentId);
+            return await freezeSummaryService.GetOvumFreezeSummarys(courseOfTreatmentId);
         }
     }
 }

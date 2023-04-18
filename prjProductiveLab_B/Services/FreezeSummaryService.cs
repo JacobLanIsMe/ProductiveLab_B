@@ -15,7 +15,7 @@ namespace prjProductiveLab_B.Services
             this.dbContext = dbContext;
             this.env = env;
         }
-        public async Task<GetOvumFreezeSummaryDto> GetOvumFreezeSummary(Guid courseOfTreatmentId) 
+        public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummarys(Guid courseOfTreatmentId) 
         {
             var customerId = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefault();
 
@@ -24,13 +24,26 @@ namespace prjProductiveLab_B.Services
                 courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
                 ovumFromCourseOfTreatmentId = x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId,
                 ovumNumber = x.OvumNumber,
-                ovumPickupTime = x.OvumPickup.CourseOfTreatment.SurgicalTime,
+                ovumPickupTime = x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze.FreezeTime,
-                freezeObservationNoteInfo = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Include(y => y.ObservationNotePhotos).OrderByDescending(y => y.ObservationTime).Select(y => new FreezeObservationNote
+                freezeObservationNoteInfo = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Include(y => y.ObservationNotePhotos).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
                 {
+                    observationNoteId = y.ObservationNoteId,
                     day = y.Day,
                     memo = y.Memo,
-                    freezeObservationNoteMainPhotoName = y.ObservationNotePhotos.Where(z => z.IsMainPhoto == true && z.IsDeleted == false).Select(z => z.PhotoName).FirstOrDefault()
+                    fertilisationResultName = y.FertilisationResult.Name,
+                    blastomereScore_C_Name = y.BlastomereScoreC.Name,
+                    blastomereScore_G_Name = y.BlastomereScoreG.Name,
+                    blastomereScore_F_Name = y.BlastomereScoreF.Name,
+                    blastocystScore_Expansion_Name = y.BlastocystScoreExpansion.Name,
+                    blastocystScore_TE_Name = y.BlastocystScoreTe.Name,
+                    blastocystScore_ICE_Name = y.BlastocystScoreIce.Name,
+                    observationNotePhotos = y.ObservationNotePhotos.Where(z => z.IsMainPhoto == true && z.IsDeleted == false).Select(z => new ObservationNotePhotoDto
+                    {
+                        observationNotePhotoId = z.ObservationNotePhotoId,
+                        photoName = z.PhotoName,
+                        isMainPhoto = true
+                    }).ToList(),
                 }).FirstOrDefault(),
                 freezeStorageInfo = new BaseStorage
                 {
@@ -54,17 +67,16 @@ namespace prjProductiveLab_B.Services
                 },
                 medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name,
 
-            }).FirstOrDefaultAsync();
-            if (result == null)
+            }).OrderBy(x=>x.ovumPickupTime).ThenBy(x=>x.ovumNumber).ToListAsync();
+            foreach (var i in result)
             {
-                return new GetOvumFreezeSummaryDto();
-            }
-            if (result.freezeObservationNoteInfo.freezeObservationNoteMainPhotoName != null)
-            {
-                string path = Path.Combine(env.ContentRootPath, "uploads", "images", result.freezeObservationNoteInfo.freezeObservationNoteMainPhotoName);
-                if (File.Exists(path))
+                if (i.freezeObservationNoteInfo != null && i.freezeObservationNoteInfo.observationNotePhotos != null && i.freezeObservationNoteInfo.observationNotePhotos.Count > 0 && !string.IsNullOrEmpty(i.freezeObservationNoteInfo.observationNotePhotos[0].photoName))
                 {
-                    result.freezeObservationNoteInfo.photoBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
+                    string path = Path.Combine(env.ContentRootPath, "uploads", "images", i.freezeObservationNoteInfo.observationNotePhotos[0].photoName);
+                    if (File.Exists(path))
+                    {
+                        i.freezeObservationNoteInfo.observationNotePhotos[0].imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
+                    }
                 }
             }
             return result;

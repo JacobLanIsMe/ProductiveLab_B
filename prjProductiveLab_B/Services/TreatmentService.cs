@@ -250,7 +250,16 @@ namespace prjProductiveLab_B.Services
             {
                 throw new Exception("卵子數量請介於 1-4");
             }
-            
+            var isFreezed = dbContext.OvumPickupDetails.FirstOrDefault(x => input.ovumPickupDetailId.Contains(x.OvumPickupDetailId) && x.OvumPickupDetailStatusId == (int)OvumPickupDetailStatusEnum.Freeze);
+            if (isFreezed != null)
+            {
+                throw new Exception($"卵子編號: {isFreezed.OvumNumber} 已冷凍入庫");
+            }
+            var hasFreezeObservationNote = dbContext.OvumPickupDetails.Where(x => input.ovumPickupDetailId.Contains(x.OvumPickupDetailId)).Include(x => x.ObservationNotes).FirstOrDefault(x => !x.ObservationNotes.Any(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation));
+            if (hasFreezeObservationNote != null)
+            {
+                throw new Exception($"卵子編號: {hasFreezeObservationNote.OvumNumber} 尚無冷凍觀察紀錄");
+            }
         }
         public async Task<Guid> GetOvumOwnerCustomerId(Guid courseOfTreatmentId)
         {

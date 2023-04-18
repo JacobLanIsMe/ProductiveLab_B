@@ -4,6 +4,6 @@ namespace prjProductiveLab_B.Interfaces
 {
     public interface IFreezeSummaryService
     {
-        Task<GetOvumFreezeSummaryDto> GetOvumFreezeSummary(Guid courseOfTreatmentId);
+        Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummarys(Guid courseOfTreatmentId);
     }
 }

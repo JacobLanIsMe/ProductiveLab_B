@@ -2,6 +2,7 @@
 {
     public class GetObservationNoteNameDto : SharedObservationNote
     {
+        public Guid? observationNoteId { get; set; }
         public string? embryologist { get; set; }
         public string? ovumMaturationName { get; set; }
         public string? observationTypeName { get; set; }
