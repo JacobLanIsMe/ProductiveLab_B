@@ -6,7 +6,9 @@ namespace prjProductiveLab_B.Interfaces
 {
     public interface IMediumService
     {
-        Task<BaseResponseDto> AddMedium(MediumInUse medium);
-        Task<InUseMediumDto> GetInUseMedium(MediumTypeEnum mediumType);
+        Task<BaseResponseDto> AddMediumInUse(AddMediumInUseDto medium);
+        Task<List<InUseMediumDto>> GetInUseMediums();
+        Task<List<CommonDto>> GetMediumTypes();
+        Task<List<FrequentlyUsedMediumDto>> GetFrequentlyUsedMediums();
     }
 }

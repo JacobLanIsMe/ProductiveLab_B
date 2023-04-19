@@ -18,17 +18,25 @@ namespace prjProductiveLab_B.Controllers
             this.mediumService = mediumService;
         }
 
-        [HttpPost("AddMedium")]
-        public async Task<BaseResponseDto> AddMedium([FromBody] MediumInUse medium)
+        [HttpPost("AddMediumInUse")]
+        public async Task<BaseResponseDto> AddMediumInUse(AddMediumInUseDto medium)
         {
-            return await mediumService.AddMedium(medium);            
+            return await mediumService.AddMediumInUse(medium);            
         }
-        [HttpGet("GetInUseMedium")]
-        public async Task<InUseMediumDto> GetInUseMedium(MediumTypeEnum mediumType)
+        [HttpGet("GetInUseMediums")]
+        public async Task<List<InUseMediumDto>> GetInUseMediums()
         {
-            return await mediumService.GetInUseMedium(mediumType);
+            return await mediumService.GetInUseMediums();
         }
-
-
+        [HttpGet("GetMediumTypes")]
+        public async Task<List<CommonDto>> GetMediumTypes()
+        {
+            return await mediumService.GetMediumTypes();
+        }
+        [HttpGet("GetFrequentlyUsedMediums")]
+        public async Task<List<FrequentlyUsedMediumDto>> GetFrequentlyUsedMediums()
+        {
+            return await mediumService.GetFrequentlyUsedMediums();
+        }
     }
 }

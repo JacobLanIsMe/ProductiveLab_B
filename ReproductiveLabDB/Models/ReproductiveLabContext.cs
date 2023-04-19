@@ -28,6 +28,7 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<FertilisationResult> FertilisationResults { get; set; } = null!;
         public virtual DbSet<FertilisationStatus> FertilisationStatuses { get; set; } = null!;
+        public virtual DbSet<FrequentlyUsedMedium> FrequentlyUsedMedia { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
         public virtual DbSet<FunctionType> FunctionTypes { get; set; } = null!;
         public virtual DbSet<Gender> Genders { get; set; } = null!;
@@ -258,6 +259,18 @@ namespace ReproductiveLabDB.Models
                 entity.ToTable("FertilisationStatus");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<FrequentlyUsedMedium>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("FrequentlyUsedMedium");
+
+                entity.HasOne(d => d.MediumType)
+                    .WithMany(p => p.FrequentlyUsedMedia)
+                    .HasForeignKey(d => d.MediumTypeId)
+                    .HasConstraintName("FK_FrequentlyUsedMedium_MediumType");
             });
 
             modelBuilder.Entity<Function>(entity =>
