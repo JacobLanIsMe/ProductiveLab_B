@@ -17,7 +17,7 @@
         // 主治醫師
         public string? doctor { get; set; }
         // 療程名稱，抓 CourseOfTreatment 資料表的 TreatmentId 欄位
-        public string? treatmentName { get; set; }
+        public TreatmentDto? treatment { get; set; }
         // 療程狀態
         public string? treatmentStatus { get; set; }
         

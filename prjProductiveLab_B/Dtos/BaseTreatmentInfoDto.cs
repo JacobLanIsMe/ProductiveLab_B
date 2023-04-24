@@ -12,7 +12,7 @@
         // 主治醫師
         public string? doctor { get; set; }
         // 療程名稱
-        public string? treatmentName { get; set; }
+        public TreatmentDto? treatment { get; set; }
         public string? memo { get; set; }
     }
 

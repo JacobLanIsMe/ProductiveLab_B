@@ -23,7 +23,19 @@ namespace prjProductiveLab_B.Services
                 medicalRecordNumber = x.Customer.SqlId,
                 name = x.Customer.Name,
                 doctor = x.DoctorNavigation.Name,
-                treatmentName = x.Treatment.Name,
+                treatment = new TreatmentDto
+                {
+                    treatmentId = x.TreatmentId,
+                    ovumSituationName = x.Treatment.OvumSituation.Name,
+                    ovumSourceName = x.Treatment.OvumSource.Name,
+                    ovumOperationName = x.Treatment.OvumOperation.Name,
+                    spermSituationName = x.Treatment.SpermSituation.Name,
+                    spermSourceName = x.Treatment.SpermSource.Name,
+                    spermOperationName = x.Treatment.SpermOperation.Name,
+                    spermRetrievalMethodName = x.Treatment.SpermRetrievalMethod.Name,
+                    embryoSituationName = x.Treatment.EmbryoSituation.Name,
+                    embryoOperationName = x.Treatment.EmbryoOperation.Name
+                },
                 treatmentStatus = x.TreatmentStatus.Name,
                 ovumFromCourseOfTreatmentId = x.OvumFromCourseOfTreatmentId,
                 spermFromCourseOfTreatmentId = x.SpermFromCourseOfTreatmentId

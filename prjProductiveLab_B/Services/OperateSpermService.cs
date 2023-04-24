@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
 using System.Transactions;
@@ -15,69 +16,25 @@ namespace prjProductiveLab_B.Services
         }
         public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
         {
-            BaseOperateSpermInfo? baseOperateSpermInfo = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseOperateSpermInfo
+            var result = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseOperateSpermInfoDto
             {
-                spermRetrievalMethod = x.SpermRetrievalMethod.Name,
-                treatmentId = x.TreatmentId,
-                spermFromCourseOfTreatmentId = x.SpermFromCourseOfTreatmentId,
-                treatmentIdOfSpermFromCourseOfTreatmentId = dbContext.CourseOfTreatments.Where(y => y.CourseOfTreatmentId == x.SpermFromCourseOfTreatmentId).Select(y => y.TreatmentId).FirstOrDefault()
-            }).AsNoTracking().FirstOrDefaultAsync();
-            if (baseOperateSpermInfo != null)
+                spermSituationName = x.Treatment.SpermSituation.Name,
+                spermRetrievalMethodName = x.Treatment.SpermRetrievalMethod.Name,
+                spermOwner = new BaseCustomerInfoDto
+                {
+                    customerName = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.Name : x.Customer.SpouseNavigation.Name,
+                    customerSqlId = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.SqlId : x.Customer.SpouseNavigation.SqlId,
+                    birthday = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.Birthday : x.Customer.SpouseNavigation.Birthday
+                }
+            }).FirstOrDefaultAsync();
+            if (result == null)
             {
-                if (baseOperateSpermInfo.spermFromCourseOfTreatmentId == courseOfTreatmentId)
-                {
-                    baseOperateSpermInfo.isFresh = true;
-                }
-                else
-                {
-                    baseOperateSpermInfo.isFresh = false;
-                }
-                if (baseOperateSpermInfo.treatmentId == 20 || baseOperateSpermInfo.treatmentId == 21 || baseOperateSpermInfo.treatmentId == 22)
-                {
-                    baseOperateSpermInfo.husband = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseCustomerInfoDto
-                    {
-                        customerSqlId = x.Customer.SqlId,
-                        customerName = x.Customer.Name,
-                        birthday = x.Customer.Birthday
-                    }).FirstOrDefault();
-                }
-                else
-                {
-                    baseOperateSpermInfo.husband = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseCustomerInfoDto
-                    {
-                        customerSqlId = x.Customer.SpouseNavigation.SqlId,
-                        customerName = x.Customer.SpouseNavigation.Name,
-                        birthday = x.Customer.SpouseNavigation.Birthday
-                    }).FirstOrDefault();
-                }
-                if (baseOperateSpermInfo.treatmentIdOfSpermFromCourseOfTreatmentId == 20 || baseOperateSpermInfo.treatmentIdOfSpermFromCourseOfTreatmentId == 21 || baseOperateSpermInfo.treatmentIdOfSpermFromCourseOfTreatmentId == 22)
-                {
-                    baseOperateSpermInfo.spermOwner = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == baseOperateSpermInfo.spermFromCourseOfTreatmentId).Select(x => new BaseCustomerInfoDto
-                    {
-                        customerSqlId = x.Customer.SqlId,
-                        customerName = x.Customer.Name,
-                        birthday = x.Customer.Birthday
-                    }).FirstOrDefault();
-                }
-                else
-                {
-                    baseOperateSpermInfo.spermOwner = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == baseOperateSpermInfo.spermFromCourseOfTreatmentId).Select(x => new BaseCustomerInfoDto
-                    {
-                        customerSqlId = x.Customer.SpouseNavigation.SqlId,
-                        customerName = x.Customer.SpouseNavigation.Name,
-                        birthday = x.Customer.SpouseNavigation.Birthday
-                    }).FirstOrDefault();
-                }
+                return new BaseOperateSpermInfoDto();
             }
-            BaseOperateSpermInfoDto result = new BaseOperateSpermInfoDto()
+            else
             {
-                husband = baseOperateSpermInfo.husband,
-                isFresh = baseOperateSpermInfo.isFresh,
-                spermRetrievalMethod = baseOperateSpermInfo.spermRetrievalMethod,
-                spermOwner = baseOperateSpermInfo.spermOwner,
-                spermFromCourseOfTreatmentId = baseOperateSpermInfo.spermFromCourseOfTreatmentId
-            };
-            return result;
+                return result;
+            }
         }
 
         public async Task<List<SpermFreezeDto>> GetSpermFreeze(Guid spermFromCourseOfTreatmentId)
@@ -93,9 +50,9 @@ namespace prjProductiveLab_B.Services
                 storageUnitId = x.StorageUnitId
             }).OrderBy(x => x.vialNumber).ToListAsync();
         }
-        public async Task<List<SpermScoreDto>> GetSpermScore(Guid spermFromCourseOfTreatmentId)
+        public async Task<List<SpermScoreDto>> GetSpermScore(Guid courseOfTreatmentId)
         {
-            return await dbContext.SpermScores.Where(x => x.CourseOfTreatmentId == spermFromCourseOfTreatmentId).Select(x => new SpermScoreDto
+            return await dbContext.SpermScores.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new SpermScoreDto
             {
                 volume = x.Volume,
                 concentration = x.Concentration,
@@ -182,13 +139,13 @@ namespace prjProductiveLab_B.Services
             return spermScore;
         }
 
-        public async Task<List<SpermFreezeOperateMethodDto>> GetSpermFreezeOperationMethod()
+        public async Task<List<CommonDto>> GetSpermFreezeOperationMethod()
         {
-            var result = await dbContext.SpermFreezeOperationMethods.Select(x => new SpermFreezeOperateMethodDto
+            var result = await dbContext.SpermFreezeOperationMethods.Select(x => new CommonDto
             {
-                spermFreezeOperateMethodSqlId = x.SqlId,
+                id = x.SqlId,
                 name = x.Name
-            }).OrderBy(x => x.spermFreezeOperateMethodSqlId).AsNoTracking().ToListAsync();
+            }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
             return result;
         }
 
@@ -196,57 +153,75 @@ namespace prjProductiveLab_B.Services
         {
             BaseResponseDto result = new BaseResponseDto();
             string errorMessage = AddSpermFreezeValidation(input);
-            if (!string.IsNullOrEmpty(errorMessage))
+            if (string.IsNullOrEmpty(errorMessage))
             {
-                result.SetError(errorMessage);
-                return result;
-            }
-            try
-            {
-                using (TransactionScope scope = new TransactionScope())
+                try
                 {
-                    for (int i = 0; i < input.storageUnitId.Count; i++)
+                    using (TransactionScope scope = new TransactionScope())
                     {
-                        SpermFreeze spermFreeze = new SpermFreeze()
+                        SpermFreezeSituation situation = new SpermFreezeSituation
                         {
-                            VialNumber = i + 1,
-                            CourseOfTreatmentId = input.courseOfTreatmentId,
-                            MediumInUseId1 = input.mediumInUseArray[0],
-                            StorageUnitId = input.storageUnitId[i],
                             Embryologist = input.embryologist,
                             FreezeTime = input.freezeTime,
                             SpermFreezeOperationMethodId = input.spermFreezeOperationMethodId,
                             FreezeMediumInUseId = input.freezeMedium,
-                            IsThawed = false
+                            OtherFreezeMediumName = input.otherFreezeMediumName
                         };
-                        if (input.mediumInUseArray.Count > 1)
+                        if (input.mediumInUseArray.Count > 0 && input.mediumInUseArray[0] != null)
                         {
-                            spermFreeze.MediumInUseId2 = input.mediumInUseArray[1];
+                            situation.MediumInUseId1 = (Guid)input.mediumInUseArray[0];
                         }
-                        if (input.mediumInUseArray.Count > 2)
+                        if (input.mediumInUseArray.Count > 1 && input.mediumInUseArray[1] != null)
                         {
-                            spermFreeze.MediumInUseId3 = input.mediumInUseArray[2];
+                            situation.MediumInUseId2 = input.mediumInUseArray[1];
                         }
-                        dbContext.SpermFreezes.Add(spermFreeze);
-                        var storageUnit = dbContext.StorageUnits.FirstOrDefault(x => x.SqlId == input.storageUnitId[i]);
-                        if (storageUnit != null && storageUnit.IsOccupied == false)
+                        if (input.mediumInUseArray.Count > 2 && input.mediumInUseArray[2] != null)
                         {
-                            storageUnit.IsOccupied = true;
+                            situation.MediumInUseId3 = input.mediumInUseArray[2];
                         }
-                        else
+                        dbContext.SpermFreezeSituations.Add(situation);
+                        dbContext.SaveChanges();
+                        Guid lastSituationId = dbContext.SpermFreezeSituations.OrderByDescending(x => x.SqlId).Select(x => x.SpermFreezeSituationId).FirstOrDefault();
+                        if (lastSituationId == Guid.Empty)
                         {
-                            throw new Exception("儲位資訊有誤");
+                            throw new Exception("冷凍精子狀況有誤");
                         }
+                        for (int i = 0; i < input.storageUnitId.Count; i++)
+                        {
+                            SpermFreeze spermFreeze = new SpermFreeze()
+                            {
+                                VialNumber = i + 1,
+                                CourseOfTreatmentId = input.courseOfTreatmentId,
+                                StorageUnitId = input.storageUnitId[i],
+                                IsThawed = false,
+                                SpermFreezeSituationId = lastSituationId
+                            };
+                            dbContext.SpermFreezes.Add(spermFreeze);
+                            var storageUnit = dbContext.StorageUnits.FirstOrDefault(x => x.SqlId == input.storageUnitId[i]);
+                            if (storageUnit != null && storageUnit.IsOccupied == false)
+                            {
+                                storageUnit.IsOccupied = true;
+                            }
+                            else
+                            {
+                                throw new Exception("儲位資訊有誤");
+                            }
+                        }
+                        dbContext.SaveChanges();
+                        scope.Complete();
                     }
-                    dbContext.SaveChanges();
-                    scope.Complete();
+                    result.SetSuccess();
                 }
-                result.SetSuccess();
+                catch (Exception ex)
+                {
+                    result.SetError(ex.Message);
+                }
             }
-            catch(Exception ex)
+            else
             {
-                result.SetError(ex.Message);
+                result.SetError(errorMessage);
             }
+            
             return result;
         }
 

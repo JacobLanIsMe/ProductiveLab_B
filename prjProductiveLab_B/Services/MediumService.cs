@@ -89,7 +89,7 @@ namespace prjProductiveLab_B.Services
                 lotNumber = x.LotNumber,
                 isDeleted = x.IsDeleted,
                 mediumTypeId = x.MediumTypeId,
-            }).OrderBy(x=>x.name).AsNoTracking().ToListAsync();
+            }).OrderBy(x=>x.mediumTypeId).ThenBy(x=>x.name).AsNoTracking().ToListAsync();
         }
         public async Task<List<CommonDto>> GetMediumTypes()
         {

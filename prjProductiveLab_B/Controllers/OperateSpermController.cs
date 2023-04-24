@@ -30,7 +30,7 @@ namespace prjProductiveLab_B.Controllers
             return await operateSpermService.UpdateExistingSpermScore(addSpermScore);
         }
         [HttpGet("GetSpermFreezeOperationMethod")]
-        public async Task<List<SpermFreezeOperateMethodDto>> GetSpermFreezeOperationMethod()
+        public async Task<List<CommonDto>> GetSpermFreezeOperationMethod()
         {
             return await operateSpermService.GetSpermFreezeOperationMethod();
         }
@@ -50,9 +50,9 @@ namespace prjProductiveLab_B.Controllers
             return await operateSpermService.GetSpermFreeze(spermFromCourseOfTreatmentId);
         }
         [HttpGet("GetSpermScore")]
-        public async Task<List<SpermScoreDto>> GetSpermScore(Guid spermFromCourseOfTreatmentId)
+        public async Task<List<SpermScoreDto>> GetSpermScore(Guid courseOfTreatmentId)
         {
-            return await operateSpermService.GetSpermScore(spermFromCourseOfTreatmentId);
+            return await operateSpermService.GetSpermScore(courseOfTreatmentId);
         }
     }
 }

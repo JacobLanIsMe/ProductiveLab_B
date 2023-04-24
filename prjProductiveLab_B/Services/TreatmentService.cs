@@ -37,14 +37,17 @@ namespace prjProductiveLab_B.Services
                             CocGrade2 = ovumPickupNote.ovumPickupNumber.coc_Grade2,
                             CocGrade1 = ovumPickupNote.ovumPickupNumber.coc_Grade1,
                             Embryologist = Guid.Parse(ovumPickupNote.embryologist),
-                            UpdateTime = DateTime.Now,
-                            MediumInUseId1 = ovumPickupNote.mediumInUse[0]
+                            UpdateTime = DateTime.Now
                         };
-                        if (ovumPickupNote.mediumInUse.Count > 1)
+                        if (ovumPickupNote.mediumInUse.Count > 0 && ovumPickupNote.mediumInUse[0] != null)
+                        {
+                            ovumPickup.MediumInUseId1 = (Guid)ovumPickupNote.mediumInUse[0];
+                        }
+                        if (ovumPickupNote.mediumInUse.Count > 1 && ovumPickupNote.mediumInUse[1] != null)
                         {
                             ovumPickup.MediumInUseId2 = ovumPickupNote.mediumInUse[1];
                         }
-                        if (ovumPickupNote.mediumInUse.Count > 2)
+                        if (ovumPickupNote.mediumInUse.Count > 2 && ovumPickupNote.mediumInUse[2] != null)
                         {
                             ovumPickup.MediumInUseId3 = ovumPickupNote.mediumInUse[2];
                         }
@@ -73,7 +76,6 @@ namespace prjProductiveLab_B.Services
                 {
                     result.SetError(ex.Message);
                 }
-
             }
             else
             {
@@ -134,7 +136,19 @@ namespace prjProductiveLab_B.Services
                 spouseSqlId = x.Customer.SpouseNavigation.SqlId,
                 spouseName = x.Customer.SpouseNavigation.Name,
                 doctor = x.DoctorNavigation.Name,
-                treatmentName = x.Treatment.Name,
+                treatment = new TreatmentDto
+                {
+                    treatmentId = x.TreatmentId,
+                    ovumSituationName = x.Treatment.OvumSituation.Name,
+                    ovumSourceName = x.Treatment.OvumSource.Name,
+                    ovumOperationName = x.Treatment.OvumOperation.Name,
+                    spermSituationName = x.Treatment.SpermSituation.Name,
+                    spermSourceName = x.Treatment.SpermSource.Name,
+                    spermOperationName = x.Treatment.SpermOperation.Name,
+                    spermRetrievalMethodName = x.Treatment.SpermRetrievalMethod.Name,
+                    embryoSituationName = x.Treatment.EmbryoSituation.Name,
+                    embryoOperationName = x.Treatment.EmbryoOperation.Name
+                },
                 memo = x.Memo
             }).AsNoTracking().FirstOrDefaultAsync();
             return result;
@@ -160,7 +174,15 @@ namespace prjProductiveLab_B.Services
             var treatments = await dbContext.Treatments.Select(x => new TreatmentDto
             {
                 treatmentId = x.SqlId,
-                name = x.Name
+                ovumSituationName = x.OvumSituation.Name,
+                ovumSourceName = x.OvumSource.Name,
+                ovumOperationName = x.OvumOperation.Name,
+                spermSituationName = x.SpermSituation.Name,
+                spermSourceName = x.SpermSource.Name,
+                spermOperationName = x.SpermOperation.Name,
+                spermRetrievalMethodName = x.SpermRetrievalMethod.Name,
+                embryoSituationName = x.EmbryoSituation.Name,
+                embryoOperationName = x.EmbryoOperation.Name
             }).OrderBy(x => x.treatmentId).AsNoTracking().ToListAsync();
             return treatments;
         }

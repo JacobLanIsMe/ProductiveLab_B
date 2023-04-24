@@ -7,12 +7,12 @@ namespace ReproductiveLabDB.Models
     {
         public SpermFreezeOperationMethod()
         {
-            SpermFreezes = new HashSet<SpermFreeze>();
+            SpermFreezeSituations = new HashSet<SpermFreezeSituation>();
         }
 
         public int SqlId { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<SpermFreeze> SpermFreezes { get; set; }
+        public virtual ICollection<SpermFreezeSituation> SpermFreezeSituations { get; set; }
     }
 }

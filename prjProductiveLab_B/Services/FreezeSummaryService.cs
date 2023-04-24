@@ -18,10 +18,11 @@ namespace prjProductiveLab_B.Services
         public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummarys(Guid courseOfTreatmentId) 
         {
             var customerId = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefault();
-
-            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.OvumFreeze != null).Select(x => new GetOvumFreezeSummaryDto
+            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
             {
+                courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
                 courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
+                ovumFromCourseOfTreatmentSqlId = dbContext.CourseOfTreatments.Where(y=>y.CourseOfTreatmentId == x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId).Select(y=>y.SqlId).FirstOrDefault(),
                 ovumFromCourseOfTreatmentId = x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId,
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,

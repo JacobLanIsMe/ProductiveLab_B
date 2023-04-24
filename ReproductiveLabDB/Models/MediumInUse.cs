@@ -9,10 +9,10 @@ namespace ReproductiveLabDB.Models
         {
             OvumFreezes = new HashSet<OvumFreeze>();
             OvumPickupDetails = new HashSet<OvumPickupDetail>();
-            SpermFreezeFreezeMediumInUses = new HashSet<SpermFreeze>();
-            SpermFreezeMediumInUseId1Navigations = new HashSet<SpermFreeze>();
-            SpermFreezeMediumInUseId2Navigations = new HashSet<SpermFreeze>();
-            SpermFreezeMediumInUseId3Navigations = new HashSet<SpermFreeze>();
+            SpermFreezeSituationFreezeMediumInUses = new HashSet<SpermFreezeSituation>();
+            SpermFreezeSituationMediumInUseId1Navigations = new HashSet<SpermFreezeSituation>();
+            SpermFreezeSituationMediumInUseId2Navigations = new HashSet<SpermFreezeSituation>();
+            SpermFreezeSituationMediumInUseId3Navigations = new HashSet<SpermFreezeSituation>();
         }
 
         public int SqlId { get; set; }
@@ -27,9 +27,9 @@ namespace ReproductiveLabDB.Models
         public virtual MediumType? MediumType { get; set; }
         public virtual ICollection<OvumFreeze> OvumFreezes { get; set; }
         public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }
-        public virtual ICollection<SpermFreeze> SpermFreezeFreezeMediumInUses { get; set; }
-        public virtual ICollection<SpermFreeze> SpermFreezeMediumInUseId1Navigations { get; set; }
-        public virtual ICollection<SpermFreeze> SpermFreezeMediumInUseId2Navigations { get; set; }
-        public virtual ICollection<SpermFreeze> SpermFreezeMediumInUseId3Navigations { get; set; }
+        public virtual ICollection<SpermFreezeSituation> SpermFreezeSituationFreezeMediumInUses { get; set; }
+        public virtual ICollection<SpermFreezeSituation> SpermFreezeSituationMediumInUseId1Navigations { get; set; }
+        public virtual ICollection<SpermFreezeSituation> SpermFreezeSituationMediumInUseId2Navigations { get; set; }
+        public virtual ICollection<SpermFreezeSituation> SpermFreezeSituationMediumInUseId3Navigations { get; set; }
     }
 }

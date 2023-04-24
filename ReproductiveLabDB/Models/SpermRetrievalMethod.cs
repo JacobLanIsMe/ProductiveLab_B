@@ -7,12 +7,12 @@ namespace ReproductiveLabDB.Models
     {
         public SpermRetrievalMethod()
         {
-            CourseOfTreatments = new HashSet<CourseOfTreatment>();
+            Treatments = new HashSet<Treatment>();
         }
 
         public int SqlId { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<CourseOfTreatment> CourseOfTreatments { get; set; }
+        public virtual ICollection<Treatment> Treatments { get; set; }
     }
 }

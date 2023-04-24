@@ -7,7 +7,7 @@
         public OperationTime? operationTime { get; set; }
         public OvumPickupNumber? ovumPickupNumber { get; set; }
         public string? embryologist { get; set; }
-        public List<Guid>? mediumInUse { get; set; }
+        public List<Guid?>? mediumInUse { get; set; }
     }
     public class OperationTime
     {
