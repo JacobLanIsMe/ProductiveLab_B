@@ -62,6 +62,7 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<SpermScore> SpermScores { get; set; } = null!;
         public virtual DbSet<SpermScoreTimePoint> SpermScoreTimePoints { get; set; } = null!;
         public virtual DbSet<SpermThaw> SpermThaws { get; set; } = null!;
+        public virtual DbSet<SpermThawMethod> SpermThawMethods { get; set; } = null!;
         public virtual DbSet<StorageCanist> StorageCanists { get; set; } = null!;
         public virtual DbSet<StorageStripBox> StorageStripBoxes { get; set; } = null!;
         public virtual DbSet<StorageTank> StorageTanks { get; set; } = null!;
@@ -1021,6 +1022,21 @@ namespace ReproductiveLabDB.Models
                     .HasForeignKey(d => d.CourseOfTreatmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SpermThaw_CourseOfTreatment");
+
+                entity.HasOne(d => d.SpermThawMethod)
+                    .WithMany(p => p.SpermThaws)
+                    .HasForeignKey(d => d.SpermThawMethodId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermThaw_SpermThawMethod1");
+            });
+
+            modelBuilder.Entity<SpermThawMethod>(entity =>
+            {
+                entity.HasKey(e => e.SqlId);
+
+                entity.ToTable("SpermThawMethod");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<StorageCanist>(entity =>

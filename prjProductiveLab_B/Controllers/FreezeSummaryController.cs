@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForFreezeSummary;
 using prjProductiveLab_B.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
@@ -15,9 +15,14 @@ namespace prjProductiveLab_B.Controllers
             this.freezeSummaryService = freezeSummaryService;
         }
         [HttpGet("GetOvumFreezeSummary")]
-        public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummarys(Guid courseOfTreatmentId)
+        public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummary(Guid courseOfTreatmentId)
         {
-            return await freezeSummaryService.GetOvumFreezeSummarys(courseOfTreatmentId);
+            return await freezeSummaryService.GetOvumFreezeSummary(courseOfTreatmentId);
+        }
+        [HttpGet("GetSpermFreezeSummary")]
+        public async Task<List<GetSpermFreezeSummaryDto>> GetSpermFreezeSummary(Guid courseOfTreatmentId)
+        {
+            return await freezeSummaryService.GetSpermFreezeSummary(courseOfTreatmentId);
         }
     }
 }

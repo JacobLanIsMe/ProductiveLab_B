@@ -1,4 +1,5 @@
 ﻿using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForMedium;
 using prjProductiveLab_B.Enums;
 using ReproductiveLabDB.Models;
 

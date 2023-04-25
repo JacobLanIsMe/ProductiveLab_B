@@ -1,4 +1,5 @@
 ﻿using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForStorage;
 
 namespace prjProductiveLab_B.Interfaces
 {

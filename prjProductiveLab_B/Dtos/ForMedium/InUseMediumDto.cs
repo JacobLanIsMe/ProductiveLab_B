@@ -1,4 +1,4 @@
-﻿namespace prjProductiveLab_B.Dtos
+﻿namespace prjProductiveLab_B.Dtos.ForMedium
 {
     public class InUseMediumDto
     {
@@ -7,7 +7,7 @@
         public DateTime? openDate { get; set; }
         public DateTime? expirationDate { get; set; }
         public string? lotNumber { get; set; }
-        public Boolean? isDeleted { get; set; }
+        public bool? isDeleted { get; set; }
         public int? mediumTypeId { get; set; }
     }
 }

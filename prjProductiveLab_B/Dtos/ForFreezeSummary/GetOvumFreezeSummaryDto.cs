@@ -1,6 +1,8 @@
-﻿using ReproductiveLabDB.Models;
+﻿using prjProductiveLab_B.Dtos.ForObservationNote;
+using prjProductiveLab_B.Dtos.ForStorage;
+using ReproductiveLabDB.Models;
 
-namespace prjProductiveLab_B.Dtos
+namespace prjProductiveLab_B.Dtos.ForFreezeSummary
 {
     public class GetOvumFreezeSummaryDto
     {

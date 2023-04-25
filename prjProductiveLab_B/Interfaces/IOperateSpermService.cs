@@ -1,4 +1,5 @@
 ﻿using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForOperateSperm;
 
 namespace prjProductiveLab_B.Interfaces
 {
@@ -12,5 +13,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<List<CommonDto>> GetSpermFreezeOperationMethod();
         Task<BaseResponseDto> AddSpermFreeze(AddSpermFreezeDto input);
         Task<BaseResponseDto> SelectSpermFreeze(List<int> unitIds);
+        Task<List<CommonDto>> GetSpermThawMethods();
     }
 }

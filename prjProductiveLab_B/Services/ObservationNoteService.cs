@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForObservationNote;
 using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;

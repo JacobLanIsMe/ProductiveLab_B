@@ -1,4 +1,4 @@
-﻿namespace prjProductiveLab_B.Dtos
+﻿namespace prjProductiveLab_B.Dtos.ForObservationNote
 {
     public class ObservationNoteDto
     {
@@ -13,10 +13,10 @@
     {
         public Guid observationNoteId { get; set; }
         public string? observationType { get; set; }
-        public int?  day { get; set; }
+        public int? day { get; set; }
         public DateTime? observationTime { get; set; }
         public string? mainPhoto { get; set; }
         public string? mainPhotoBase64 { get; set; }
-        
+
     }
 }

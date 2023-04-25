@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForStorage;
 using prjProductiveLab_B.Interfaces;
 
 namespace prjProductiveLab_B.Controllers

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForOperateSperm;
 using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
@@ -19,7 +20,7 @@ namespace prjProductiveLab_B.Services
             var result = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseOperateSpermInfoDto
             {
                 spermSituationName = x.Treatment.SpermSituation.Name,
-                spermRetrievalMethodName = x.Treatment.SpermRetrievalMethod.Name,
+                spermRetrievalMethodName = x.SpermFromCourseOfTreatment.Treatment.SpermRetrievalMethod.Name,
                 spermOwner = new BaseCustomerInfoDto
                 {
                     customerName = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.Name : x.Customer.SpouseNavigation.Name,
@@ -277,6 +278,15 @@ namespace prjProductiveLab_B.Services
                 errorMessage += "儲位資訊有誤\n";
             }
             return errorMessage;
+        }
+
+        public async Task<List<CommonDto>> GetSpermThawMethods()
+        {
+            return await dbContext.SpermThawMethods.Select(x => new CommonDto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).OrderBy(x => x.id).ToListAsync();
         }
     }
 }

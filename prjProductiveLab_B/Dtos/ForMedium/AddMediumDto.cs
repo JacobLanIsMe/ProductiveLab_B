@@ -1,5 +1,4 @@
-﻿
-namespace prjProductiveLab_B.Dtos
+﻿namespace prjProductiveLab_B.Dtos.ForMedium
 {
     public class AddMediumDto
     {

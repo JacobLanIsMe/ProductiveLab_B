@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForOperateSperm;
 using prjProductiveLab_B.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
@@ -53,6 +54,11 @@ namespace prjProductiveLab_B.Controllers
         public async Task<List<SpermScoreDto>> GetSpermScore(Guid courseOfTreatmentId)
         {
             return await operateSpermService.GetSpermScore(courseOfTreatmentId);
+        }
+        [HttpGet("GetSpermThawMethods")]
+        public async Task<List<CommonDto>> GetSpermThawMethods()
+        {
+            return await operateSpermService.GetSpermThawMethods();
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForFreezeSummary;
+using prjProductiveLab_B.Dtos.ForObservationNote;
+using prjProductiveLab_B.Dtos.ForStorage;
 using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
@@ -15,14 +18,14 @@ namespace prjProductiveLab_B.Services
             this.dbContext = dbContext;
             this.env = env;
         }
-        public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummarys(Guid courseOfTreatmentId) 
+        public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummary(Guid courseOfTreatmentId)
         {
             var customerId = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefault();
-            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
+            var result = await dbContext.OvumPickupDetails.Where(x => (x.OvumPickup.CourseOfTreatment.CustomerId == customerId || x.OvumThaw.CourseOfTreatment.CustomerId == customerId) && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
             {
                 courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
                 courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
-                ovumFromCourseOfTreatmentSqlId = dbContext.CourseOfTreatments.Where(y=>y.CourseOfTreatmentId == x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId).Select(y=>y.SqlId).FirstOrDefault(),
+                ovumFromCourseOfTreatmentSqlId = dbContext.CourseOfTreatments.Where(y => y.CourseOfTreatmentId == x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId).Select(y => y.SqlId).FirstOrDefault(),
                 ovumFromCourseOfTreatmentId = x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId,
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,
@@ -72,7 +75,7 @@ namespace prjProductiveLab_B.Services
                 },
                 medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name,
 
-            }).OrderBy(x=>x.ovumPickupTime).ThenBy(x=>x.ovumNumber).ToListAsync();
+            }).OrderBy(x => x.ovumPickupTime).ThenBy(x => x.ovumNumber).ToListAsync();
             foreach (var i in result)
             {
                 if (i.freezeObservationNoteInfo != null && i.freezeObservationNoteInfo.observationNotePhotos != null && i.freezeObservationNoteInfo.observationNotePhotos.Count > 0 && !string.IsNullOrEmpty(i.freezeObservationNoteInfo.observationNotePhotos[0].photoName))
@@ -85,7 +88,36 @@ namespace prjProductiveLab_B.Services
                 }
             }
             return result;
-            
+
+        }
+        public async Task<List<GetSpermFreezeSummaryDto>> GetSpermFreezeSummary(Guid courseOfTreatmentId)
+        {
+            var q = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new
+            {
+                treatment = x.Treatment,
+                course = x,
+                husbandID = x.Customer.SpouseNavigation.CustomerId
+            }).FirstOrDefaultAsync();
+            if (q == null)
+            {
+                return new List<GetSpermFreezeSummaryDto>();
+            }
+            Guid customerId = q.treatment.SpermOperationId == (int)GermCellOperationEnum.freeze ? q.course.CustomerId : q.husbandID;
+            var result = await dbContext.SpermFreezes.Where(x=>x.CourseOfTreatment.CustomerId == customerId).Select(x=>new GetSpermFreezeSummaryDto
+            {
+                spermSourceName = x.CourseOfTreatment.Treatment.SpermSource.Name,
+                courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
+                spermSituation = x.CourseOfTreatment.Treatment.SpermSituation.Name,
+                surgicalTime = x.CourseOfTreatment.SurgicalTime,
+                freezeTime = x.SpermFreezeSituation.FreezeTime,
+                vialNumber = x.VialNumber,
+                tankName = x.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
+                canistName = x.StorageUnit.StorageStripBox.StorageCanist.CanistName,
+                boxId = x.StorageUnit.StorageStripBoxId,
+                unitName = x.StorageUnit.UnitName,
+                freezeMediumName = x.SpermFreezeSituation.FreezeMediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.SpermFreezeSituation.OtherFreezeMediumName : x.SpermFreezeSituation.FreezeMediumInUse.Name,
+            }).OrderBy(x=>x.vialNumber).ToListAsync();
+            return result;
         }
     }
 }

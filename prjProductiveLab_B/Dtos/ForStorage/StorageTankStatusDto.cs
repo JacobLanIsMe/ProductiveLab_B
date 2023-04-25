@@ -1,4 +1,4 @@
-﻿namespace prjProductiveLab_B.Dtos
+﻿namespace prjProductiveLab_B.Dtos.ForStorage
 {
     public class StorageTankStatusDto : BaseStorage
     {
