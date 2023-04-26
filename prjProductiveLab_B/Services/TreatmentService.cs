@@ -320,5 +320,21 @@ namespace prjProductiveLab_B.Services
                 name = x.Name
             }).ToListAsync();
         }
+        public async Task<List<CommonDto>> GetFertilisationMethods()
+        {
+            return await dbContext.FertilisationMethods.Select(x=>new CommonDto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).OrderBy(x=>x.id).ToListAsync();
+        }
+        public async Task<List<CommonDto>> GetIncubators()
+        {
+            return await dbContext.Incubators.Select(x => new CommonDto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).OrderBy(x => x.id).ToListAsync();
+        }
     }
 }
