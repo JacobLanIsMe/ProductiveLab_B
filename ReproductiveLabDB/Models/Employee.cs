@@ -13,6 +13,8 @@ namespace ReproductiveLabDB.Models
             OvumPickups = new HashSet<OvumPickup>();
             SpermFreezeSituations = new HashSet<SpermFreezeSituation>();
             SpermScores = new HashSet<SpermScore>();
+            SpermThawEmbryologistNavigations = new HashSet<SpermThaw>();
+            SpermThawRecheckEmbryologistNavigations = new HashSet<SpermThaw>();
         }
 
         public int SqlId { get; set; }
@@ -31,5 +33,7 @@ namespace ReproductiveLabDB.Models
         public virtual ICollection<OvumPickup> OvumPickups { get; set; }
         public virtual ICollection<SpermFreezeSituation> SpermFreezeSituations { get; set; }
         public virtual ICollection<SpermScore> SpermScores { get; set; }
+        public virtual ICollection<SpermThaw> SpermThawEmbryologistNavigations { get; set; }
+        public virtual ICollection<SpermThaw> SpermThawRecheckEmbryologistNavigations { get; set; }
     }
 }

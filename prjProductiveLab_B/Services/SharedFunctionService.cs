@@ -7,35 +7,18 @@ namespace prjProductiveLab_B.Services
     {
         public void SetMediumInUse<T>(T mediumTable, List<Guid> inputMediums)
         {
-            if (typeof(T) == typeof(SpermFreezeSituation))
+            
+            if (inputMediums.Count > 0)
             {
-                if (inputMediums.Count > 0)
-                {
-                    (mediumTable as SpermFreezeSituation).MediumInUseId1 = inputMediums[0];
-                }
-                if (inputMediums.Count > 1)
-                {
-                    (mediumTable as SpermFreezeSituation).MediumInUseId2 = inputMediums[1];
-                }
-                if (inputMediums.Count > 2)
-                {
-                    (mediumTable as SpermFreezeSituation).MediumInUseId3 = inputMediums[2];
-                }
+                mediumTable.GetType().GetProperty("MediumInUseId1").SetValue(mediumTable, inputMediums[0]);
             }
-            if (typeof(T) == typeof(OvumPickup))
+            if (inputMediums.Count > 1)
             {
-                if (inputMediums.Count > 0)
-                {
-                    (mediumTable as OvumPickup).MediumInUseId1 = inputMediums[0];
-                }
-                if (inputMediums.Count > 1)
-                {
-                    (mediumTable as OvumPickup).MediumInUseId2 = inputMediums[1];
-                }
-                if (inputMediums.Count > 2)
-                {
-                    (mediumTable as OvumPickup).MediumInUseId3 = inputMediums[2];
-                }
+                mediumTable.GetType().GetProperty("MediumInUseId2").SetValue(mediumTable, inputMediums[1]);
+            }
+            if (inputMediums.Count > 2)
+            {
+                mediumTable.GetType().GetProperty("MediumInUseId3").SetValue(mediumTable, inputMediums[2]);
             }
         }
     }

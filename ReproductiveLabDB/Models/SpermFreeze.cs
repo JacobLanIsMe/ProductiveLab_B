@@ -5,6 +5,11 @@ namespace ReproductiveLabDB.Models
 {
     public partial class SpermFreeze
     {
+        public SpermFreeze()
+        {
+            SpermThawFreezePairs = new HashSet<SpermThawFreezePair>();
+        }
+
         public int SqlId { get; set; }
         public Guid SpermFreezeId { get; set; }
         public int VialNumber { get; set; }
@@ -16,5 +21,6 @@ namespace ReproductiveLabDB.Models
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual SpermFreezeSituation SpermFreezeSituation { get; set; } = null!;
         public virtual StorageUnit StorageUnit { get; set; } = null!;
+        public virtual ICollection<SpermThawFreezePair> SpermThawFreezePairs { get; set; }
     }
 }

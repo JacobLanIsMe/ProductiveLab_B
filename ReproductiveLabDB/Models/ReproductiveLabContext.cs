@@ -62,6 +62,7 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<SpermScore> SpermScores { get; set; } = null!;
         public virtual DbSet<SpermScoreTimePoint> SpermScoreTimePoints { get; set; } = null!;
         public virtual DbSet<SpermThaw> SpermThaws { get; set; } = null!;
+        public virtual DbSet<SpermThawFreezePair> SpermThawFreezePairs { get; set; } = null!;
         public virtual DbSet<SpermThawMethod> SpermThawMethods { get; set; } = null!;
         public virtual DbSet<StorageCanist> StorageCanists { get; set; } = null!;
         public virtual DbSet<StorageStripBox> StorageStripBoxes { get; set; } = null!;
@@ -1023,17 +1024,74 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
+                entity.Property(e => e.ThawTime).HasColumnType("datetime");
+
                 entity.HasOne(d => d.CourseOfTreatment)
                     .WithMany(p => p.SpermThaws)
                     .HasForeignKey(d => d.CourseOfTreatmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SpermThaw_CourseOfTreatment");
 
+                entity.HasOne(d => d.EmbryologistNavigation)
+                    .WithMany(p => p.SpermThawEmbryologistNavigations)
+                    .HasForeignKey(d => d.Embryologist)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermThaw_Employee");
+
+                entity.HasOne(d => d.MediumInUseId1Navigation)
+                    .WithMany(p => p.SpermThawMediumInUseId1Navigations)
+                    .HasForeignKey(d => d.MediumInUseId1)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermThaw_MediumInUse");
+
+                entity.HasOne(d => d.MediumInUseId2Navigation)
+                    .WithMany(p => p.SpermThawMediumInUseId2Navigations)
+                    .HasForeignKey(d => d.MediumInUseId2)
+                    .HasConstraintName("FK_SpermThaw_MediumInUse1");
+
+                entity.HasOne(d => d.MediumInUseId3Navigation)
+                    .WithMany(p => p.SpermThawMediumInUseId3Navigations)
+                    .HasForeignKey(d => d.MediumInUseId3)
+                    .HasConstraintName("FK_SpermThaw_MediumInUse2");
+
+                entity.HasOne(d => d.RecheckEmbryologistNavigation)
+                    .WithMany(p => p.SpermThawRecheckEmbryologistNavigations)
+                    .HasForeignKey(d => d.RecheckEmbryologist)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermThaw_Employee1");
+
                 entity.HasOne(d => d.SpermThawMethod)
                     .WithMany(p => p.SpermThaws)
                     .HasForeignKey(d => d.SpermThawMethodId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SpermThaw_SpermThawMethod1");
+            });
+
+            modelBuilder.Entity<SpermThawFreezePair>(entity =>
+            {
+                entity.HasKey(e => e.SpermThawFreezePairId)
+                    .IsClustered(false);
+
+                entity.ToTable("SpermThawFreezePair");
+
+                entity.HasIndex(e => e.SqlId, "IX_SpermThawFreezePair")
+                    .IsClustered();
+
+                entity.Property(e => e.SpermThawFreezePairId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.SpermFreeze)
+                    .WithMany(p => p.SpermThawFreezePairs)
+                    .HasForeignKey(d => d.SpermFreezeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermThawFreezePair_SpermFreeze");
+
+                entity.HasOne(d => d.SpermThaw)
+                    .WithMany(p => p.SpermThawFreezePairs)
+                    .HasForeignKey(d => d.SpermThawId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SpermThawFreezePair_SpermThaw");
             });
 
             modelBuilder.Entity<SpermThawMethod>(entity =>

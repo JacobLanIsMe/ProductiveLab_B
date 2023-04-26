@@ -40,11 +40,6 @@ namespace prjProductiveLab_B.Controllers
         {
             return await operateSpermService.AddSpermFreeze(input);
         }
-        [HttpPut("SelectSpermFreeze")]
-        public async Task<BaseResponseDto> SelectSpermFreeze(List<int> unitIds)
-        {
-            return await operateSpermService.SelectSpermFreeze(unitIds);
-        }
         [HttpGet("GetSpermFreeze")]
         public async Task<List<SpermFreezeDto>> GetSpermFreeze(Guid spermFromCourseOfTreatmentId)
         {
@@ -59,6 +54,11 @@ namespace prjProductiveLab_B.Controllers
         public async Task<List<CommonDto>> GetSpermThawMethods()
         {
             return await operateSpermService.GetSpermThawMethods();
+        }
+        [HttpPost("AddSpermThaw")]
+        public BaseResponseDto AddSpermThaw(AddSpermThawDto input)
+        {
+            return operateSpermService.AddSpermThaw(input);
         }
     }
 }

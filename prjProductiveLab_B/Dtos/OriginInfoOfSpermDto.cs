@@ -17,6 +17,7 @@
         public string? storageCanistName { get; set; }
         public string? storageTankName { get; set; }
         public int storageUnitId { get; set; }
+        public DateTime freezeTime { get; set; }
     }
 
    

@@ -13,6 +13,9 @@ namespace ReproductiveLabDB.Models
             SpermFreezeSituationMediumInUseId1Navigations = new HashSet<SpermFreezeSituation>();
             SpermFreezeSituationMediumInUseId2Navigations = new HashSet<SpermFreezeSituation>();
             SpermFreezeSituationMediumInUseId3Navigations = new HashSet<SpermFreezeSituation>();
+            SpermThawMediumInUseId1Navigations = new HashSet<SpermThaw>();
+            SpermThawMediumInUseId2Navigations = new HashSet<SpermThaw>();
+            SpermThawMediumInUseId3Navigations = new HashSet<SpermThaw>();
         }
 
         public int SqlId { get; set; }
@@ -31,5 +34,8 @@ namespace ReproductiveLabDB.Models
         public virtual ICollection<SpermFreezeSituation> SpermFreezeSituationMediumInUseId1Navigations { get; set; }
         public virtual ICollection<SpermFreezeSituation> SpermFreezeSituationMediumInUseId2Navigations { get; set; }
         public virtual ICollection<SpermFreezeSituation> SpermFreezeSituationMediumInUseId3Navigations { get; set; }
+        public virtual ICollection<SpermThaw> SpermThawMediumInUseId1Navigations { get; set; }
+        public virtual ICollection<SpermThaw> SpermThawMediumInUseId2Navigations { get; set; }
+        public virtual ICollection<SpermThaw> SpermThawMediumInUseId3Navigations { get; set; }
     }
 }

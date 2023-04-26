@@ -50,8 +50,9 @@ namespace prjProductiveLab_B.Services
                 storageStripBoxId = x.StorageUnit.StorageStripBoxId,
                 storageCanistName = x.StorageUnit.StorageStripBox.StorageCanist.CanistName,
                 storageTankName = x.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
-                storageUnitId = x.StorageUnitId
-            }).OrderBy(x => x.vialNumber).ToListAsync();
+                storageUnitId = x.StorageUnitId,
+                freezeTime = x.SpermFreezeSituation.FreezeTime
+            }).OrderBy(x=>x.freezeTime).ThenBy(x => x.vialNumber).ToListAsync();
         }
         public async Task<List<SpermScoreDto>> GetSpermScore(Guid courseOfTreatmentId)
         {
@@ -217,46 +218,7 @@ namespace prjProductiveLab_B.Services
             return result;
         }
 
-        public async Task<BaseResponseDto> SelectSpermFreeze(List<int> unitIds)
-        {
-            BaseResponseDto result = new BaseResponseDto();
-            try
-            {
-                using (TransactionScope scope = new TransactionScope())
-                {
-                    foreach (var i in unitIds)
-                    {
-                        var spermFreeze = dbContext.SpermFreezes.FirstOrDefault(x=>x.StorageUnitId == i);
-                        if (spermFreeze == null)
-                        {
-                            throw new Exception("冷凍精蟲資訊有誤");
-                        }
-                        else
-                        {
-                            spermFreeze.IsThawed = true;
-                        }
-                        var storageUnit = dbContext.StorageUnits.FirstOrDefault(x => x.SqlId == i);
-                        if (storageUnit == null || storageUnit.IsOccupied == false)
-                        {
-                            throw new Exception("儲位資訊有誤");
-                        }
-                        else
-                        {
-                            storageUnit.IsOccupied = false;
-                        }
-                    }
-                    dbContext.SaveChanges();
-                    scope.Complete();
-                }
-                result.SetSuccess();
-            }
-            catch(Exception ex)
-            {
-                result.SetError(ex.Message);
-            }
-            return result;
-        }
-
+        
         private string AddSpermFreezeValidation(AddSpermFreezeDto input)
         {
             string errorMessage = "";
@@ -278,6 +240,62 @@ namespace prjProductiveLab_B.Services
                 id = x.SqlId,
                 name = x.Name
             }).OrderBy(x => x.id).ToListAsync();
+        }
+
+        public BaseResponseDto AddSpermThaw(AddSpermThawDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using(TransactionScope scope = new TransactionScope())
+                {
+                    SpermThaw spermThaw = new SpermThaw
+                    {
+                        CourseOfTreatmentId = input.courseOfTreatmentId,
+                        SpermThawMethodId = input.spermThawMethodId,
+                        ThawTime = input.thawTime,
+                        Embryologist = input.embryologist,
+                        RecheckEmbryologist = input.recheckEmbryologist,
+                        OtherSpermThawMethod = input.otherSpermThawMethod,
+                    };
+                    sharedFunction.SetMediumInUse(spermThaw, input.mediumInUseIds);
+                    dbContext.SpermThaws.Add(spermThaw);
+                    dbContext.SaveChanges();
+                    Guid latestSpermThawId = dbContext.SpermThaws.OrderByDescending(x=>x.SqlId).Select(x=>x.SpermThawId).FirstOrDefault();
+                    if (latestSpermThawId == Guid.Empty)
+                    {
+                        throw new Exception("spermThaw 資料表寫入錯誤");
+                    }
+                    foreach (var i in input.spermFreezeIds)
+                    {
+                        SpermThawFreezePair pair = new SpermThawFreezePair
+                        {
+                            SpermThawId = latestSpermThawId,
+                            SpermFreezeId = i
+                        };
+                        dbContext.SpermThawFreezePairs.Add(pair);
+                        var spermFreeze = dbContext.SpermFreezes.Where(x => x.SpermFreezeId == i).Select(x => new
+                        {
+                            spermFreeze = x,
+                            storageUnit = x.StorageUnit
+                        }).FirstOrDefault();
+                        if (spermFreeze == null)
+                        {
+                            throw new Exception("SpermThawFreezePair資料表寫入錯誤");
+                        }
+                        spermFreeze.spermFreeze.IsThawed = true;
+                        spermFreeze.storageUnit.IsOccupied = false;
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch(Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
         }
     }
 }
