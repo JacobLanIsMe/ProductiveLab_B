@@ -116,7 +116,7 @@ namespace prjProductiveLab_B.Services
                 boxId = x.StorageUnit.StorageStripBoxId,
                 unitName = x.StorageUnit.UnitName,
                 freezeMediumName = x.SpermFreezeSituation.FreezeMediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.SpermFreezeSituation.OtherFreezeMediumName : x.SpermFreezeSituation.FreezeMediumInUse.Name,
-            }).OrderBy(x=>x.vialNumber).ToListAsync();
+            }).OrderBy(x=>x.freezeTime).ThenBy(x=>x.vialNumber).ToListAsync();
             return result;
         }
     }

@@ -893,7 +893,13 @@ namespace ReproductiveLabDB.Models
 
             modelBuilder.Entity<SpermFreezeSituation>(entity =>
             {
+                entity.HasKey(e => e.SpermFreezeSituationId)
+                    .IsClustered(false);
+
                 entity.ToTable("SpermFreezeSituation");
+
+                entity.HasIndex(e => e.SqlId, "IX_SpermFreezeSituation")
+                    .IsClustered();
 
                 entity.Property(e => e.SpermFreezeSituationId).HasDefaultValueSql("(newid())");
 

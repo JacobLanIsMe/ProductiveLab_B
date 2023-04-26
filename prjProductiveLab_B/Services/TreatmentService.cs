@@ -11,9 +11,11 @@ namespace prjProductiveLab_B.Services
     public class TreatmentService : ITreatmentService
     {
         private readonly ReproductiveLabContext dbContext;
-        public TreatmentService(ReproductiveLabContext dbContext)
+        private readonly ISharedFunctionService sharedFunction;
+        public TreatmentService(ReproductiveLabContext dbContext, ISharedFunctionService sharedFunction)
         {
             this.dbContext = dbContext;
+            this.sharedFunction = sharedFunction;
         }
         public BaseResponseDto AddOvumPickupNote(AddOvumPickupNoteDto ovumPickupNote)
         {
@@ -39,18 +41,7 @@ namespace prjProductiveLab_B.Services
                             Embryologist = Guid.Parse(ovumPickupNote.embryologist),
                             UpdateTime = DateTime.Now
                         };
-                        if (ovumPickupNote.mediumInUse.Count > 0 && ovumPickupNote.mediumInUse[0] != null)
-                        {
-                            ovumPickup.MediumInUseId1 = (Guid)ovumPickupNote.mediumInUse[0];
-                        }
-                        if (ovumPickupNote.mediumInUse.Count > 1 && ovumPickupNote.mediumInUse[1] != null)
-                        {
-                            ovumPickup.MediumInUseId2 = ovumPickupNote.mediumInUse[1];
-                        }
-                        if (ovumPickupNote.mediumInUse.Count > 2 && ovumPickupNote.mediumInUse[2] != null)
-                        {
-                            ovumPickup.MediumInUseId3 = ovumPickupNote.mediumInUse[2];
-                        }
+                        sharedFunction.SetMediumInUse<OvumPickup>(ovumPickup, ovumPickupNote.mediumInUse);
                         dbContext.OvumPickups.Add(ovumPickup);
                         dbContext.SaveChanges();
                         Guid latestOvumPickupId = dbContext.OvumPickups.OrderByDescending(x=>x.SqlId).Select(x=>x.OvumPickupId).FirstOrDefault();

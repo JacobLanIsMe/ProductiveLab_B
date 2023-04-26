@@ -11,9 +11,11 @@ namespace prjProductiveLab_B.Services
     public class OperateSpermService : IOperateSpermService
     {
         private readonly ReproductiveLabContext dbContext;
-        public OperateSpermService(ReproductiveLabContext dbContext)
+        private readonly ISharedFunctionService sharedFunction;
+        public OperateSpermService(ReproductiveLabContext dbContext, ISharedFunctionService sharedFunction)
         {
             this.dbContext = dbContext;
+            this.sharedFunction = sharedFunction;
         }
         public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
         {
@@ -149,7 +151,7 @@ namespace prjProductiveLab_B.Services
             }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
             return result;
         }
-
+        
         public async Task<BaseResponseDto> AddSpermFreeze(AddSpermFreezeDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
@@ -168,18 +170,7 @@ namespace prjProductiveLab_B.Services
                             FreezeMediumInUseId = input.freezeMedium,
                             OtherFreezeMediumName = input.otherFreezeMediumName
                         };
-                        if (input.mediumInUseArray.Count > 0 && input.mediumInUseArray[0] != null)
-                        {
-                            situation.MediumInUseId1 = (Guid)input.mediumInUseArray[0];
-                        }
-                        if (input.mediumInUseArray.Count > 1 && input.mediumInUseArray[1] != null)
-                        {
-                            situation.MediumInUseId2 = input.mediumInUseArray[1];
-                        }
-                        if (input.mediumInUseArray.Count > 2 && input.mediumInUseArray[2] != null)
-                        {
-                            situation.MediumInUseId3 = input.mediumInUseArray[2];
-                        }
+                        sharedFunction.SetMediumInUse<SpermFreezeSituation>(situation, input.mediumInUseArray);
                         dbContext.SpermFreezeSituations.Add(situation);
                         dbContext.SaveChanges();
                         Guid lastSituationId = dbContext.SpermFreezeSituations.OrderByDescending(x => x.SqlId).Select(x => x.SpermFreezeSituationId).FirstOrDefault();
@@ -275,7 +266,7 @@ namespace prjProductiveLab_B.Services
             }
             if(input.storageUnitId == null || input.storageUnitId.Count == 0) 
             {
-                errorMessage += "儲位資訊有誤\n";
+                errorMessage += "請選擇儲位\n";
             }
             return errorMessage;
         }

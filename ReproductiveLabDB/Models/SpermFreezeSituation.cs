@@ -16,10 +16,10 @@ namespace ReproductiveLabDB.Models
         public DateTime FreezeTime { get; set; }
         public int SpermFreezeOperationMethodId { get; set; }
         public Guid FreezeMediumInUseId { get; set; }
+        public string? OtherFreezeMediumName { get; set; }
         public Guid MediumInUseId1 { get; set; }
         public Guid? MediumInUseId2 { get; set; }
         public Guid? MediumInUseId3 { get; set; }
-        public string? OtherFreezeMediumName { get; set; }
 
         public virtual Employee EmbryologistNavigation { get; set; } = null!;
         public virtual MediumInUse FreezeMediumInUse { get; set; } = null!;
