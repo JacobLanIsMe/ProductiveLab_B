@@ -8,6 +8,7 @@ namespace ReproductiveLabDB.Models
         public Employee()
         {
             CourseOfTreatments = new HashSet<CourseOfTreatment>();
+            Fertilisations = new HashSet<Fertilisation>();
             ObservationNotes = new HashSet<ObservationNote>();
             OvumFreezes = new HashSet<OvumFreeze>();
             OvumPickups = new HashSet<OvumPickup>();
@@ -28,6 +29,7 @@ namespace ReproductiveLabDB.Models
         public virtual IdentityServer IdentityServer { get; set; } = null!;
         public virtual JobTitle JobTitle { get; set; } = null!;
         public virtual ICollection<CourseOfTreatment> CourseOfTreatments { get; set; }
+        public virtual ICollection<Fertilisation> Fertilisations { get; set; }
         public virtual ICollection<ObservationNote> ObservationNotes { get; set; }
         public virtual ICollection<OvumFreeze> OvumFreezes { get; set; }
         public virtual ICollection<OvumPickup> OvumPickups { get; set; }

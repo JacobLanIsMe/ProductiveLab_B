@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ReproductiveLabDB.Models
 {
-    public partial class Incubator
+    public partial class FertilisationMethod
     {
-        public Incubator()
+        public FertilisationMethod()
         {
             Fertilisations = new HashSet<Fertilisation>();
         }

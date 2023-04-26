@@ -16,15 +16,15 @@ namespace ReproductiveLabDB.Models
         public Guid OvumPickupDetailId { get; set; }
         public Guid? OvumPickupId { get; set; }
         public int OvumNumber { get; set; }
-        public int? IncubatorId { get; set; }
         public Guid? MediumInUseId { get; set; }
         public int OvumPickupDetailStatusId { get; set; }
         public int FertilisationStatusId { get; set; }
         public Guid? OvumFreezeId { get; set; }
         public Guid? OvumThawId { get; set; }
+        public Guid? FertilisationId { get; set; }
 
+        public virtual Fertilisation? Fertilisation { get; set; }
         public virtual FertilisationStatus FertilisationStatus { get; set; } = null!;
-        public virtual Incubator? Incubator { get; set; }
         public virtual MediumInUse? MediumInUse { get; set; }
         public virtual OvumFreeze? OvumFreeze { get; set; }
         public virtual OvumPickup? OvumPickup { get; set; }
