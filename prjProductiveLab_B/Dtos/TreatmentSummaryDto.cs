@@ -8,7 +8,8 @@
         public string? ovumPickupDetailStatus { get; set; }
         public int dateOfEmbryo { get; set; }
         public int ovumNumber { get; set; }
-        public string? fertilizationStatus { get; set; }
+        public bool hasFertilization { get; set; }
         public string? observationNote { get; set; }
+        public string? ovumSource { get; set; }
     }
 }

@@ -29,7 +29,6 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<Fertilisation> Fertilisations { get; set; } = null!;
         public virtual DbSet<FertilisationMethod> FertilisationMethods { get; set; } = null!;
         public virtual DbSet<FertilisationResult> FertilisationResults { get; set; } = null!;
-        public virtual DbSet<FertilisationStatus> FertilisationStatuses { get; set; } = null!;
         public virtual DbSet<FrequentlyUsedMedium> FrequentlyUsedMedia { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
         public virtual DbSet<FunctionType> FunctionTypes { get; set; } = null!;
@@ -323,16 +322,6 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("FertilisationResult");
-
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
-            });
-
-            modelBuilder.Entity<FertilisationStatus>(entity =>
-            {
-                entity.HasKey(e => e.SqlId)
-                    .HasName("PK_FertilizationStatus_1");
-
-                entity.ToTable("FertilisationStatus");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
@@ -816,12 +805,6 @@ namespace ReproductiveLabDB.Models
                     .HasForeignKey(d => d.FertilisationId)
                     .HasConstraintName("FK_OvumPickupDetail_Fertilisation");
 
-                entity.HasOne(d => d.FertilisationStatus)
-                    .WithMany(p => p.OvumPickupDetails)
-                    .HasForeignKey(d => d.FertilisationStatusId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickupDetail_FertilisationStatus");
-
                 entity.HasOne(d => d.MediumInUse)
                     .WithMany(p => p.OvumPickupDetails)
                     .HasForeignKey(d => d.MediumInUseId)
@@ -871,6 +854,8 @@ namespace ReproductiveLabDB.Models
                 entity.Property(e => e.OvumThawId).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.ThawTime).HasColumnType("datetime");
 
                 entity.HasOne(d => d.CourseOfTreatment)
                     .WithMany(p => p.OvumThaws)

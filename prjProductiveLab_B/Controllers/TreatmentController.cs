@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForTreatmentSummary;
 using prjProductiveLab_B.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
@@ -66,6 +67,11 @@ namespace prjProductiveLab_B.Controllers
         public async Task<List<CommonDto>> GetIncubators()
         {
             return await treatmentService.GetIncubators();
+        }
+        [HttpPost("AddFertilisation")]
+        public BaseResponseDto AddFertilisation(AddFertilisationDto input)
+        {
+            return treatmentService.AddFertilisation(input);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForTreatmentSummary;
 
 namespace prjProductiveLab_B.Interfaces
 {
@@ -15,5 +16,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<List<CommonDto>> GetTopColors();
         Task<List<CommonDto>> GetFertilisationMethods();
         Task<List<CommonDto>> GetIncubators();
+        BaseResponseDto AddFertilisation(AddFertilisationDto input);
     }
 }

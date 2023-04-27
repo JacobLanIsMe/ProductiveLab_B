@@ -14,6 +14,7 @@ namespace ReproductiveLabDB.Models
         public int SqlId { get; set; }
         public Guid OvumThawId { get; set; }
         public Guid CourseOfTreatmentId { get; set; }
+        public DateTime ThawTime { get; set; }
 
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }

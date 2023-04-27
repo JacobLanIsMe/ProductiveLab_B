@@ -16,7 +16,6 @@ builder.Services.AddScoped<ISharedFunctionService, SharedFunctionService>();
 builder.Services.AddScoped<ILabMainPage, LabMainPageService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IMediumService, MediumService>();
-builder.Services.AddScoped<IIncubatorService, IncubatorService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<ITreatmentService, TreatmentService>();
 builder.Services.AddScoped<IOperateSpermService, OperateSpermService>();

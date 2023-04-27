@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForTreatmentSummary;
 using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
@@ -52,8 +53,7 @@ namespace prjProductiveLab_B.Services
                             {
                                 OvumPickupId = latestOvumPickupId,
                                 OvumNumber = i,
-                                OvumPickupDetailStatusId = 1,
-                                FertilisationStatusId = 1
+                                OvumPickupDetailStatusId = 1
                             };
                             dbContext.Add(ovumPickupDetail);
                         }
@@ -147,16 +147,18 @@ namespace prjProductiveLab_B.Services
 
         public async Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId)
         {
-            return await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new TreatmentSummaryDto
+            return await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatmentId == courseOfTreatmentId || x.OvumThaw.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new TreatmentSummaryDto
             {
                 ovumPickupDetailId = x.OvumPickupDetailId,
-                courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
-                ovumFromCourseOfTreatmentSqlId = dbContext.CourseOfTreatments.Where(z=>z.CourseOfTreatmentId == x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId).Select(z=>z.SqlId).FirstOrDefault(),
+                courseOfTreatmentSqlId = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.SqlId : x.OvumThaw.CourseOfTreatment.SqlId,
+                ovumFromCourseOfTreatmentSqlId = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId,
                 ovumPickupDetailStatus = x.OvumPickupDetailStatus.Name,
-                dateOfEmbryo = (DateTime.Now.Date - x.OvumPickup.CourseOfTreatment.SurgicalTime.Date).Days,
+                dateOfEmbryo = x.OvumPickup != null ? (DateTime.Now.Date - x.OvumPickup.CourseOfTreatment.SurgicalTime.Date).Days : dbContext.ObservationNotes.Where(y=>y.OvumPickupDetailId == x.OvumThawFreezePairThawOvumPickupDetails.Select(z=>z.FreezeOvumPickupDetailId).FirstOrDefault() && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && y.OvumPickupDetail.Fertilisation == null).Select(y=>y.Day).FirstOrDefault() + (DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days, 
                 ovumNumber = x.OvumNumber,
-                fertilizationStatus = x.FertilisationStatus.Name,
-                observationNote = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId).OrderByDescending(y => y.SqlId).Select(y => y.Memo).FirstOrDefault()
+                hasFertilization = x.Fertilisation == null ? false : true,
+                observationNote = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId).OrderByDescending(y => y.SqlId).Select(y => y.Memo).FirstOrDefault(),
+                ovumSource = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatment.Treatment.OvumSource.Name : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatment.Treatment.OvumSource.Name
+
             }).OrderBy(x=>x.ovumNumber).AsNoTracking().ToListAsync();
         }
 
@@ -335,6 +337,45 @@ namespace prjProductiveLab_B.Services
                 id = x.SqlId,
                 name = x.Name
             }).OrderBy(x => x.id).ToListAsync();
+        }
+        public BaseResponseDto AddFertilisation(AddFertilisationDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using(TransactionScope scope = new TransactionScope())
+                {
+                    Fertilisation fertilisation = new Fertilisation
+                    {
+                        FertilisationTime = input.fertilisationTime,
+                        Embryologist = input.embryologist,
+                        FertilisationMethodId = input.fertilisationMethodId,
+                        IncubatorId = input.incubatorId,
+                        OtherIncubator = input.otherIncubator
+                    };
+                    sharedFunction.SetMediumInUse(fertilisation, input.mediumInUseIds);
+                    dbContext.Fertilisations.Add(fertilisation);
+                    dbContext.SaveChanges();
+                    Guid latestFertilisationId = dbContext.Fertilisations.OrderByDescending(x=>x.SqlId).Select(x=>x.FertilisationId).FirstOrDefault();
+                    if (latestFertilisationId == Guid.Empty)
+                    {
+                        throw new Exception("Fertilisation 資料表寫入也誤");
+                    }
+                    var ovumPickupDetailIds = dbContext.OvumPickupDetails.Where(x=>input.ovumPickupDetailIds.Contains(x.OvumPickupDetailId)).ToList();
+                    foreach (var i in ovumPickupDetailIds)
+                    {
+                        i.FertilisationId = latestFertilisationId;
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch(Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
         }
     }
 }
