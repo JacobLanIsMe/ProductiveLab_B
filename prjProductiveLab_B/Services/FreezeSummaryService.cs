@@ -33,7 +33,7 @@ namespace prjProductiveLab_B.Services
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze.FreezeTime,
-                freezeObservationNoteInfo = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Include(y => y.ObservationNotePhotos).Include(y => y.ObservationNoteOvumAbnormalities).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
+                freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
                 {
                     ovumPickupDetailId = y.OvumPickupDetailId,
                     observationTime = y.ObservationTime,
@@ -41,7 +41,7 @@ namespace prjProductiveLab_B.Services
                     day = y.Day,
                     ovumMaturationName = y.OvumMaturation.Name,
                     ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Select(z => z.ForeignKey.Name).ToList(),
-                    observationNotePhotos = y.ObservationNotePhotos.Where(z => z.IsMainPhoto).Select(z => new ObservationNotePhotoDto
+                    observationNotePhotos = y.ObservationNotePhotos.Where(z => z.IsMainPhoto && z.IsDeleted == false).Select(z => new ObservationNotePhotoDto
                     {
                         observationNotePhotoId = z.ObservationNotePhotoId,
                         photoName = z.PhotoName,
@@ -61,7 +61,8 @@ namespace prjProductiveLab_B.Services
                         storageUnitId = x.OvumFreeze.StorageUnitId,
                         unitName = x.OvumFreeze.StorageUnit.UnitName
                     }
-                }
+                },
+                medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name
             }).OrderBy(x => x.freezeTime).ThenBy(x => x.ovumNumber).ToListAsync();
 
             ConvertPhotoToBase64String(result);
@@ -89,12 +90,12 @@ namespace prjProductiveLab_B.Services
             {
                 courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
                 courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
-                ovumFromCourseOfTreatmentSqlId = dbContext.CourseOfTreatments.Where(y => y.CourseOfTreatmentId == x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId).Select(y => y.SqlId).FirstOrDefault(),
-                ovumFromCourseOfTreatmentId = x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId,
+                ovumFromCourseOfTreatmentSqlId = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId,
+                ovumFromCourseOfTreatmentId = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatmentId,
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze.FreezeTime,
-                freezeObservationNoteInfo = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Include(y => y.ObservationNotePhotos).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
+                freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
                 {
                     observationNoteId = y.ObservationNoteId,
                     day = y.Day,
