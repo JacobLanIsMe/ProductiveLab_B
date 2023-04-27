@@ -6,6 +6,7 @@ using prjProductiveLab_B.Dtos.ForStorage;
 using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
+using System.Runtime.CompilerServices;
 
 namespace prjProductiveLab_B.Services
 {
@@ -17,6 +18,69 @@ namespace prjProductiveLab_B.Services
         {
             this.dbContext = dbContext;
             this.env = env;
+        }
+        public async Task<List<GetOvumFreezeSummaryDto>> GetRecipientOvumFreezes(Guid courseOfTreatmentId)
+        {
+            var customerId = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefault();
+            if (customerId == Guid.Empty)
+            {
+                return new List<GetOvumFreezeSummaryDto>();
+            }
+            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.Fertilisation == null && x.OvumThaw == null && x.OvumFreeze != null).Select(x => new GetOvumFreezeSummaryDto
+            {
+                courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
+                courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
+                ovumNumber = x.OvumNumber,
+                ovumPickupTime = x.OvumPickup.StartTime,
+                freezeTime = x.OvumFreeze.FreezeTime,
+                freezeObservationNoteInfo = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Include(y => y.ObservationNotePhotos).Include(y => y.ObservationNoteOvumAbnormalities).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
+                {
+                    ovumPickupDetailId = y.OvumPickupDetailId,
+                    observationTime = y.ObservationTime,
+                    memo = y.Memo,
+                    day = y.Day,
+                    ovumMaturationName = y.OvumMaturation.Name,
+                    ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Select(z => z.ForeignKey.Name).ToList(),
+                    observationNotePhotos = y.ObservationNotePhotos.Where(z => z.IsMainPhoto).Select(z => new ObservationNotePhotoDto
+                    {
+                        observationNotePhotoId = z.ObservationNotePhotoId,
+                        photoName = z.PhotoName,
+                    }).ToList(),
+                }).FirstOrDefault(),
+                freezeStorageInfo = new BaseStorage
+                {
+                    tankInfo = new StorageTankDto
+                    {
+                        tankName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
+                        tankTypeId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId
+                    },
+                    canistName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.CanistName,
+                    stripBoxId = x.OvumFreeze.StorageUnit.StorageStripBoxId,
+                    unitInfo = new StorageUnitDto
+                    {
+                        storageUnitId = x.OvumFreeze.StorageUnitId,
+                        unitName = x.OvumFreeze.StorageUnit.UnitName
+                    }
+                }
+            }).OrderBy(x => x.freezeTime).ThenBy(x => x.ovumNumber).ToListAsync();
+
+            ConvertPhotoToBase64String(result);
+            return result;
+        }
+
+        private void ConvertPhotoToBase64String(List<GetOvumFreezeSummaryDto> result)
+        {
+            foreach (var i in result)
+            {
+                if (i.freezeObservationNoteInfo != null && i.freezeObservationNoteInfo.observationNotePhotos != null && i.freezeObservationNoteInfo.observationNotePhotos.Count > 0 && !string.IsNullOrEmpty(i.freezeObservationNoteInfo.observationNotePhotos[0].photoName))
+                {
+                    string path = Path.Combine(env.ContentRootPath, "uploads", "images", i.freezeObservationNoteInfo.observationNotePhotos[0].photoName);
+                    if (File.Exists(path))
+                    {
+                        i.freezeObservationNoteInfo.observationNotePhotos[0].imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
+                    }
+                }
+            }
         }
         public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummary(Guid courseOfTreatmentId)
         {
@@ -76,17 +140,7 @@ namespace prjProductiveLab_B.Services
                 medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name,
 
             }).OrderBy(x => x.ovumPickupTime).ThenBy(x => x.ovumNumber).ToListAsync();
-            foreach (var i in result)
-            {
-                if (i.freezeObservationNoteInfo != null && i.freezeObservationNoteInfo.observationNotePhotos != null && i.freezeObservationNoteInfo.observationNotePhotos.Count > 0 && !string.IsNullOrEmpty(i.freezeObservationNoteInfo.observationNotePhotos[0].photoName))
-                {
-                    string path = Path.Combine(env.ContentRootPath, "uploads", "images", i.freezeObservationNoteInfo.observationNotePhotos[0].photoName);
-                    if (File.Exists(path))
-                    {
-                        i.freezeObservationNoteInfo.observationNotePhotos[0].imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
-                    }
-                }
-            }
+            ConvertPhotoToBase64String(result);
             return result;
 
         }
@@ -119,5 +173,7 @@ namespace prjProductiveLab_B.Services
             }).OrderBy(x=>x.freezeTime).ThenBy(x=>x.vialNumber).ToListAsync();
             return result;
         }
+
+        
     }
 }
