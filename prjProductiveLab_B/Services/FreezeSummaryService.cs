@@ -19,55 +19,6 @@ namespace prjProductiveLab_B.Services
             this.dbContext = dbContext;
             this.env = env;
         }
-        public async Task<List<GetOvumFreezeSummaryDto>> GetRecipientOvumFreezes(Guid courseOfTreatmentId)
-        {
-            var customerId = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefault();
-            if (customerId == Guid.Empty)
-            {
-                return new List<GetOvumFreezeSummaryDto>();
-            }
-            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.Fertilisation == null && x.OvumThaw == null && x.OvumFreeze != null).Select(x => new GetOvumFreezeSummaryDto
-            {
-                courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
-                courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
-                ovumNumber = x.OvumNumber,
-                ovumPickupTime = x.OvumPickup.StartTime,
-                freezeTime = x.OvumFreeze.FreezeTime,
-                freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
-                {
-                    ovumPickupDetailId = y.OvumPickupDetailId,
-                    observationTime = y.ObservationTime,
-                    memo = y.Memo,
-                    day = y.Day,
-                    ovumMaturationName = y.OvumMaturation.Name,
-                    ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Select(z => z.ForeignKey.Name).ToList(),
-                    observationNotePhotos = y.ObservationNotePhotos.Where(z => z.IsMainPhoto && z.IsDeleted == false).Select(z => new ObservationNotePhotoDto
-                    {
-                        observationNotePhotoId = z.ObservationNotePhotoId,
-                        photoName = z.PhotoName,
-                    }).ToList(),
-                }).FirstOrDefault(),
-                freezeStorageInfo = new BaseStorage
-                {
-                    tankInfo = new StorageTankDto
-                    {
-                        tankName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
-                        tankTypeId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId
-                    },
-                    canistName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.CanistName,
-                    stripBoxId = x.OvumFreeze.StorageUnit.StorageStripBoxId,
-                    unitInfo = new StorageUnitDto
-                    {
-                        storageUnitId = x.OvumFreeze.StorageUnitId,
-                        unitName = x.OvumFreeze.StorageUnit.UnitName
-                    }
-                },
-                medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name
-            }).OrderBy(x => x.freezeTime).ThenBy(x => x.ovumNumber).ToListAsync();
-
-            ConvertPhotoToBase64String(result);
-            return result;
-        }
 
         private void ConvertPhotoToBase64String(List<GetOvumFreezeSummaryDto> result)
         {
@@ -85,7 +36,12 @@ namespace prjProductiveLab_B.Services
         }
         public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummary(Guid courseOfTreatmentId)
         {
-            var customerId = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefault();
+            var customer = dbContext.CourseOfTreatments.FirstOrDefault(x => x.CourseOfTreatmentId == courseOfTreatmentId);
+            if (customer == null)
+            {
+                return new List<GetOvumFreezeSummaryDto>();
+            }
+            Guid customerId = customer.CustomerId;
             var result = await dbContext.OvumPickupDetails.Where(x => (x.OvumPickup.CourseOfTreatment.CustomerId == customerId || x.OvumThaw.CourseOfTreatment.CustomerId == customerId) && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
             {
                 courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
@@ -174,7 +130,73 @@ namespace prjProductiveLab_B.Services
             }).OrderBy(x=>x.freezeTime).ThenBy(x=>x.vialNumber).ToListAsync();
             return result;
         }
+        public async Task<List<GetOvumFreezeSummaryDto>> GetRecipientOvumFreezes(Guid courseOfTreatmentId)
+        {
+            var customer = dbContext.CourseOfTreatments.FirstOrDefault(x => x.CourseOfTreatmentId == courseOfTreatmentId);
+            if (customer == null)
+            {
+                return new List<GetOvumFreezeSummaryDto>();
+            }
+            Guid customerId = customer.CustomerId;
+            var result = await GetOvumFreezesByCustomerId(customerId);
+            return result;
+        }
 
-        
+        private async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezesByCustomerId(Guid customerId)
+        {
+            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.OvumThawId == null && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
+            {
+                courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
+                courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
+                ovumNumber = x.OvumNumber,
+                ovumPickupTime = x.OvumPickup.StartTime,
+                freezeTime = x.OvumFreeze.FreezeTime,
+                freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
+                {
+                    ovumPickupDetailId = y.OvumPickupDetailId,
+                    observationTime = y.ObservationTime,
+                    memo = y.Memo,
+                    day = y.Day,
+                    ovumMaturationName = y.OvumMaturation.Name,
+                    ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Select(z => z.ForeignKey.Name).ToList(),
+                    observationNotePhotos = y.ObservationNotePhotos.Where(z => z.IsMainPhoto && z.IsDeleted == false).Select(z => new ObservationNotePhotoDto
+                    {
+                        observationNotePhotoId = z.ObservationNotePhotoId,
+                        photoName = z.PhotoName,
+                    }).ToList(),
+                }).FirstOrDefault(),
+                freezeStorageInfo = new BaseStorage
+                {
+                    tankInfo = new StorageTankDto
+                    {
+                        tankName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
+                        tankTypeId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId
+                    },
+                    canistName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.CanistName,
+                    stripBoxId = x.OvumFreeze.StorageUnit.StorageStripBoxId,
+                    unitInfo = new StorageUnitDto
+                    {
+                        storageUnitId = x.OvumFreeze.StorageUnitId,
+                        unitName = x.OvumFreeze.StorageUnit.UnitName
+                    },
+                    topColorName = x.OvumFreeze.TopColor.Name
+                },
+                medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name
+            }).OrderBy(x => x.freezeTime).ThenBy(x => x.ovumNumber).ToListAsync();
+            ConvertPhotoToBase64String(result);
+            return result;
+        }
+
+
+        public async Task<List<GetOvumFreezeSummaryDto>> GetDonorOvumFreezes(int customerSqlId)
+        {
+            var customer = dbContext.Customers.FirstOrDefault(x => x.SqlId == customerSqlId);
+            if (customer == null)
+            {
+                return new List<GetOvumFreezeSummaryDto>();
+            }
+            var result = await GetOvumFreezesByCustomerId(customer.CustomerId);
+            return result;
+        }
     }
 }

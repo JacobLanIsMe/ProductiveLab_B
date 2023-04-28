@@ -29,5 +29,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await freezeSummaryService.GetRecipientOvumFreezes(courseOfTreatmentId);
         }
+        [HttpGet("GetDonorOvumFreezes")]
+        public async Task<List<GetOvumFreezeSummaryDto>> GetDonorOvumFreezes(int customerSqlId)
+        {
+            return await freezeSummaryService.GetDonorOvumFreezes(customerSqlId);
+        }
     }
 }
