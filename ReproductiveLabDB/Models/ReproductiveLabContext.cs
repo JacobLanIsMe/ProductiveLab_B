@@ -862,6 +862,40 @@ namespace ReproductiveLabDB.Models
                     .HasForeignKey(d => d.CourseOfTreatmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumThaw_CourseOfTreatment");
+
+                entity.HasOne(d => d.EmbryologistNavigation)
+                    .WithMany(p => p.OvumThawEmbryologistNavigations)
+                    .HasForeignKey(d => d.Embryologist)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumThaw_Employee");
+
+                entity.HasOne(d => d.MediumInUseId1Navigation)
+                    .WithMany(p => p.OvumThawMediumInUseId1Navigations)
+                    .HasForeignKey(d => d.MediumInUseId1)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumThaw_MediumInUse1");
+
+                entity.HasOne(d => d.MediumInUseId2Navigation)
+                    .WithMany(p => p.OvumThawMediumInUseId2Navigations)
+                    .HasForeignKey(d => d.MediumInUseId2)
+                    .HasConstraintName("FK_OvumThaw_MediumInUse2");
+
+                entity.HasOne(d => d.MediumInUseId3Navigation)
+                    .WithMany(p => p.OvumThawMediumInUseId3Navigations)
+                    .HasForeignKey(d => d.MediumInUseId3)
+                    .HasConstraintName("FK_OvumThaw_MediumInUse3");
+
+                entity.HasOne(d => d.RecheckEmbryologistNavigation)
+                    .WithMany(p => p.OvumThawRecheckEmbryologistNavigations)
+                    .HasForeignKey(d => d.RecheckEmbryologist)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumThaw_Employee1");
+
+                entity.HasOne(d => d.ThawMediumInUse)
+                    .WithMany(p => p.OvumThawThawMediumInUses)
+                    .HasForeignKey(d => d.ThawMediumInUseId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumThaw_MediumInUse");
             });
 
             modelBuilder.Entity<OvumThawFreezePair>(entity =>

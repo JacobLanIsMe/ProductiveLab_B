@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Dtos.ForTreatmentSummary;
+using prjProductiveLab_B.Dtos.ForTreatment;
 using prjProductiveLab_B.Interfaces;
 
 namespace prjProductiveLab_B.Controllers

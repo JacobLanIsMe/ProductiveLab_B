@@ -2,6 +2,7 @@
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
+using System.Runtime.CompilerServices;
 
 namespace prjProductiveLab_B.Services
 {
@@ -33,6 +34,16 @@ namespace prjProductiveLab_B.Services
             return allFunctions;
         }
 
-        
+        public async Task<List<FunctionDto>> GetSubfunctions(int functionId)
+        {
+            return await dbContext.Functions.Where(x => x.ParentFunctionId == functionId).Select(x => new FunctionDto
+            {
+                functionId = x.SqlId,
+                name = x.Name,
+                route = x.Route,
+                functionTypeId = x.FunctionTypeId,
+                subFunctions = null
+            }).OrderBy(x=>x.functionId).AsNoTracking().ToListAsync();
+        }
     }
 }

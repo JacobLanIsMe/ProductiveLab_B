@@ -1,4 +1,4 @@
-﻿namespace prjProductiveLab_B.Dtos.ForTreatmentSummary
+﻿namespace prjProductiveLab_B.Dtos.ForTreatment
 {
     public class AddFertilisationDto
     {

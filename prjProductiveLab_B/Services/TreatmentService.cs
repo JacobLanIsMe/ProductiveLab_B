@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Dtos.ForTreatmentSummary;
+using prjProductiveLab_B.Dtos.ForTreatment;
 using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
@@ -377,5 +377,10 @@ namespace prjProductiveLab_B.Services
             }
             return result;
         }
+
+        //public BaseResponseDto AddOvumThaw()
+        //{
+
+        //}
     }
 }

@@ -12,6 +12,8 @@ namespace ReproductiveLabDB.Models
             ObservationNotes = new HashSet<ObservationNote>();
             OvumFreezes = new HashSet<OvumFreeze>();
             OvumPickups = new HashSet<OvumPickup>();
+            OvumThawEmbryologistNavigations = new HashSet<OvumThaw>();
+            OvumThawRecheckEmbryologistNavigations = new HashSet<OvumThaw>();
             SpermFreezeSituations = new HashSet<SpermFreezeSituation>();
             SpermScores = new HashSet<SpermScore>();
             SpermThawEmbryologistNavigations = new HashSet<SpermThaw>();
@@ -33,6 +35,8 @@ namespace ReproductiveLabDB.Models
         public virtual ICollection<ObservationNote> ObservationNotes { get; set; }
         public virtual ICollection<OvumFreeze> OvumFreezes { get; set; }
         public virtual ICollection<OvumPickup> OvumPickups { get; set; }
+        public virtual ICollection<OvumThaw> OvumThawEmbryologistNavigations { get; set; }
+        public virtual ICollection<OvumThaw> OvumThawRecheckEmbryologistNavigations { get; set; }
         public virtual ICollection<SpermFreezeSituation> SpermFreezeSituations { get; set; }
         public virtual ICollection<SpermScore> SpermScores { get; set; }
         public virtual ICollection<SpermThaw> SpermThawEmbryologistNavigations { get; set; }

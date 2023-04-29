@@ -1,5 +1,5 @@
 ﻿using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Dtos.ForTreatmentSummary;
+using prjProductiveLab_B.Dtos.ForTreatment;
 
 namespace prjProductiveLab_B.Interfaces
 {

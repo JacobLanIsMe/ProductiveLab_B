@@ -20,5 +20,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await functionService.GetAllFunctions();
         }
+        [HttpGet("GetSubfunctions")]
+        public async Task<List<FunctionDto>> GetSubfunctions(int functionId)
+        {
+            return await functionService.GetSubfunctions(functionId);
+        }
     }
 }
