@@ -9,6 +9,7 @@ namespace prjProductiveLab_B.Interfaces
         Task<BaseTreatmentInfoDto> GetBaseTreatmentInfo(Guid courseOfTreatmentId);
         Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId);
         Task<List<TreatmentDto>> GetAllTreatment();
+        Task<List<BaseCustomerInfoDto>> GetAllCustomer();
         Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input);
         Task<BaseResponseDto> AddOvumFreeze(AddOvumFreezeDto input);
         Task<Guid> GetOvumOwnerCustomerId(Guid courseOfTreatmentId);
@@ -17,5 +18,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<List<CommonDto>> GetFertilisationMethods();
         Task<List<CommonDto>> GetIncubators();
         BaseResponseDto AddFertilisation(AddFertilisationDto input);
+        BaseResponseDto AddOvumThaw(AddOvumThawDto input);
     }
 }

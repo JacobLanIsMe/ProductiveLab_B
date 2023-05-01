@@ -695,7 +695,7 @@ namespace prjProductiveLab_B.Services
         }
         public async Task<List<GetObservationNoteNameDto>> GetFreezeObservationNotes(List<Guid> ovumPickupDetailIds)
         {
-            return await dbContext.ObservationNotes.Where(x => ovumPickupDetailIds.Contains(x.OvumPickupDetailId) && x.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(x => new GetObservationNoteNameDto
+            return await dbContext.ObservationNotes.Where(x => ovumPickupDetailIds.Contains(x.OvumPickupDetailId) && x.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !x.IsDeleted).Select(x => new GetObservationNoteNameDto
             {
                 ovumNumber = x.OvumPickupDetail.OvumNumber,
                 day = x.Day,

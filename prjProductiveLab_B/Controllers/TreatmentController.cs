@@ -21,6 +21,11 @@ namespace prjProductiveLab_B.Controllers
         {
             return await this.treatmentService.GetAllTreatment();
         }
+        [HttpGet("GetAllCustomer")]
+        public async Task<List<BaseCustomerInfoDto>> GetAllCustomer()
+        {
+            return await treatmentService.GetAllCustomer();
+        }
         [HttpPost("AddCourseOfTreatment")]
         public async Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input)
         {
@@ -72,6 +77,11 @@ namespace prjProductiveLab_B.Controllers
         public BaseResponseDto AddFertilisation(AddFertilisationDto input)
         {
             return treatmentService.AddFertilisation(input);
+        }
+        [HttpPost("AddOvumThaw")]
+        public BaseResponseDto AddOvumThaw(AddOvumThawDto input)
+        {
+            return treatmentService.AddOvumThaw(input);
         }
     }
 }

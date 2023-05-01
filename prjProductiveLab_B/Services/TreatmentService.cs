@@ -53,7 +53,7 @@ namespace prjProductiveLab_B.Services
                             {
                                 OvumPickupId = latestOvumPickupId,
                                 OvumNumber = i,
-                                OvumPickupDetailStatusId = 1
+                                OvumPickupDetailStatusId = (int)OvumPickupDetailStatusEnum.Incubation
                             };
                             dbContext.Add(ovumPickupDetail);
                         }
@@ -150,14 +150,14 @@ namespace prjProductiveLab_B.Services
             return await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatmentId == courseOfTreatmentId || x.OvumThaw.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new TreatmentSummaryDto
             {
                 ovumPickupDetailId = x.OvumPickupDetailId,
-                courseOfTreatmentSqlId = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.SqlId : x.OvumThaw.CourseOfTreatment.SqlId,
-                ovumFromCourseOfTreatmentSqlId = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId,
+                courseOfTreatmentSqlId = x.OvumPickupId != null ? x.OvumPickup.CourseOfTreatment.SqlId : x.OvumThaw.CourseOfTreatment.SqlId,
+                ovumFromCourseOfTreatmentSqlId = x.OvumPickupId != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId,
                 ovumPickupDetailStatus = x.OvumPickupDetailStatus.Name,
-                dateOfEmbryo = x.OvumPickup != null ? (DateTime.Now.Date - x.OvumPickup.CourseOfTreatment.SurgicalTime.Date).Days : dbContext.ObservationNotes.Where(y=>y.OvumPickupDetailId == x.OvumThawFreezePairThawOvumPickupDetails.Select(z=>z.FreezeOvumPickupDetailId).FirstOrDefault() && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && y.OvumPickupDetail.Fertilisation == null).Select(y=>y.Day).FirstOrDefault() + (DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days, 
+                dateOfEmbryo = x.OvumPickupId != null ? (DateTime.Now.Date - x.OvumPickup.CourseOfTreatment.SurgicalTime.Date).Days : dbContext.ObservationNotes.Where(y=>y.OvumPickupDetailId == x.OvumThawFreezePairThawOvumPickupDetails.Select(z=>z.FreezeOvumPickupDetailId).FirstOrDefault() && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(y=>y.Day).FirstOrDefault() + (DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days, 
                 ovumNumber = x.OvumNumber,
-                hasFertilization = x.Fertilisation == null ? false : true,
-                observationNote = dbContext.ObservationNotes.Where(y => y.OvumPickupDetailId == x.OvumPickupDetailId).OrderByDescending(y => y.SqlId).Select(y => y.Memo).FirstOrDefault(),
-                ovumSource = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatment.Treatment.OvumSource.Name : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatment.Treatment.OvumSource.Name
+                hasFertilization = x.FertilisationId == null ? false : true,
+                observationNote = x.ObservationNotes.OrderByDescending(y => y.SqlId).Select(y => y.Memo).FirstOrDefault(),
+                ovumSource = x.OvumPickupId != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatment.Treatment.OvumSource.Name : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatment.Treatment.OvumSource.Name
 
             }).OrderBy(x=>x.ovumNumber).AsNoTracking().ToListAsync();
         }
@@ -180,6 +180,16 @@ namespace prjProductiveLab_B.Services
             return treatments;
         }
 
+        public async Task<List<BaseCustomerInfoDto>> GetAllCustomer()
+        {
+            return await dbContext.Customers.Select(x => new BaseCustomerInfoDto
+            {
+                customerId = x.CustomerId,
+                customerSqlId = x.SqlId,
+                customerName = x.Name,
+                birthday = x.Birthday
+            }).OrderBy(x => x.customerSqlId).ToListAsync();
+        }
         public async Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
@@ -227,7 +237,8 @@ namespace prjProductiveLab_B.Services
                         OvumMorphologyA = input.ovumMorphology_A,
                         OvumMorphologyB = input.ovumMorphology_B,
                         OvumMorphologyC = input.ovumMorphology_C,
-                        TopColorId = input.topColorId
+                        TopColorId = input.topColorId,
+                        IsThawed = false
                     };
                     dbContext.OvumFreezes.Add(ovumFreeze);
                     dbContext.SaveChanges();
@@ -378,9 +389,76 @@ namespace prjProductiveLab_B.Services
             return result;
         }
 
-        //public BaseResponseDto AddOvumThaw()
-        //{
-
-        //}
+        public BaseResponseDto AddOvumThaw(AddOvumThawDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                AddOvumThawValidation(input);
+                using(TransactionScope scope = new TransactionScope())
+                {
+                    OvumThaw ovumThaw = new OvumThaw
+                    {
+                        CourseOfTreatmentId = input.courseOfTreatmentId,
+                        ThawTime = input.thawTime,
+                        ThawMediumInUseId = input.thawMediumInUseId,
+                        Embryologist = input.embryologist,
+                        RecheckEmbryologist = input.recheckEmbryologist
+                    };
+                    sharedFunction.SetMediumInUse<OvumThaw>(ovumThaw, input.mediumInUseIds);
+                    dbContext.OvumThaws.Add(ovumThaw);
+                    dbContext.SaveChanges();
+                    Guid latestOvumThawId = dbContext.OvumThaws.OrderByDescending(x=>x.SqlId).Select(x=>x.OvumThawId).FirstOrDefault();
+                    for (int i = 0; i < input.freezeOvumPickupDetailIds.Count; i++)
+                    {
+                        OvumPickupDetail ovumPickupDetail = new OvumPickupDetail
+                        {
+                            OvumNumber = i + 1,
+                            OvumPickupDetailStatusId = (int)OvumPickupDetailStatusEnum.Incubation,
+                            OvumThawId = latestOvumThawId,
+                        };
+                        dbContext.OvumPickupDetails.Add(ovumPickupDetail);
+                        dbContext.SaveChanges();
+                        Guid thawOvumPickupDetailId = dbContext.OvumPickupDetails.OrderByDescending(x=>x.SqlId).Select(x=>x.OvumPickupDetailId).FirstOrDefault();
+                        OvumThawFreezePair ovumThawFreezePair = new OvumThawFreezePair
+                        {
+                            FreezeOvumPickupDetailId = input.freezeOvumPickupDetailIds[i],
+                            ThawOvumPickupDetailId = thawOvumPickupDetailId
+                        };
+                        dbContext.OvumThawFreezePairs.Add(ovumThawFreezePair);
+                        dbContext.SaveChanges();
+                    }
+                    var q = dbContext.OvumPickupDetails.Where(x => x.OvumFreezeId != null && input.freezeOvumPickupDetailIds.Contains(x.OvumPickupDetailId)).Select(x => new
+                    {
+                        ovumFreeze = x.OvumFreeze,
+                        storageUnit = x.OvumFreeze.StorageUnit
+                    });
+                    foreach (var i in q)
+                    {
+                        i.ovumFreeze.IsThawed = true;
+                        i.storageUnit.IsOccupied = false;
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch(Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
+        private void AddOvumThawValidation(AddOvumThawDto input)
+        {
+            if (input.freezeOvumPickupDetailIds == null || input.freezeOvumPickupDetailIds.Count <= 0)
+            {
+                throw new Exception("請選擇要解凍的卵子");
+            }
+            if (input.mediumInUseIds == null || input.mediumInUseIds.Count <= 0)
+            {
+                throw new Exception("請選擇培養液");
+            }
+        }
     }
 }

@@ -51,6 +51,7 @@ namespace prjProductiveLab_B.Services
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze.FreezeTime,
+                thawTime = x.OvumThaw.ThawTime,
                 freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
                 {
                     observationNoteId = y.ObservationNoteId,
@@ -144,13 +145,20 @@ namespace prjProductiveLab_B.Services
 
         private async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezesByCustomerId(Guid customerId)
         {
-            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.OvumThawId == null && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
+            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
             {
                 courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
                 courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
+                ovumOwner = new BaseCustomerInfoDto
+                {
+                    customerId = customerId,
+                    customerSqlId = x.OvumPickup.CourseOfTreatment.Customer.SqlId,
+                    customerName = x.OvumPickup.CourseOfTreatment.Customer.Name
+                },
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze.FreezeTime,
+                thawTime = x.OvumThaw.ThawTime,
                 freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
                 {
                     ovumPickupDetailId = y.OvumPickupDetailId,
