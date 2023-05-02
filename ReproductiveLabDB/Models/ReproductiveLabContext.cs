@@ -49,11 +49,11 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<ObservationType> ObservationTypes { get; set; } = null!;
         public virtual DbSet<OperationType> OperationTypes { get; set; } = null!;
         public virtual DbSet<OvumAbnormality> OvumAbnormalities { get; set; } = null!;
+        public virtual DbSet<OvumDetail> OvumDetails { get; set; } = null!;
+        public virtual DbSet<OvumDetailStatus> OvumDetailStatuses { get; set; } = null!;
         public virtual DbSet<OvumFreeze> OvumFreezes { get; set; } = null!;
         public virtual DbSet<OvumMaturation> OvumMaturations { get; set; } = null!;
         public virtual DbSet<OvumPickup> OvumPickups { get; set; } = null!;
-        public virtual DbSet<OvumPickupDetail> OvumPickupDetails { get; set; } = null!;
-        public virtual DbSet<OvumPickupDetailStatus> OvumPickupDetailStatuses { get; set; } = null!;
         public virtual DbSet<OvumThaw> OvumThaws { get; set; } = null!;
         public virtual DbSet<OvumThawFreezePair> OvumThawFreezePairs { get; set; } = null!;
         public virtual DbSet<SpermFreeze> SpermFreezes { get; set; } = null!;
@@ -544,16 +544,16 @@ namespace ReproductiveLabDB.Models
                     .HasForeignKey(d => d.ObservationTypeId)
                     .HasConstraintName("FK_ObservationNote_ObservationType");
 
+                entity.HasOne(d => d.OvumDetail)
+                    .WithMany(p => p.ObservationNotes)
+                    .HasForeignKey(d => d.OvumDetailId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNote_OvumPickupDetail");
+
                 entity.HasOne(d => d.OvumMaturation)
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.OvumMaturationId)
                     .HasConstraintName("FK_ObservationNote_OvumMaturation");
-
-                entity.HasOne(d => d.OvumPickupDetail)
-                    .WithMany(p => p.ObservationNotes)
-                    .HasForeignKey(d => d.OvumPickupDetailId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ObservationNote_OvumPickupDetail");
             });
 
             modelBuilder.Entity<ObservationNoteEmbryoStatus>(entity =>
@@ -685,6 +685,64 @@ namespace ReproductiveLabDB.Models
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
+            modelBuilder.Entity<OvumDetail>(entity =>
+            {
+                entity.HasKey(e => e.OvumDetailId)
+                    .HasName("PK_OvumPickupDetail")
+                    .IsClustered(false);
+
+                entity.ToTable("OvumDetail");
+
+                entity.HasIndex(e => e.SqlId, "IX_OvumPickupDetail")
+                    .IsClustered();
+
+                entity.Property(e => e.OvumDetailId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.CourseOfTreatment)
+                    .WithMany(p => p.OvumDetails)
+                    .HasForeignKey(d => d.CourseOfTreatmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumDetail_CourseOfTreatment");
+
+                entity.HasOne(d => d.Fertilisation)
+                    .WithMany(p => p.OvumDetails)
+                    .HasForeignKey(d => d.FertilisationId)
+                    .HasConstraintName("FK_OvumPickupDetail_Fertilisation");
+
+                entity.HasOne(d => d.OvumDetailStatus)
+                    .WithMany(p => p.OvumDetails)
+                    .HasForeignKey(d => d.OvumDetailStatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumPickupDetail_OvumPickupDetailStatus");
+
+                entity.HasOne(d => d.OvumFreeze)
+                    .WithMany(p => p.OvumDetails)
+                    .HasForeignKey(d => d.OvumFreezeId)
+                    .HasConstraintName("FK_OvumPickupDetail_OvumFreeze");
+
+                entity.HasOne(d => d.OvumPickup)
+                    .WithMany(p => p.OvumDetails)
+                    .HasForeignKey(d => d.OvumPickupId)
+                    .HasConstraintName("FK_OvumPickupDetail_OvumPickup");
+
+                entity.HasOne(d => d.OvumThaw)
+                    .WithMany(p => p.OvumDetails)
+                    .HasForeignKey(d => d.OvumThawId)
+                    .HasConstraintName("FK_OvumPickupDetail_OvumThaw");
+            });
+
+            modelBuilder.Entity<OvumDetailStatus>(entity =>
+            {
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_OvumPickupDetailStatus");
+
+                entity.ToTable("OvumDetailStatus");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<OvumFreeze>(entity =>
             {
                 entity.HasKey(e => e.OvumFreezeId)
@@ -773,72 +831,11 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.UpdateTime).HasColumnType("datetime");
 
-                entity.HasOne(d => d.CourseOfTreatment)
-                    .WithMany(p => p.OvumPickups)
-                    .HasForeignKey(d => d.CourseOfTreatmentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickup_CourseOfTreatment");
-
                 entity.HasOne(d => d.EmbryologistNavigation)
                     .WithMany(p => p.OvumPickups)
                     .HasForeignKey(d => d.Embryologist)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumPickup_Employee");
-            });
-
-            modelBuilder.Entity<OvumPickupDetail>(entity =>
-            {
-                entity.HasKey(e => e.OvumPickupDetailId)
-                    .IsClustered(false);
-
-                entity.ToTable("OvumPickupDetail");
-
-                entity.HasIndex(e => e.SqlId, "IX_OvumPickupDetail")
-                    .IsClustered();
-
-                entity.Property(e => e.OvumPickupDetailId).HasDefaultValueSql("(newid())");
-
-                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
-
-                entity.HasOne(d => d.Fertilisation)
-                    .WithMany(p => p.OvumPickupDetails)
-                    .HasForeignKey(d => d.FertilisationId)
-                    .HasConstraintName("FK_OvumPickupDetail_Fertilisation");
-
-                entity.HasOne(d => d.MediumInUse)
-                    .WithMany(p => p.OvumPickupDetails)
-                    .HasForeignKey(d => d.MediumInUseId)
-                    .HasConstraintName("FK_OvumPickupDetail_MediumInUse");
-
-                entity.HasOne(d => d.OvumFreeze)
-                    .WithMany(p => p.OvumPickupDetails)
-                    .HasForeignKey(d => d.OvumFreezeId)
-                    .HasConstraintName("FK_OvumPickupDetail_OvumFreeze");
-
-                entity.HasOne(d => d.OvumPickupDetailStatus)
-                    .WithMany(p => p.OvumPickupDetails)
-                    .HasForeignKey(d => d.OvumPickupDetailStatusId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickupDetail_OvumPickupDetailStatus");
-
-                entity.HasOne(d => d.OvumPickup)
-                    .WithMany(p => p.OvumPickupDetails)
-                    .HasForeignKey(d => d.OvumPickupId)
-                    .HasConstraintName("FK_OvumPickupDetail_OvumPickup");
-
-                entity.HasOne(d => d.OvumThaw)
-                    .WithMany(p => p.OvumPickupDetails)
-                    .HasForeignKey(d => d.OvumThawId)
-                    .HasConstraintName("FK_OvumPickupDetail_OvumThaw");
-            });
-
-            modelBuilder.Entity<OvumPickupDetailStatus>(entity =>
-            {
-                entity.HasKey(e => e.SqlId);
-
-                entity.ToTable("OvumPickupDetailStatus");
-
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<OvumThaw>(entity =>
@@ -856,12 +853,6 @@ namespace ReproductiveLabDB.Models
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.ThawTime).HasColumnType("datetime");
-
-                entity.HasOne(d => d.CourseOfTreatment)
-                    .WithMany(p => p.OvumThaws)
-                    .HasForeignKey(d => d.CourseOfTreatmentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumThaw_CourseOfTreatment");
 
                 entity.HasOne(d => d.EmbryologistNavigation)
                     .WithMany(p => p.OvumThawEmbryologistNavigations)
@@ -908,25 +899,19 @@ namespace ReproductiveLabDB.Models
                 entity.HasIndex(e => e.SqlId, "IX_OvumThawFreezePair")
                     .IsClustered();
 
-                entity.Property(e => e.OvumThawFreezePairId).ValueGeneratedNever();
+                entity.Property(e => e.OvumThawFreezePairId).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
-                entity.HasOne(d => d.FreezeOvumPickupDetail)
-                    .WithMany(p => p.OvumThawFreezePairFreezeOvumPickupDetails)
-                    .HasForeignKey(d => d.FreezeOvumPickupDetailId)
+                entity.HasOne(d => d.FreezeOvumDetail)
+                    .WithMany(p => p.OvumThawFreezePairFreezeOvumDetails)
+                    .HasForeignKey(d => d.FreezeOvumDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumThawFreezePair_OvumPickupDetail");
 
-                entity.HasOne(d => d.OvumThaw)
-                    .WithMany(p => p.OvumThawFreezePairs)
-                    .HasForeignKey(d => d.OvumThawId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumThawFreezePair_OvumThaw");
-
-                entity.HasOne(d => d.ThawOvumPickupDetail)
-                    .WithMany(p => p.OvumThawFreezePairThawOvumPickupDetails)
-                    .HasForeignKey(d => d.ThawOvumPickupDetailId)
+                entity.HasOne(d => d.ThawOvumDetail)
+                    .WithMany(p => p.OvumThawFreezePairThawOvumDetails)
+                    .HasForeignKey(d => d.ThawOvumDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumThawFreezePair_OvumPickupDetail1");
             });

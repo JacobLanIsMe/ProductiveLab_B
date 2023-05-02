@@ -8,6 +8,6 @@
         public Guid thawMediumInUseId { get; set; }
         public Guid recheckEmbryologist { get; set; }
         public List<Guid>? mediumInUseIds { get; set; }
-        public List<Guid>? freezeOvumPickupDetailIds { get; set; }
+        public List<Guid>? freezeOvumDetailIds { get; set; }
     }
 }

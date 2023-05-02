@@ -15,7 +15,7 @@ namespace ReproductiveLabDB.Models
 
         public int SqlId { get; set; }
         public Guid ObservationNoteId { get; set; }
-        public Guid OvumPickupDetailId { get; set; }
+        public Guid OvumDetailId { get; set; }
         public DateTime ObservationTime { get; set; }
         public Guid Embryologist { get; set; }
         public int? OvumMaturationId { get; set; }
@@ -44,8 +44,8 @@ namespace ReproductiveLabDB.Models
         public virtual Employee EmbryologistNavigation { get; set; } = null!;
         public virtual FertilisationResult? FertilisationResult { get; set; }
         public virtual ObservationType? ObservationType { get; set; }
+        public virtual OvumDetail OvumDetail { get; set; } = null!;
         public virtual OvumMaturation? OvumMaturation { get; set; }
-        public virtual OvumPickupDetail OvumPickupDetail { get; set; } = null!;
         public virtual ICollection<ObservationNoteEmbryoStatus> ObservationNoteEmbryoStatuses { get; set; }
         public virtual ICollection<ObservationNoteOperation> ObservationNoteOperations { get; set; }
         public virtual ICollection<ObservationNoteOvumAbnormality> ObservationNoteOvumAbnormalities { get; set; }

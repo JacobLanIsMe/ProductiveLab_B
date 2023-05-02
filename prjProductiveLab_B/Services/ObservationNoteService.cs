@@ -21,18 +21,18 @@ namespace prjProductiveLab_B.Services
 
         public async Task<List<ObservationNoteDto>> GetObservationNote(Guid courseOfTreatmentId)
         {
-            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new ObservationNoteDto
+            var result = await dbContext.OvumDetails.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new ObservationNoteDto
             {
-                ovumPickupDetailId = x.OvumPickupDetailId,
+                ovumDetailId = x.OvumDetailId,
                 ovumPickupDate = x.OvumPickup.UpdateTime,
                 ovumNumber = x.OvumNumber,
-                observationNote = dbContext.ObservationNotes.Where(y=>y.OvumPickupDetailId == x.OvumPickupDetailId && y.IsDeleted == false).Include(y=>y.ObservationNotePhotos).Select(y=>new Observation
+                observationNote = x.ObservationNotes.Where(y=>y.IsDeleted == false).Select(y=>new Observation
                 {
                     observationNoteId = y.ObservationNoteId,
                     observationType = y.ObservationType.Name,
                     day = y.Day,
                     observationTime = y.ObservationTime,
-                    mainPhoto = y.ObservationNotePhotos.Where(z=>z.IsMainPhoto == true && z.IsDeleted == false).Select(z=>z.PhotoName).FirstOrDefault()
+                    mainPhoto = y.ObservationNotePhotos.Where(z => z.IsMainPhoto == true && z.IsDeleted == false).Select(z => z.PhotoName).FirstOrDefault()
                 }).ToList()
             }).OrderBy(x => x.ovumNumber).AsNoTracking().ToListAsync();
             foreach (var i in result)
@@ -192,7 +192,7 @@ namespace prjProductiveLab_B.Services
 
         private ObservationNote GenerateObservationNote(ObservationNote observationNote, AddObservationNoteDto input)
         {
-            observationNote.OvumPickupDetailId = input.ovumPickupDetailId;
+            observationNote.OvumDetailId = input.ovumDetailId;
             observationNote.Embryologist = input.embryologist;
             observationNote.Day = input.day;
             observationNote.IsDeleted = false;
@@ -541,9 +541,9 @@ namespace prjProductiveLab_B.Services
 
         public async Task<GetObservationNoteDto?> GetExistingObservationNote(Guid observationNoteId)
         {
-            var result = await dbContext.ObservationNotes.Where(x => x.ObservationNoteId == observationNoteId).Include(x => x.ObservationNotePhotos).Include(x => x.ObservationNoteOperations).Include(x => x.ObservationNoteEmbryoStatuses).Include(x => x.ObservationNoteOvumAbnormalities).Select(x => new GetObservationNoteDto
+            var result = await dbContext.ObservationNotes.Where(x => x.ObservationNoteId == observationNoteId).Select(x => new GetObservationNoteDto
             {
-                ovumPickupDetailId = x.OvumPickupDetailId,
+                ovumDetailId = x.OvumDetailId,
                 observationTime = x.ObservationTime,
                 embryologist = x.Embryologist,
                 ovumMaturationId = x.OvumMaturationId.ToString(),
@@ -591,9 +591,9 @@ namespace prjProductiveLab_B.Services
         }
         public async Task<GetObservationNoteNameDto?> GetExistingObservationNoteName(Guid observationNoteId)
         {
-            var result = await dbContext.ObservationNotes.Where(x => x.ObservationNoteId == observationNoteId).Include(x => x.ObservationNotePhotos).Select(x => new GetObservationNoteNameDto
+            var result = await dbContext.ObservationNotes.Where(x => x.ObservationNoteId == observationNoteId).Select(x => new GetObservationNoteNameDto
             {
-                ovumPickupDetailId = x.OvumPickupDetailId,
+                ovumDetailId = x.OvumDetailId,
                 observationTime = x.ObservationTime,
                 memo = x.Memo,
                 kidScore = x.Kidscore.ToString(),
@@ -693,11 +693,11 @@ namespace prjProductiveLab_B.Services
             
             return result;
         }
-        public async Task<List<GetObservationNoteNameDto>> GetFreezeObservationNotes(List<Guid> ovumPickupDetailIds)
+        public async Task<List<GetObservationNoteNameDto>> GetFreezeObservationNotes(List<Guid> ovumDetailIds)
         {
-            return await dbContext.ObservationNotes.Where(x => ovumPickupDetailIds.Contains(x.OvumPickupDetailId) && x.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !x.IsDeleted).Select(x => new GetObservationNoteNameDto
+            return await dbContext.ObservationNotes.Where(x => ovumDetailIds.Contains(x.OvumDetailId) && x.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !x.IsDeleted).Select(x => new GetObservationNoteNameDto
             {
-                ovumNumber = x.OvumPickupDetail.OvumNumber,
+                ovumNumber = x.OvumDetail.OvumNumber,
                 day = x.Day,
                 fertilisationResultName = x.FertilisationResult.Name,
                 observationTime = x.ObservationTime,

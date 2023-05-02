@@ -2,7 +2,7 @@
 {
     public class ObservationNoteDto
     {
-        public Guid ovumPickupDetailId { get; set; }
+        public Guid ovumDetailId { get; set; }
         public DateTime? ovumPickupDate { get; set; }
         public int ovumNumber { get; set; }
         public List<Observation> observationNote { get; set; }

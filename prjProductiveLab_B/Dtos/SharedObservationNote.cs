@@ -2,7 +2,7 @@
 {
     public class SharedObservationNote
     {
-        public Guid ovumPickupDetailId { get; set; }
+        public Guid ovumDetailId { get; set; }
         
         public DateTime? observationTime { get; set; }
         public string? memo { get; set; }

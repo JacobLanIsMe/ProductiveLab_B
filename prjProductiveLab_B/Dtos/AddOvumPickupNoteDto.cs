@@ -3,7 +3,7 @@
     public class AddOvumPickupNoteDto
     {
 
-        public string? courseOfTreatmentId { get; set; }
+        public Guid courseOfTreatmentId { get; set; }
         public OperationTime? operationTime { get; set; }
         public OvumPickupNumber? ovumPickupNumber { get; set; }
         public string? embryologist { get; set; }

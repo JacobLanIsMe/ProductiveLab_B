@@ -2,7 +2,7 @@
 {
     public class AddOvumFreezeDto
     {
-        public List<Guid> ovumPickupDetailId { get; set; }
+        public List<Guid> ovumDetailId { get; set; }
         public DateTime freezeTime { get; set; }
         public Guid embryologist { get; set; }
         public int storageUnitId { get; set; }

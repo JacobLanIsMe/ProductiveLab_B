@@ -2,7 +2,7 @@
 
 namespace prjProductiveLab_B.Enums
 {
-    public enum OvumPickupDetailStatusEnum
+    public enum OvumDetailStatusEnum
     {
         Incubation = 1,
         Suspend = 2,

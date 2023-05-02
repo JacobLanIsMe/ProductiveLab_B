@@ -7,12 +7,10 @@ namespace ReproductiveLabDB.Models
     {
         public int SqlId { get; set; }
         public Guid OvumThawFreezePairId { get; set; }
-        public Guid OvumThawId { get; set; }
-        public Guid FreezeOvumPickupDetailId { get; set; }
-        public Guid ThawOvumPickupDetailId { get; set; }
+        public Guid FreezeOvumDetailId { get; set; }
+        public Guid ThawOvumDetailId { get; set; }
 
-        public virtual OvumPickupDetail FreezeOvumPickupDetail { get; set; } = null!;
-        public virtual OvumThaw OvumThaw { get; set; } = null!;
-        public virtual OvumPickupDetail ThawOvumPickupDetail { get; set; } = null!;
+        public virtual OvumDetail FreezeOvumDetail { get; set; } = null!;
+        public virtual OvumDetail ThawOvumDetail { get; set; } = null!;
     }
 }

@@ -11,7 +11,6 @@ namespace ReproductiveLabDB.Models
             FertilisationMediumInUseId2Navigations = new HashSet<Fertilisation>();
             FertilisationMediumInUseId3Navigations = new HashSet<Fertilisation>();
             OvumFreezes = new HashSet<OvumFreeze>();
-            OvumPickupDetails = new HashSet<OvumPickupDetail>();
             OvumThawMediumInUseId1Navigations = new HashSet<OvumThaw>();
             OvumThawMediumInUseId2Navigations = new HashSet<OvumThaw>();
             OvumThawMediumInUseId3Navigations = new HashSet<OvumThaw>();
@@ -39,7 +38,6 @@ namespace ReproductiveLabDB.Models
         public virtual ICollection<Fertilisation> FertilisationMediumInUseId2Navigations { get; set; }
         public virtual ICollection<Fertilisation> FertilisationMediumInUseId3Navigations { get; set; }
         public virtual ICollection<OvumFreeze> OvumFreezes { get; set; }
-        public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }
         public virtual ICollection<OvumThaw> OvumThawMediumInUseId1Navigations { get; set; }
         public virtual ICollection<OvumThaw> OvumThawMediumInUseId2Navigations { get; set; }
         public virtual ICollection<OvumThaw> OvumThawMediumInUseId3Navigations { get; set; }

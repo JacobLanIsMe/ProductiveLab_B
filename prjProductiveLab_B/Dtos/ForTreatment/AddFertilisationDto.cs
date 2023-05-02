@@ -8,6 +8,6 @@
         public string? otherIncubator { get; set; }
         public List<Guid>? mediumInUseIds { get; set; }
         public Guid embryologist { get; set; }
-        public List<Guid>? ovumPickupDetailIds { get; set; }
+        public List<Guid>? ovumDetailIds { get; set; }
     }
 }

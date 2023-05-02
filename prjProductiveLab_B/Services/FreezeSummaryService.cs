@@ -42,12 +42,12 @@ namespace prjProductiveLab_B.Services
                 return new List<GetOvumFreezeSummaryDto>();
             }
             Guid customerId = customer.CustomerId;
-            var result = await dbContext.OvumPickupDetails.Where(x => (x.OvumPickup.CourseOfTreatment.CustomerId == customerId || x.OvumThaw.CourseOfTreatment.CustomerId == customerId) && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
+            var result = await dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
             {
-                courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
-                courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
-                ovumFromCourseOfTreatmentSqlId = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId,
-                ovumFromCourseOfTreatmentId = x.OvumPickup != null ? x.OvumPickup.CourseOfTreatment.OvumFromCourseOfTreatmentId : x.OvumThaw.CourseOfTreatment.OvumFromCourseOfTreatmentId,
+                courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
+                courseOfTreatmentId = x.CourseOfTreatmentId,
+                ovumFromCourseOfTreatmentSqlId = x.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId,
+                ovumFromCourseOfTreatmentId = x.CourseOfTreatment.OvumFromCourseOfTreatmentId,
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze.FreezeTime,
@@ -145,23 +145,23 @@ namespace prjProductiveLab_B.Services
 
         private async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezesByCustomerId(Guid customerId)
         {
-            var result = await dbContext.OvumPickupDetails.Where(x => x.OvumPickup.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
+            var result = await dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
             {
-                courseOfTreatmentSqlId = x.OvumPickup.CourseOfTreatment.SqlId,
-                courseOfTreatmentId = x.OvumPickup.CourseOfTreatmentId,
+                courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
+                courseOfTreatmentId = x.CourseOfTreatmentId,
                 ovumOwner = new BaseCustomerInfoDto
                 {
                     customerId = customerId,
-                    customerSqlId = x.OvumPickup.CourseOfTreatment.Customer.SqlId,
-                    customerName = x.OvumPickup.CourseOfTreatment.Customer.Name
+                    customerSqlId = x.CourseOfTreatment.Customer.SqlId,
+                    customerName = x.CourseOfTreatment.Customer.Name
                 },
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze.FreezeTime,
-                thawTime = x.OvumThaw.ThawTime,
+                thawTime = x.OvumThawFreezePairFreezeOvumDetails.FirstOrDefault().ThawOvumDetail.OvumThaw.ThawTime,
                 freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
                 {
-                    ovumPickupDetailId = y.OvumPickupDetailId,
+                    ovumDetailId = y.OvumDetailId,
                     observationTime = y.ObservationTime,
                     memo = y.Memo,
                     day = y.Day,

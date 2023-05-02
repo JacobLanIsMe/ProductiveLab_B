@@ -7,7 +7,7 @@ namespace ReproductiveLabDB.Models
     {
         public Fertilisation()
         {
-            OvumPickupDetails = new HashSet<OvumPickupDetail>();
+            OvumDetails = new HashSet<OvumDetail>();
         }
 
         public int SqlId { get; set; }
@@ -27,6 +27,6 @@ namespace ReproductiveLabDB.Models
         public virtual MediumInUse MediumInUseId1Navigation { get; set; } = null!;
         public virtual MediumInUse? MediumInUseId2Navigation { get; set; }
         public virtual MediumInUse? MediumInUseId3Navigation { get; set; }
-        public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }
+        public virtual ICollection<OvumDetail> OvumDetails { get; set; }
     }
 }

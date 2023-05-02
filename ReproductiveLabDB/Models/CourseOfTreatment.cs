@@ -9,8 +9,7 @@ namespace ReproductiveLabDB.Models
         {
             InverseOvumFromCourseOfTreatment = new HashSet<CourseOfTreatment>();
             InverseSpermFromCourseOfTreatment = new HashSet<CourseOfTreatment>();
-            OvumPickups = new HashSet<OvumPickup>();
-            OvumThaws = new HashSet<OvumThaw>();
+            OvumDetails = new HashSet<OvumDetail>();
             SpermFreezes = new HashSet<SpermFreeze>();
             SpermScores = new HashSet<SpermScore>();
             SpermThaws = new HashSet<SpermThaw>();
@@ -35,8 +34,7 @@ namespace ReproductiveLabDB.Models
         public virtual TreatmentStatus TreatmentStatus { get; set; } = null!;
         public virtual ICollection<CourseOfTreatment> InverseOvumFromCourseOfTreatment { get; set; }
         public virtual ICollection<CourseOfTreatment> InverseSpermFromCourseOfTreatment { get; set; }
-        public virtual ICollection<OvumPickup> OvumPickups { get; set; }
-        public virtual ICollection<OvumThaw> OvumThaws { get; set; }
+        public virtual ICollection<OvumDetail> OvumDetails { get; set; }
         public virtual ICollection<SpermFreeze> SpermFreezes { get; set; }
         public virtual ICollection<SpermScore> SpermScores { get; set; }
         public virtual ICollection<SpermThaw> SpermThaws { get; set; }

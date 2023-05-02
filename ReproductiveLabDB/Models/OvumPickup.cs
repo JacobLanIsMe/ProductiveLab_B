@@ -7,12 +7,11 @@ namespace ReproductiveLabDB.Models
     {
         public OvumPickup()
         {
-            OvumPickupDetails = new HashSet<OvumPickupDetail>();
+            OvumDetails = new HashSet<OvumDetail>();
         }
 
         public int SqlId { get; set; }
         public Guid OvumPickupId { get; set; }
-        public Guid CourseOfTreatmentId { get; set; }
         public DateTime TriggerTime { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
@@ -27,8 +26,7 @@ namespace ReproductiveLabDB.Models
         public Guid? MediumInUseId2 { get; set; }
         public Guid? MediumInUseId3 { get; set; }
 
-        public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual Employee EmbryologistNavigation { get; set; } = null!;
-        public virtual ICollection<OvumPickupDetail> OvumPickupDetails { get; set; }
+        public virtual ICollection<OvumDetail> OvumDetails { get; set; }
     }
 }
