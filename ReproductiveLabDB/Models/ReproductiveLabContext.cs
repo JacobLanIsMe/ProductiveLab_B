@@ -216,7 +216,6 @@ namespace ReproductiveLabDB.Models
                 entity.HasOne(d => d.SpouseNavigation)
                     .WithMany(p => p.InverseSpouseNavigation)
                     .HasForeignKey(d => d.Spouse)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Customer_Customer");
             });
 
@@ -570,9 +569,9 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
-                entity.HasOne(d => d.ForeignKey)
+                entity.HasOne(d => d.EmbryoStatus)
                     .WithMany(p => p.ObservationNoteEmbryoStatuses)
-                    .HasForeignKey(d => d.ForeignKeyId)
+                    .HasForeignKey(d => d.EmbryoStatusId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ObservationNoteEmbryoStatus_EmbryoStatus");
 
@@ -597,17 +596,17 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
-                entity.HasOne(d => d.ForeignKey)
-                    .WithMany(p => p.ObservationNoteOperations)
-                    .HasForeignKey(d => d.ForeignKeyId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ObservationNoteOperation_OperationType");
-
                 entity.HasOne(d => d.ObservationNote)
                     .WithMany(p => p.ObservationNoteOperations)
                     .HasForeignKey(d => d.ObservationNoteId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ObservationNoteOperation_ObservationNote");
+
+                entity.HasOne(d => d.OperationType)
+                    .WithMany(p => p.ObservationNoteOperations)
+                    .HasForeignKey(d => d.OperationTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNoteOperation_OperationType");
             });
 
             modelBuilder.Entity<ObservationNoteOvumAbnormality>(entity =>
@@ -624,17 +623,17 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
-                entity.HasOne(d => d.ForeignKey)
-                    .WithMany(p => p.ObservationNoteOvumAbnormalities)
-                    .HasForeignKey(d => d.ForeignKeyId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ObservationNoteOvumAbnormality_OvumAbnormality");
-
                 entity.HasOne(d => d.ObservationNote)
                     .WithMany(p => p.ObservationNoteOvumAbnormalities)
                     .HasForeignKey(d => d.ObservationNoteId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ObservationNoteOvumAbnormality_ObservationNote");
+
+                entity.HasOne(d => d.OvumAbnormality)
+                    .WithMany(p => p.ObservationNoteOvumAbnormalities)
+                    .HasForeignKey(d => d.OvumAbnormalityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ObservationNoteOvumAbnormality_OvumAbnormality");
             });
 
             modelBuilder.Entity<ObservationNotePhoto>(entity =>

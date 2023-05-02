@@ -8,10 +8,10 @@ namespace ReproductiveLabDB.Models
         public int SqlId { get; set; }
         public Guid Id { get; set; }
         public Guid ObservationNoteId { get; set; }
-        public int ForeignKeyId { get; set; }
+        public int OvumAbnormalityId { get; set; }
         public bool IsDeleted { get; set; }
 
-        public virtual OvumAbnormality ForeignKey { get; set; } = null!;
         public virtual ObservationNote ObservationNote { get; set; } = null!;
+        public virtual OvumAbnormality OvumAbnormality { get; set; } = null!;
     }
 }

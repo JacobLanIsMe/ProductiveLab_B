@@ -8,11 +8,11 @@ namespace ReproductiveLabDB.Models
         public int SqlId { get; set; }
         public Guid Id { get; set; }
         public Guid ObservationNoteId { get; set; }
-        public int ForeignKeyId { get; set; }
+        public int OperationTypeId { get; set; }
         public string? SpindleResult { get; set; }
         public bool IsDeleted { get; set; }
 
-        public virtual OperationType ForeignKey { get; set; } = null!;
         public virtual ObservationNote ObservationNote { get; set; } = null!;
+        public virtual OperationType OperationType { get; set; } = null!;
     }
 }

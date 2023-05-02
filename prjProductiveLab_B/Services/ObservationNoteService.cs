@@ -334,7 +334,7 @@ namespace prjProductiveLab_B.Services
                     ObservationNoteOvumAbnormality ovumAbnormality = new ObservationNoteOvumAbnormality
                     {
                         ObservationNoteId = observationNoteId,
-                        ForeignKeyId = i,
+                        OvumAbnormalityId = i,
                         IsDeleted = false
                     };
                     dbContext.ObservationNoteOvumAbnormalities.Add(ovumAbnormality);
@@ -365,7 +365,7 @@ namespace prjProductiveLab_B.Services
                     ObservationNoteOperation operation = new ObservationNoteOperation
                     {
                         ObservationNoteId = observationNoteId,
-                        ForeignKeyId = i,
+                        OperationTypeId = i,
                         IsDeleted = false
                     };
                     if (i == (int)OperationTypeEnum.Spindle && input.spindleResult != "null")
@@ -401,7 +401,7 @@ namespace prjProductiveLab_B.Services
                     ObservationNoteEmbryoStatus embryoStatus = new ObservationNoteEmbryoStatus
                     {
                         ObservationNoteId = observationNoteId,
-                        ForeignKeyId = i,
+                        EmbryoStatusId = i,
                         IsDeleted = false
                     };
                     dbContext.ObservationNoteEmbryoStatuses.Add(embryoStatus);
@@ -548,12 +548,12 @@ namespace prjProductiveLab_B.Services
                 embryologist = x.Embryologist,
                 ovumMaturationId = x.OvumMaturationId.ToString(),
                 observationTypeId = x.ObservationTypeId.ToString(),
-                ovumAbnormalityIds = x.ObservationNoteOvumAbnormalities.Where(y => y.IsDeleted == false).Select(y => y.ForeignKeyId).ToList(),
+                ovumAbnormalityIds = x.ObservationNoteOvumAbnormalities.Where(y => y.IsDeleted == false).Select(y => y.OvumAbnormalityId).ToList(),
                 fertilisationResultId = x.FertilisationResultId.ToString(),
                 blastomereScore_C_Id = x.BlastomereScoreCId.ToString(),
                 blastomereScore_G_Id = x.BlastomereScoreGId.ToString(),
                 blastomereScore_F_Id = x.BlastomereScoreFId.ToString(),
-                embryoStatusIds = x.ObservationNoteEmbryoStatuses.Where(y => y.IsDeleted == false).Select(y => y.ForeignKeyId).ToList(),
+                embryoStatusIds = x.ObservationNoteEmbryoStatuses.Where(y => y.IsDeleted == false).Select(y => y.EmbryoStatusId).ToList(),
                 blastocystScore_Expansion_Id = x.BlastocystScoreExpansionId.ToString(),
                 blastocystScore_ICE_Id = x.BlastocystScoreIceId.ToString(),
                 blastocystScore_TE_Id = x.BlastocystScoreTeId.ToString(),
@@ -562,8 +562,8 @@ namespace prjProductiveLab_B.Services
                 pgtaNumber = x.Pgtanumber.ToString(),
                 pgtaResult = x.Pgtaresult,
                 pgtmResult = x.Pgtmresult,
-                operationTypeIds = x.ObservationNoteOperations.Where(y => y.IsDeleted == false).Select(y => y.ForeignKeyId).ToList(),
-                spindleResult = x.ObservationNoteOperations.Where(y => y.ForeignKeyId == (int)OperationTypeEnum.Spindle && y.SpindleResult != null && y.IsDeleted == false).Select(y => y.SpindleResult).FirstOrDefault(),
+                operationTypeIds = x.ObservationNoteOperations.Where(y => y.IsDeleted == false).Select(y => y.OperationTypeId).ToList(),
+                spindleResult = x.ObservationNoteOperations.Where(y => y.OperationTypeId == (int)OperationTypeEnum.Spindle && y.SpindleResult != null && y.IsDeleted == false).Select(y => y.SpindleResult).FirstOrDefault(),
                 day = x.Day,
                 observationNotePhotos = x.ObservationNotePhotos.Where(y => y.IsDeleted == false).Select(y => new ObservationNotePhotoDto
                 {
@@ -604,12 +604,12 @@ namespace prjProductiveLab_B.Services
                 embryologist = x.EmbryologistNavigation.Name,
                 ovumMaturationName = x.OvumMaturation.Name,
                 observationTypeName = x.ObservationType.Name,
-                ovumAbnormalityName = dbContext.ObservationNoteOvumAbnormalities.Where(y=>y.ObservationNoteId == observationNoteId && y.IsDeleted == false).Select(y=>y.ForeignKey.Name).ToList(),
+                ovumAbnormalityName = x.ObservationNoteOvumAbnormalities.Where(y=> y.IsDeleted == false).Select(y=>y.OvumAbnormality.Name).ToList(),
                 fertilisationResultName = x.FertilisationResult.Name,
                 blastomereScore_C_Name = x.BlastomereScoreC.Name,
                 blastomereScore_G_Name = x.BlastomereScoreG.Name,
                 blastomereScore_F_Name = x.BlastomereScoreF.Name,
-                embryoStatusName = dbContext.ObservationNoteEmbryoStatuses.Where(y=>y.ObservationNoteId == observationNoteId && y.IsDeleted == false).Select(y=>y.ForeignKey.Name).ToList(),
+                embryoStatusName = x.ObservationNoteEmbryoStatuses.Where(y=>y.IsDeleted == false).Select(y=>y.EmbryoStatus.Name).ToList(),
                 blastocystScore_Expansion_Name = x.BlastocystScoreExpansion.Name,
                 blastocystScore_ICE_Name = x.BlastocystScoreIce.Name,
                 blastocystScore_TE_Name = x.BlastocystScoreTe.Name,
@@ -628,12 +628,12 @@ namespace prjProductiveLab_B.Services
             {
                 var q = dbContext.ObservationNoteOperations.Where(x => x.ObservationNoteId == observationNoteId && x.IsDeleted == false).Select(x => new
                 {
-                    operationTypeName = x.ForeignKey.Name,
-                    foreignKeyId = x.ForeignKeyId,
+                    operationTypeName = x.OperationType.Name,
+                    operationTypeId = x.OperationTypeId,
                     spindleResult = x.SpindleResult
                 }).ToList();
                 result.operationTypeName = q.Select(x => x.operationTypeName).ToList();
-                result.spindleResult = q.Where(x => x.foreignKeyId == (int)OperationTypeEnum.Spindle && x.spindleResult != null).Select(x => x.spindleResult).FirstOrDefault();
+                result.spindleResult = q.Where(x => x.operationTypeId == (int)OperationTypeEnum.Spindle && x.spindleResult != null).Select(x => x.spindleResult).FirstOrDefault();
                 if (result.observationNotePhotos != null && result.observationNotePhotos.Count != 0)
                 {
                     GetObservationNotePhotoBase64String(result.observationNotePhotos);
