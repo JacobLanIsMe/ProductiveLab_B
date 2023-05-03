@@ -159,7 +159,7 @@ namespace prjProductiveLab_B.Services
             {
                 return new List<OvumFreezeStorageDto>();
             }
-            var result = await dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null).GroupBy(x => x.OvumFreeze.StorageUnit.StorageStripBoxId).Select(x => new OvumFreezeStorageDto
+            var result = await dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null && !x.OvumFreeze.IsThawed).GroupBy(x => x.OvumFreeze.StorageUnit.StorageStripBoxId).Select(x => new OvumFreezeStorageDto
             {
                 stripBoxId = x.Key,
                 tankId = x.Select(y => y.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTankId).FirstOrDefault(),

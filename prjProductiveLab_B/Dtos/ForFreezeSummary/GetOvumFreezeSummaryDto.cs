@@ -10,6 +10,7 @@ namespace prjProductiveLab_B.Dtos.ForFreezeSummary
         public Guid courseOfTreatmentId { get; set; }
         public int? ovumFromCourseOfTreatmentSqlId { get; set; }
         public Guid? ovumFromCourseOfTreatmentId { get; set; }
+        public string? ovumSource { get; set; }
         public BaseCustomerInfoDto? ovumSourceOwner { get; set; }
         public int ovumNumber { get; set; }
         public DateTime? ovumPickupTime { get; set; }

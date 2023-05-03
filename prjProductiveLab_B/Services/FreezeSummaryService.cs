@@ -48,6 +48,7 @@ namespace prjProductiveLab_B.Services
                 courseOfTreatmentId = x.CourseOfTreatmentId,
                 ovumFromCourseOfTreatmentSqlId = x.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId,
                 ovumFromCourseOfTreatmentId = x.CourseOfTreatment.OvumFromCourseOfTreatmentId,
+                ovumSource = x.CourseOfTreatment.Treatment.OvumSource.Name,
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze.FreezeTime,
@@ -277,5 +278,12 @@ namespace prjProductiveLab_B.Services
             ConvertPhotoToBase64String(result);
             return result;
         }
+        public async Task<List<Guid>> GetUnFreezingObservationNoteOvumDetails(List<Guid> ovumDetailIds)
+        {
+            var freezingObservationNoteOvumDetails = await dbContext.ObservationNotes.Where(x => ovumDetailIds.Contains(x.OvumDetailId) && x.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(x => x.OvumDetailId).ToListAsync();
+            var unFreezingObservationNoteOvumDetails = ovumDetailIds.Where(x => !freezingObservationNoteOvumDetails.Contains(x)).ToList();
+            return unFreezingObservationNoteOvumDetails;
+        }
+        
     }
 }

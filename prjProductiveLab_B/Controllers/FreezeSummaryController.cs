@@ -39,5 +39,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await freezeSummaryService.GetEmbryoFreezes(courseOfTreatmentId);
         }
+        [HttpPost("GetUnFreezingObservationNoteOvumDetails")]
+        public async Task<List<Guid>> GetUnFreezingObservationNoteOvumDetails(List<Guid> ovumDetailIds)
+        {
+            return await freezeSummaryService.GetUnFreezingObservationNoteOvumDetails(ovumDetailIds);
+        }
     }
 }
