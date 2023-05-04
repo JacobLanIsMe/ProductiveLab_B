@@ -2,7 +2,7 @@
 {
     public class GetSpermFreezeSummaryDto
     {
-        public string? spermSourceName { get; set; }
+        public string? spermSource { get; set; }
         public int courseOfTreatmentSqlId { get; set; }
         public string? spermSituation { get; set; }
         public DateTime surgicalTime { get; set; }

@@ -105,20 +105,17 @@ namespace prjProductiveLab_B.Services
         }
         public async Task<List<GetSpermFreezeSummaryDto>> GetSpermFreezeSummary(Guid courseOfTreatmentId)
         {
-            var q = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new
+            var customer = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new
             {
-                treatment = x.Treatment,
-                course = x,
-                husbandID = x.Customer.SpouseNavigation.CustomerId
+                customerId = x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze ? x.CustomerId : x.Customer.Spouse
             }).FirstOrDefaultAsync();
-            if (q == null)
+            if (customer == null || customer.customerId == null)
             {
                 return new List<GetSpermFreezeSummaryDto>();
             }
-            Guid customerId = q.treatment.SpermOperationId == (int)GermCellOperationEnum.freeze ? q.course.CustomerId : q.husbandID;
-            var result = await dbContext.SpermFreezes.Where(x => x.CourseOfTreatment.CustomerId == customerId).Select(x => new GetSpermFreezeSummaryDto
+            var result = await dbContext.SpermFreezes.Where(x => x.CourseOfTreatment.CustomerId == customer.customerId).Select(x => new GetSpermFreezeSummaryDto
             {
-                spermSourceName = x.CourseOfTreatment.Treatment.SpermSource.Name,
+                spermSource = x.CourseOfTreatment.Treatment.SpermSource.Name,
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
                 spermSituation = x.CourseOfTreatment.Treatment.SpermSituation.Name,
                 surgicalTime = x.CourseOfTreatment.SurgicalTime,
@@ -129,7 +126,7 @@ namespace prjProductiveLab_B.Services
                 boxId = x.StorageUnit.StorageStripBoxId,
                 unitName = x.StorageUnit.UnitName,
                 freezeMediumName = x.SpermFreezeSituation.FreezeMediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.SpermFreezeSituation.OtherFreezeMediumName : x.SpermFreezeSituation.FreezeMediumInUse.Name,
-            }).OrderBy(x => x.freezeTime).ThenBy(x => x.vialNumber).ToListAsync();
+            }).OrderBy(x => x.courseOfTreatmentSqlId).ThenBy(x => x.vialNumber).ToListAsync();
             return result;
         }
         public async Task<List<GetOvumFreezeSummaryDto>> GetRecipientOvumFreezes(Guid courseOfTreatmentId)
