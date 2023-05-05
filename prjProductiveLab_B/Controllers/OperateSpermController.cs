@@ -45,10 +45,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await operateSpermService.GetSpermFreeze(spermFromCourseOfTreatmentId);
         }
-        [HttpGet("GetSpermScore")]
-        public async Task<List<SpermScoreDto>> GetSpermScore(Guid courseOfTreatmentId)
+        [HttpGet("GetSpermScores")]
+        public async Task<List<SpermScoreDto>> GetSpermScores(Guid courseOfTreatmentId)
         {
-            return await operateSpermService.GetSpermScore(courseOfTreatmentId);
+            return await operateSpermService.GetSpermScores(courseOfTreatmentId);
         }
         [HttpGet("GetSpermThawMethods")]
         public async Task<List<CommonDto>> GetSpermThawMethods()

@@ -16,5 +16,6 @@
         public Guid embryologist { get; set; }
         public string? embryologistName { get; set; }
         public Guid courseOfTreatmentId { get; set; }
+        public int courseOfTreatmentSqlId { get; set; }
     }
 }

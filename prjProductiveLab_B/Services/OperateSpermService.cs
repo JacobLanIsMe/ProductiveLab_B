@@ -54,7 +54,7 @@ namespace prjProductiveLab_B.Services
                 freezeTime = x.SpermFreezeSituation.FreezeTime
             }).OrderBy(x=>x.freezeTime).ThenBy(x => x.vialNumber).ToListAsync();
         }
-        public async Task<List<SpermScoreDto>> GetSpermScore(Guid courseOfTreatmentId)
+        public async Task<List<SpermScoreDto>> GetSpermScores(Guid courseOfTreatmentId)
         {
             return await dbContext.SpermScores.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new SpermScoreDto
             {
@@ -71,7 +71,8 @@ namespace prjProductiveLab_B.Services
                 recordTime = x.RecordTime,
                 embryologist = x.Embryologist,
                 embryologistName = x.EmbryologistNavigation.Name,
-                courseOfTreatmentId = x.CourseOfTreatmentId
+                courseOfTreatmentId = x.CourseOfTreatmentId,
+                courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId
             }).OrderBy(x => x.spermScoreTimePointId).ThenBy(x=>x.recordTime).ToListAsync();
         }
         public BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore)
