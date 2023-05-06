@@ -34,21 +34,21 @@ namespace prjProductiveLab_B.Services
                 }
             }
         }
-        public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummary(Guid courseOfTreatmentId)
+        private async Task<List<GetOvumFreezeSummaryDto>> GetOvumDetailInfos(IQueryable<OvumDetail> ovumDetails)
         {
-            var customer = dbContext.CourseOfTreatments.FirstOrDefault(x => x.CourseOfTreatmentId == courseOfTreatmentId);
-            if (customer == null)
-            {
-                return new List<GetOvumFreezeSummaryDto>();
-            }
-            Guid customerId = customer.CustomerId;
-            var result = await dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
+            return await ovumDetails.Select(x => new GetOvumFreezeSummaryDto
             {
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
                 courseOfTreatmentId = x.CourseOfTreatmentId,
                 ovumFromCourseOfTreatmentSqlId = x.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId,
                 ovumFromCourseOfTreatmentId = x.CourseOfTreatment.OvumFromCourseOfTreatmentId,
                 ovumSource = x.CourseOfTreatment.Treatment.OvumSource.Name,
+                ovumSourceOwner = new BaseCustomerInfoDto
+                {
+                    customerSqlId = x.CourseOfTreatment.OvumFromCourseOfTreatment.Customer.SqlId,
+                    customerId = x.CourseOfTreatment.OvumFromCourseOfTreatment.CustomerId,
+                    customerName = x.CourseOfTreatment.OvumFromCourseOfTreatment.Customer.Name
+                },
                 ovumNumber = x.OvumNumber,
                 ovumPickupTime = x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze.FreezeTime,
@@ -99,9 +99,19 @@ namespace prjProductiveLab_B.Services
                 medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name,
 
             }).OrderBy(x => x.ovumPickupTime).ThenBy(x => x.ovumNumber).ToListAsync();
+        }
+        public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummary(Guid courseOfTreatmentId)
+        {
+            var customer = dbContext.CourseOfTreatments.FirstOrDefault(x => x.CourseOfTreatmentId == courseOfTreatmentId);
+            if (customer == null)
+            {
+                return new List<GetOvumFreezeSummaryDto>();
+            }
+            Guid customerId = customer.CustomerId;
+            var query = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null);
+            List<GetOvumFreezeSummaryDto> result = await GetOvumDetailInfos(query);
             ConvertPhotoToBase64String(result);
             return result;
-
         }
         public async Task<List<GetSpermFreezeSummaryDto>> GetSpermFreezeSummary(Guid courseOfTreatmentId)
         {
@@ -137,71 +147,24 @@ namespace prjProductiveLab_B.Services
                 return new List<GetOvumFreezeSummaryDto>();
             }
             Guid customerId = customer.CustomerId;
-            var result = await GetOvumFreezesByCustomerId(customerId);
-            return result;
-        }
+            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.OvumFreezeId != null);
 
-        private async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezesByCustomerId(Guid customerId)
-        {
-            var result = await dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.OvumFreezeId != null).Select(x => new GetOvumFreezeSummaryDto
-            {
-                courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
-                courseOfTreatmentId = x.CourseOfTreatmentId,
-                ovumSourceOwner = new BaseCustomerInfoDto
-                {
-                    customerId = customerId,
-                    customerSqlId = x.CourseOfTreatment.Customer.SqlId,
-                    customerName = x.CourseOfTreatment.Customer.Name
-                },
-                ovumNumber = x.OvumNumber,
-                ovumPickupTime = x.OvumPickup.StartTime,
-                freezeTime = x.OvumFreeze.FreezeTime,
-                thawTime = x.OvumThawFreezePairFreezeOvumDetails.FirstOrDefault().ThawOvumDetail.OvumThaw.ThawTime,
-                freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
-                {
-                    ovumDetailId = y.OvumDetailId,
-                    observationTime = y.ObservationTime,
-                    memo = y.Memo,
-                    day = y.Day,
-                    ovumMaturationName = y.OvumMaturation.Name,
-                    ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Select(z => z.OvumAbnormality.Name).ToList(),
-                    observationNotePhotos = y.ObservationNotePhotos.Where(z => z.IsMainPhoto && z.IsDeleted == false).Select(z => new ObservationNotePhotoDto
-                    {
-                        observationNotePhotoId = z.ObservationNotePhotoId,
-                        photoName = z.PhotoName,
-                    }).ToList(),
-                }).FirstOrDefault(),
-                freezeStorageInfo = new BaseStorage
-                {
-                    tankInfo = new StorageTankDto
-                    {
-                        tankName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
-                        tankTypeId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId
-                    },
-                    canistName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.CanistName,
-                    stripBoxId = x.OvumFreeze.StorageUnit.StorageStripBoxId,
-                    unitInfo = new StorageUnitDto
-                    {
-                        storageUnitId = x.OvumFreeze.StorageUnitId,
-                        unitName = x.OvumFreeze.StorageUnit.UnitName
-                    },
-                    topColorName = x.OvumFreeze.TopColor.Name
-                },
-                medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name
-            }).OrderBy(x => x.freezeTime).ThenBy(x => x.ovumNumber).ToListAsync();
+            var result = await GetOvumDetailInfos(ovumDetails);
             ConvertPhotoToBase64String(result);
             return result;
         }
 
-
-        public async Task<List<GetOvumFreezeSummaryDto>> GetDonorOvumFreezes(int customerSqlId)
+        public async Task<List<GetOvumFreezeSummaryDto>> GetDonorOvums(int customerSqlId)
         {
             var customer = dbContext.Customers.FirstOrDefault(x => x.SqlId == customerSqlId);
             if (customer == null)
             {
                 return new List<GetOvumFreezeSummaryDto>();
             }
-            var result = await GetOvumFreezesByCustomerId(customer.CustomerId);
+            Guid customerId = customer.CustomerId;
+            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.CourseOfTreatment.Treatment.OvumSourceId == (int)GermCellSourceEnum.OD);
+            var result = await GetOvumDetailInfos(ovumDetails);
+            ConvertPhotoToBase64String(result);
             return result;
         }
 
@@ -213,65 +176,8 @@ namespace prjProductiveLab_B.Services
                 return new List<GetOvumFreezeSummaryDto>();
             }
             Guid customerId = courseOfTreatment.CustomerId;
-            var result = await dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null && x.FertilisationId != null).Select(x => new GetOvumFreezeSummaryDto
-            {
-                courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
-                courseOfTreatmentId = x.CourseOfTreatmentId,
-                ovumSourceOwner = new BaseCustomerInfoDto
-                {
-                    customerId = x.CourseOfTreatment.OvumFromCourseOfTreatment.CustomerId,
-                    customerSqlId = x.CourseOfTreatment.OvumFromCourseOfTreatment.Customer.SqlId,
-                    customerName = x.CourseOfTreatment.OvumFromCourseOfTreatment.Customer.Name
-                },
-                ovumNumber = x.OvumNumber,
-                ovumPickupTime = x.OvumPickup.UpdateTime,
-                freezeTime = x.OvumFreeze.FreezeTime,
-                thawTime = x.OvumThawFreezePairFreezeOvumDetails.FirstOrDefault().ThawOvumDetail.OvumThaw.ThawTime,
-                freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
-                {
-                    ovumDetailId = y.OvumDetailId,
-                    observationTime = y.ObservationTime,
-                    memo = y.Memo,
-                    day = y.Day,
-                    kidScore = y.Kidscore.ToString(),
-                    pgtaNumber = y.Pgtanumber.ToString(),
-                    pgtaResult = y.Pgtaresult,
-                    pgtmResult = y.Pgtmresult,
-                    fertilisationResultName = y.FertilisationResult.Name,
-                    blastomereScore_C_Name = y.BlastomereScoreC.Name,
-                    blastomereScore_G_Name = y.BlastomereScoreG.Name,
-                    blastomereScore_F_Name = y.BlastomereScoreF.Name,
-                    embryoStatusName = y.ObservationNoteEmbryoStatuses.Select(z=>z.EmbryoStatus.Name).ToList(),
-                    blastocystScore_Expansion_Name = y.BlastocystScoreExpansion.Name,
-                    blastocystScore_ICE_Name = y.BlastocystScoreIce.Name,
-                    blastocystScore_TE_Name = y.BlastocystScoreTe.Name,
-                    observationNotePhotos = y.ObservationNotePhotos.Where(z=>!z.IsDeleted && z.IsMainPhoto).Select(z => new ObservationNotePhotoDto
-                    {
-                        observationNotePhotoId = z.ObservationNotePhotoId,
-                        photoName = z.PhotoName,
-                    }).ToList()
-                }).FirstOrDefault(),
-                freezeStorageInfo = new BaseStorage
-                {
-                    tankInfo = new StorageTankDto
-                    {
-                        tankName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
-                        tankTypeId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId,
-                    },
-                    tankId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTankId,
-                    canistId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanistId,
-                    canistName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.CanistName,
-                    stripBoxId = x.OvumFreeze.StorageUnit.StorageStripBoxId,
-                    stripBoxName = x.OvumFreeze.StorageUnit.StorageStripBox.StripBoxName,
-                    topColorName = x.OvumFreeze.TopColor.Name,
-                    unitInfo = new StorageUnitDto
-                    {
-                        storageUnitId = x.OvumFreeze.StorageUnitId,
-                        unitName = x.OvumFreeze.StorageUnit.UnitName
-                    }
-                },
-                medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name
-            }).OrderBy(x => x.freezeTime).ThenBy(x => x.ovumNumber).ToListAsync();
+            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null && x.FertilisationId != null);
+            var result = await GetOvumDetailInfos(ovumDetails);
             ConvertPhotoToBase64String(result);
             return result;
         }
