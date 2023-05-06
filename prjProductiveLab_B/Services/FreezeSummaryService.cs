@@ -36,7 +36,7 @@ namespace prjProductiveLab_B.Services
         }
         private async Task<List<GetOvumFreezeSummaryDto>> GetOvumDetailInfos(IQueryable<OvumDetail> ovumDetails)
         {
-            return await ovumDetails.Select(x => new GetOvumFreezeSummaryDto
+            var q = await ovumDetails.Select(x => new GetOvumFreezeSummaryDto
             {
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
                 courseOfTreatmentId = x.CourseOfTreatmentId,
@@ -55,6 +55,7 @@ namespace prjProductiveLab_B.Services
                 thawTime = x.OvumThaw.ThawTime,
                 freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
                 {
+                    ovumDetailId = y.OvumDetailId,
                     observationNoteId = y.ObservationNoteId,
                     day = y.Day,
                     memo = y.Memo,
@@ -97,8 +98,11 @@ namespace prjProductiveLab_B.Services
                     }
                 },
                 medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name,
-
+                isThawed = x.OvumThawFreezePairFreezeOvumDetails.Count == 0 ? false : true,
             }).OrderBy(x => x.ovumPickupTime).ThenBy(x => x.ovumNumber).ToListAsync();
+
+            List<GetOvumFreezeSummaryDto> result = q.Where(x => !x.isThawed).ToList();
+            return result;
         }
         public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummary(Guid courseOfTreatmentId)
         {

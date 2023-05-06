@@ -19,6 +19,7 @@ namespace prjProductiveLab_B.Dtos.ForFreezeSummary
         public GetObservationNoteNameDto? freezeObservationNoteInfo { get; set; }
         public BaseStorage? freezeStorageInfo { get; set; }
         public string? medium { get; set; }
+        public bool isThawed { get; set; }
     }
 
 }
