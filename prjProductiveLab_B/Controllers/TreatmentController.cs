@@ -83,5 +83,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return treatmentService.AddOvumThaw(input);
         }
+        [HttpPost("OvumBankTransfer")]
+        public async Task<BaseResponseDto> OvumBankTransfer(OvumBankTransferDto input)
+        {
+            return await treatmentService.OvumBankTransfer(input);
+        }
     }
 }

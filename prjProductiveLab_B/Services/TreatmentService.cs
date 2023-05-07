@@ -456,5 +456,82 @@ namespace prjProductiveLab_B.Services
                 throw new Exception("請選擇培養液");
             }
         }
+
+        public async Task<BaseResponseDto> OvumBankTransfer(OvumBankTransferDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                if (input.transferOvumDetailIds == null || input.transferOvumDetailIds.Count < 1)
+                {
+                    throw new Exception("請選擇要轉移的卵子");
+                }
+                using(TransactionScope scope = new TransactionScope())
+                {
+                    // 將受贈者的OvumFromCourseOfTreatmentId 改成捐贈者的 CourseOfTreatmentId
+                    var recipientCourseOfTreatment = dbContext.CourseOfTreatments.Where(x => x.SqlId == input.recipientCourseOfTreatmentSqlId).Select(x => new
+                    {
+                        recipientCourseOfTreatment = x,
+                        ovumSourceId = x.Treatment.OvumSourceId
+                    }).FirstOrDefault();
+                    if (recipientCourseOfTreatment == null)
+                    {
+                        throw new Exception("查無此受贈者之療程編號");
+                    }
+                    recipientCourseOfTreatment.recipientCourseOfTreatment.OvumFromCourseOfTreatmentId = input.donorCourseOfTreatmentId;
+
+                    var donorOvumDetails = dbContext.OvumDetails.Where(x => input.transferOvumDetailIds.Contains(x.OvumDetailId)).ToList();
+                    if (donorOvumDetails.Count != input.transferOvumDetailIds.Count)
+                    {
+                        throw new Exception("捐贈卵子資訊有誤");
+                    }
+                    for (int i = 0; i < input.transferOvumDetailIds.Count; i++)
+                    {
+                        // Donor 的 OvumDetail 的 IsTransferred 欄位改為 true
+                        var donorOvumDetail = dbContext.OvumDetails.FirstOrDefault(x => x.OvumDetailId == donorOvumDetails[i].OvumDetailId);
+                        if (donorOvumDetail == null)
+                        {
+                            throw new Exception("捐贈卵子資訊有誤");
+                        }
+                        donorOvumDetail.IsTransferred = true;
+                        // 加入新的 OvumDetail 資料
+                        OvumDetail ovumDetail = new OvumDetail
+                        {
+                            OvumNumber = i + 1,
+                            OvumFreezeId = donorOvumDetails[i].OvumFreezeId,
+                            CourseOfTreatmentId = recipientCourseOfTreatment.recipientCourseOfTreatment.CourseOfTreatmentId
+                        };
+                        if (recipientCourseOfTreatment.ovumSourceId == (int)GermCellSourceEnum.OR)
+                        {
+                            ovumDetail.OvumDetailStatusId = (int)OvumDetailStatusEnum.Freeze;
+                        }
+                        if (recipientCourseOfTreatment.ovumSourceId == (int)GermCellSourceEnum.OR_F)
+                        {
+                            ovumDetail.OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation;
+                        }
+                        dbContext.OvumDetails.Add(ovumDetail);
+                        dbContext.SaveChanges();
+                        Guid latestOvumDetailId = dbContext.OvumDetails.OrderByDescending(x => x.SqlId).Select(x=>x.OvumDetailId).FirstOrDefault();
+                        // 加入新的 OvumTransferPair 資料
+                        OvumTransferPair pair = new OvumTransferPair
+                        {
+                            RecipientOvumDetailId = latestOvumDetailId,
+                            DonorOvumDetailId = donorOvumDetail.OvumDetailId
+                        };
+                        dbContext.OvumTransferPairs.Add(pair);
+
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch (Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
+        
     }
 }

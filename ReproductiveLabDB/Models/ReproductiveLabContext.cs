@@ -56,6 +56,7 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<OvumPickup> OvumPickups { get; set; } = null!;
         public virtual DbSet<OvumThaw> OvumThaws { get; set; } = null!;
         public virtual DbSet<OvumThawFreezePair> OvumThawFreezePairs { get; set; } = null!;
+        public virtual DbSet<OvumTransferPair> OvumTransferPairs { get; set; } = null!;
         public virtual DbSet<SpermFreeze> SpermFreezes { get; set; } = null!;
         public virtual DbSet<SpermFreezeOperationMethod> SpermFreezeOperationMethods { get; set; } = null!;
         public virtual DbSet<SpermFreezeSituation> SpermFreezeSituations { get; set; } = null!;
@@ -913,6 +914,33 @@ namespace ReproductiveLabDB.Models
                     .HasForeignKey(d => d.ThawOvumDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumThawFreezePair_OvumPickupDetail1");
+            });
+
+            modelBuilder.Entity<OvumTransferPair>(entity =>
+            {
+                entity.HasKey(e => e.OvumTransferPairId)
+                    .IsClustered(false);
+
+                entity.ToTable("OvumTransferPair");
+
+                entity.HasIndex(e => e.SqlId, "IX_OvumTransferPair")
+                    .IsClustered();
+
+                entity.Property(e => e.OvumTransferPairId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.DonorOvumDetail)
+                    .WithMany(p => p.OvumTransferPairDonorOvumDetails)
+                    .HasForeignKey(d => d.DonorOvumDetailId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumTransferPair_OvumDetail1");
+
+                entity.HasOne(d => d.RecipientOvumDetail)
+                    .WithMany(p => p.OvumTransferPairRecipientOvumDetails)
+                    .HasForeignKey(d => d.RecipientOvumDetailId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumTransferPair_OvumDetail");
             });
 
             modelBuilder.Entity<SpermFreeze>(entity =>

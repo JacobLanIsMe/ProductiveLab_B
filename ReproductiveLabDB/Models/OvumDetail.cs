@@ -10,6 +10,8 @@ namespace ReproductiveLabDB.Models
             ObservationNotes = new HashSet<ObservationNote>();
             OvumThawFreezePairFreezeOvumDetails = new HashSet<OvumThawFreezePair>();
             OvumThawFreezePairThawOvumDetails = new HashSet<OvumThawFreezePair>();
+            OvumTransferPairDonorOvumDetails = new HashSet<OvumTransferPair>();
+            OvumTransferPairRecipientOvumDetails = new HashSet<OvumTransferPair>();
         }
 
         public int SqlId { get; set; }
@@ -21,6 +23,7 @@ namespace ReproductiveLabDB.Models
         public Guid? OvumThawId { get; set; }
         public Guid? FertilisationId { get; set; }
         public Guid CourseOfTreatmentId { get; set; }
+        public bool IsTransferred { get; set; }
 
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual Fertilisation? Fertilisation { get; set; }
@@ -31,5 +34,7 @@ namespace ReproductiveLabDB.Models
         public virtual ICollection<ObservationNote> ObservationNotes { get; set; }
         public virtual ICollection<OvumThawFreezePair> OvumThawFreezePairFreezeOvumDetails { get; set; }
         public virtual ICollection<OvumThawFreezePair> OvumThawFreezePairThawOvumDetails { get; set; }
+        public virtual ICollection<OvumTransferPair> OvumTransferPairDonorOvumDetails { get; set; }
+        public virtual ICollection<OvumTransferPair> OvumTransferPairRecipientOvumDetails { get; set; }
     }
 }

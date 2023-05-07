@@ -19,5 +19,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<List<CommonDto>> GetIncubators();
         BaseResponseDto AddFertilisation(AddFertilisationDto input);
         BaseResponseDto AddOvumThaw(AddOvumThawDto input);
+        Task<BaseResponseDto> OvumBankTransfer(OvumBankTransferDto input);
     }
 }
