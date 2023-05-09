@@ -49,10 +49,11 @@ namespace prjProductiveLab_B.Services
                     customerId = x.CourseOfTreatment.OvumFromCourseOfTreatment.CustomerId,
                     customerName = x.CourseOfTreatment.OvumFromCourseOfTreatment.Customer.Name
                 },
+                ovumDetailId = x.OvumDetailId,
                 ovumNumber = x.OvumNumber,
-                ovumPickupTime = x.OvumPickup.StartTime,
-                freezeTime = x.OvumFreeze.FreezeTime,
-                thawTime = x.OvumThaw.ThawTime,
+                ovumPickupTime = x.OvumPickup == null ? null : x.OvumPickup.StartTime,
+                freezeTime = x.OvumFreeze == null ? null : x.OvumFreeze.FreezeTime,
+                thawTime = x.OvumThaw == null ? null : x.OvumThaw.ThawTime,
                 freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
                 {
                     ovumDetailId = y.OvumDetailId,
@@ -112,7 +113,7 @@ namespace prjProductiveLab_B.Services
                 return new List<GetOvumFreezeSummaryDto>();
             }
             Guid customerId = customer.CustomerId;
-            var query = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null);
+            var query = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null && x.OvumThawFreezePairFreezeOvumDetails.Count == 0 && x.OvumTransferPairDonorOvumDetails.Count == 0);
             List<GetOvumFreezeSummaryDto> result = await GetOvumDetailInfos(query);
             ConvertPhotoToBase64String(result);
             return result;
@@ -166,7 +167,7 @@ namespace prjProductiveLab_B.Services
                 return new List<GetOvumFreezeSummaryDto>();
             }
             Guid customerId = customer.CustomerId;
-            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.CourseOfTreatment.Treatment.OvumSourceId == (int)GermCellSourceEnum.OD);
+            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.CourseOfTreatment.Treatment.OvumSourceId == (int)GermCellSourceEnum.OD && x.OvumTransferPairDonorOvumDetails.Count <= 0);
             var result = await GetOvumDetailInfos(ovumDetails);
             ConvertPhotoToBase64String(result);
             return result;

@@ -393,6 +393,7 @@ namespace prjProductiveLab_B.Services
                 AddOvumThawValidation(input);
                 using(TransactionScope scope = new TransactionScope())
                 {
+                    #region 增加一筆 OvumThaw 的資訊，並得到此筆 OvumThaw 的 OvumThawId
                     OvumThaw ovumThaw = new OvumThaw
                     {
                         ThawTime = input.thawTime,
@@ -404,35 +405,67 @@ namespace prjProductiveLab_B.Services
                     dbContext.OvumThaws.Add(ovumThaw);
                     dbContext.SaveChanges();
                     Guid latestOvumThawId = dbContext.OvumThaws.OrderByDescending(x=>x.SqlId).Select(x=>x.OvumThawId).FirstOrDefault();
-                    for (int i = 0; i < input.freezeOvumDetailIds.Count; i++)
+                    #endregion
+                    #region 找出 recipient 及 donor 的 customerId
+                    Guid recipientCustomerId = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == input.courseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefault();
+                    if (recipientCustomerId == Guid.Empty)
                     {
-                        OvumDetail ovumDetail = new OvumDetail
-                        {
-                            CourseOfTreatmentId = input.courseOfTreatmentId,
-                            OvumNumber = i + 1,
-                            OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation,
-                            OvumThawId = latestOvumThawId,
-                        };
-                        dbContext.OvumDetails.Add(ovumDetail);
-                        dbContext.SaveChanges();
-                        Guid thawOvumDetailId = dbContext.OvumDetails.OrderByDescending(x=>x.SqlId).Select(x=>x.OvumDetailId).FirstOrDefault();
-                        OvumThawFreezePair ovumThawFreezePair = new OvumThawFreezePair
-                        {
-                            FreezeOvumDetailId = input.freezeOvumDetailIds[i],
-                            ThawOvumDetailId = thawOvumDetailId
-                        };
-                        dbContext.OvumThawFreezePairs.Add(ovumThawFreezePair);
-                        dbContext.SaveChanges();
+                        throw new Exception("此療程編號有誤");
                     }
-                    var q = dbContext.OvumDetails.Where(x => x.OvumFreezeId != null && input.freezeOvumDetailIds.Contains(x.OvumDetailId)).Select(x => new
+                    Guid donorCustomerId = dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == input.ovumFromCourseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefault();
+                    if (donorCustomerId == Guid.Empty)
+                    {
+                        throw new Exception("解凍卵子的療程編號有誤");
+                    }
+                    #endregion
+                    
+                    var freezeOvumDetails = dbContext.OvumDetails.Where(x => x.OvumFreezeId != null && input.freezeOvumDetailIds.Contains(x.OvumDetailId)).Select(x => new
                     {
                         ovumFreeze = x.OvumFreeze,
-                        storageUnit = x.OvumFreeze.StorageUnit
+                        storageUnit = x.OvumFreeze.StorageUnit,
+                        ovumDetail = x,
+                        observationNoteCount = x.ObservationNotes.Count,
+                        isTransferred = x.OvumTransferPairRecipientOvumDetails.Count > 0 ? true : false
                     });
-                    foreach (var i in q)
+                    int count = 0;
+                    foreach (var i in freezeOvumDetails)
                     {
                         i.ovumFreeze.IsThawed = true;
                         i.storageUnit.IsOccupied = false;
+                        if (i.observationNoteCount == 0 && i.isTransferred)
+                        {
+                            i.ovumDetail.OvumFreezeId = null;
+                            i.ovumDetail.OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation;
+                            i.ovumDetail.OvumThawId = latestOvumThawId;
+                            OvumThawFreezePair pair = new OvumThawFreezePair
+                            {
+                                FreezeOvumDetailId = i.ovumDetail.OvumDetailId,
+                                ThawOvumDetailId = i.ovumDetail.OvumDetailId
+                            };
+                            dbContext.OvumThawFreezePairs.Add(pair);
+                            dbContext.SaveChanges();
+                        }
+                        else
+                        {
+                            OvumDetail ovumDetail = new OvumDetail
+                            {
+                                CourseOfTreatmentId = input.courseOfTreatmentId,
+                                OvumNumber = count + 1,
+                                OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation,
+                                OvumThawId = latestOvumThawId
+                            };
+                            dbContext.OvumDetails.Add(ovumDetail);
+                            dbContext.SaveChanges();
+                            Guid thawOvumDetailId = dbContext.OvumDetails.OrderByDescending(x => x.SqlId).Select(x => x.OvumDetailId).FirstOrDefault();
+                            OvumThawFreezePair pair = new OvumThawFreezePair
+                            {
+                                FreezeOvumDetailId = i.ovumDetail.OvumDetailId,
+                                ThawOvumDetailId = thawOvumDetailId
+                            };
+                            dbContext.OvumThawFreezePairs.Add(pair);
+                            dbContext.SaveChanges();
+                        }
+                        count++;
                     }
                     dbContext.SaveChanges();
                     scope.Complete();
@@ -488,12 +521,12 @@ namespace prjProductiveLab_B.Services
                     for (int i = 0; i < input.transferOvumDetailIds.Count; i++)
                     {
                         // Donor 的 OvumDetail 的 IsTransferred 欄位改為 true
-                        var donorOvumDetail = dbContext.OvumDetails.FirstOrDefault(x => x.OvumDetailId == donorOvumDetails[i].OvumDetailId);
-                        if (donorOvumDetail == null)
-                        {
-                            throw new Exception("捐贈卵子資訊有誤");
-                        }
-                        donorOvumDetail.IsTransferred = true;
+                        //var donorOvumDetail = dbContext.OvumDetails.FirstOrDefault(x => x.OvumDetailId == donorOvumDetails[i].OvumDetailId);
+                        //if (donorOvumDetail == null)
+                        //{
+                        //    throw new Exception("捐贈卵子資訊有誤");
+                        //}
+                        //donorOvumDetail.IsTransferred = true;
                         // 加入新的 OvumDetail 資料
                         OvumDetail ovumDetail = new OvumDetail
                         {
@@ -516,10 +549,10 @@ namespace prjProductiveLab_B.Services
                         OvumTransferPair pair = new OvumTransferPair
                         {
                             RecipientOvumDetailId = latestOvumDetailId,
-                            DonorOvumDetailId = donorOvumDetail.OvumDetailId
+                            DonorOvumDetailId = donorOvumDetails[i].OvumDetailId
                         };
                         dbContext.OvumTransferPairs.Add(pair);
-
+                        
                     }
                     dbContext.SaveChanges();
                     scope.Complete();

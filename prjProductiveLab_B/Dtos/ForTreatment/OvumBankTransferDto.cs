@@ -5,5 +5,6 @@
         public int recipientCourseOfTreatmentSqlId { get; set; }
         public Guid donorCourseOfTreatmentId { get; set; }
         public List<Guid>? transferOvumDetailIds { get; set; }
+        
     }
 }

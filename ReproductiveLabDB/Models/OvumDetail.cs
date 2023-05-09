@@ -23,7 +23,6 @@ namespace ReproductiveLabDB.Models
         public Guid? OvumThawId { get; set; }
         public Guid? FertilisationId { get; set; }
         public Guid CourseOfTreatmentId { get; set; }
-        public bool IsTransferred { get; set; }
 
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual Fertilisation? Fertilisation { get; set; }
