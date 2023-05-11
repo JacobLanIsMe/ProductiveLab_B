@@ -2,6 +2,7 @@
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Dtos.ForTreatment;
 using prjProductiveLab_B.Interfaces;
+using ReproductiveLabDB.Models;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -54,9 +55,9 @@ namespace prjProductiveLab_B.Controllers
             return await treatmentService.AddOvumFreeze(input);
         }
         [HttpGet("GetOvumOwnerInfo")]
-        public async Task<BaseCustomerInfoDto> GetOvumOwnerInfo(Guid courseOfTreatmentId)
+        public async Task<BaseCustomerInfoDto> GetOvumOwnerInfo(Guid ovumDetailId)
         {
-            return await treatmentService.GetOvumOwnerInfo(courseOfTreatmentId);
+            return await treatmentService.GetOvumOwnerInfo(ovumDetailId);
         }
         [HttpGet("GetTopColors")]
         public async Task<List<CommonDto>> GetTopColors()

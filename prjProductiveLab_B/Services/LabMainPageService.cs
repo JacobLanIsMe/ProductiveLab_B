@@ -38,7 +38,7 @@ namespace prjProductiveLab_B.Services
                     embryoOperationName = x.Treatment.EmbryoOperation.Name
                 },
                 treatmentStatus = x.TreatmentStatus.Name,
-                ovumFromCourseOfTreatmentId = x.OvumFromCourseOfTreatmentId,
+                //ovumFromCourseOfTreatmentId = x.OvumFromCourseOfTreatmentId,
                 spermFromCourseOfTreatmentId = x.SpermFromCourseOfTreatmentId
             }).OrderBy(x=>x.surgicalTime).ToListAsync();
             foreach (var i in result)

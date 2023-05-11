@@ -9,6 +9,6 @@ namespace prjProductiveLab_B.Interfaces
         Task<List<StorageUnitStatusDto>> GetStorageUnitStatus(int tankId, int shelfId);
         Task<BaseResponseDto> AddStorageTank(StorageAddNewTankDto storageAddNewTankDto);
         Task<List<StorageTankTypeDto>> GetStorageTankType();
-        Task<List<OvumFreezeStorageDto>> GetOvumFreezeStorageInfo(Guid courseOfTreatmentId);
+        Task<List<OvumFreezeStorageDto>> GetOvumFreezeStorageInfo(Guid ovumDetailId);
     }
 }

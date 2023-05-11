@@ -38,9 +38,9 @@ namespace prjProductiveLab_B.Controllers
             return await storageService.GetStorageTankType();
         }
         [HttpGet("GetOvumFreezeStorageInfo")]
-        public async Task<List<OvumFreezeStorageDto>> GetOvumFreezeStorageInfo(Guid courseOfTreatmentId)
+        public async Task<List<OvumFreezeStorageDto>> GetOvumFreezeStorageInfo(Guid ovumDetailId)
         {
-            return await storageService.GetOvumFreezeStorageInfo(courseOfTreatmentId);
+            return await storageService.GetOvumFreezeStorageInfo(ovumDetailId);
         }
     }
 }

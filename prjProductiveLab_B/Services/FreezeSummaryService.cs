@@ -40,14 +40,14 @@ namespace prjProductiveLab_B.Services
             {
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
                 courseOfTreatmentId = x.CourseOfTreatmentId,
-                ovumFromCourseOfTreatmentSqlId = x.CourseOfTreatment.OvumFromCourseOfTreatment.SqlId,
-                ovumFromCourseOfTreatmentId = x.CourseOfTreatment.OvumFromCourseOfTreatmentId,
+                ovumFromCourseOfTreatmentSqlId = x.OvumFromCourseOfTreatment.SqlId,
+                ovumFromCourseOfTreatmentId = x.OvumFromCourseOfTreatmentId,
                 ovumSource = x.CourseOfTreatment.Treatment.OvumSource.Name,
                 ovumSourceOwner = new BaseCustomerInfoDto
                 {
-                    customerSqlId = x.CourseOfTreatment.OvumFromCourseOfTreatment.Customer.SqlId,
-                    customerId = x.CourseOfTreatment.OvumFromCourseOfTreatment.CustomerId,
-                    customerName = x.CourseOfTreatment.OvumFromCourseOfTreatment.Customer.Name
+                    customerSqlId = x.OvumFromCourseOfTreatment.Customer.SqlId,
+                    customerId = x.OvumFromCourseOfTreatment.CustomerId,
+                    customerName = x.OvumFromCourseOfTreatment.Customer.Name
                 },
                 ovumDetailId = x.OvumDetailId,
                 ovumNumber = x.OvumNumber,

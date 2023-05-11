@@ -152,10 +152,10 @@ namespace prjProductiveLab_B.Services
         }
 
         
-        public async Task<List<OvumFreezeStorageDto>> GetOvumFreezeStorageInfo(Guid courseOfTreatmentId)
+        public async Task<List<OvumFreezeStorageDto>> GetOvumFreezeStorageInfo(Guid ovumDetailId)
         {
-            Guid customerId = await treatmentService.GetOvumOwnerCustomerId(courseOfTreatmentId);
-            if (customerId == default(Guid))
+            Guid customerId = await dbContext.OvumDetails.Where(x => x.OvumDetailId == ovumDetailId).Select(x => x.CourseOfTreatment.CustomerId).FirstOrDefaultAsync();
+            if (customerId == Guid.Empty)
             {
                 return new List<OvumFreezeStorageDto>();
             }

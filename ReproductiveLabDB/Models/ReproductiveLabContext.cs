@@ -169,11 +169,6 @@ namespace ReproductiveLabDB.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CourseOfTreatment_Employee");
 
-                entity.HasOne(d => d.OvumFromCourseOfTreatment)
-                    .WithMany(p => p.InverseOvumFromCourseOfTreatment)
-                    .HasForeignKey(d => d.OvumFromCourseOfTreatmentId)
-                    .HasConstraintName("FK_CourseOfTreatment_CourseOfTreatment");
-
                 entity.HasOne(d => d.SpermFromCourseOfTreatment)
                     .WithMany(p => p.InverseSpermFromCourseOfTreatment)
                     .HasForeignKey(d => d.SpermFromCourseOfTreatmentId)
@@ -701,7 +696,7 @@ namespace ReproductiveLabDB.Models
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.CourseOfTreatment)
-                    .WithMany(p => p.OvumDetails)
+                    .WithMany(p => p.OvumDetailCourseOfTreatments)
                     .HasForeignKey(d => d.CourseOfTreatmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumDetail_CourseOfTreatment");
@@ -721,6 +716,12 @@ namespace ReproductiveLabDB.Models
                     .WithMany(p => p.OvumDetails)
                     .HasForeignKey(d => d.OvumFreezeId)
                     .HasConstraintName("FK_OvumPickupDetail_OvumFreeze");
+
+                entity.HasOne(d => d.OvumFromCourseOfTreatment)
+                    .WithMany(p => p.OvumDetailOvumFromCourseOfTreatments)
+                    .HasForeignKey(d => d.OvumFromCourseOfTreatmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumDetail_CourseOfTreatment1");
 
                 entity.HasOne(d => d.OvumPickup)
                     .WithMany(p => p.OvumDetails)
