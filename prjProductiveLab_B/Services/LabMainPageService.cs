@@ -40,7 +40,7 @@ namespace prjProductiveLab_B.Services
                 treatmentStatus = x.TreatmentStatus.Name,
                 //ovumFromCourseOfTreatmentId = x.OvumFromCourseOfTreatmentId,
                 spermFromCourseOfTreatmentId = x.SpermFromCourseOfTreatmentId
-            }).OrderBy(x=>x.surgicalTime).ToListAsync();
+            }).OrderByDescending(x=>x.surgicalTime).ToListAsync();
             foreach (var i in result)
             {
                 TimeSpan treatmentDay = DateTime.Now.Date - i.surgicalTime.Date;

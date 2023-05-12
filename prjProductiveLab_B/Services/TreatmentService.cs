@@ -152,14 +152,18 @@ namespace prjProductiveLab_B.Services
                 ovumNumber = x.OvumNumber,
                 hasFertilization = x.FertilisationId == null ? false : true,
                 observationNote = x.ObservationNotes.OrderByDescending(y => y.SqlId).Select(y => y.Memo).FirstOrDefault(),
+                ovumSource = x.CourseOfTreatment.Treatment.OvumSource == null ? null : x.CourseOfTreatment.Treatment.OvumSource.Name,
                 hasPickup = x.OvumPickupId == null ? false : true,
+                isFreshPickup = x.OvumPickupId != null && x.OvumFreezeId == null ? true : false,
+                isFreezePickup = x.OvumPickupId != null && x.OvumFreezeId != null ? true : false,
                 hasTransfer = x.OvumTransferPairRecipientOvumDetails.Count == 0 ? false : true,
                 hasThaw = x.OvumThawFreezePairThawOvumDetails.Count == 0 ? false : true,
                 isFreezeTransfer = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumThawId == null && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId != null) ? true : false,
                 isTransferThaw = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumThaw != null ? true : false,
                 isFreshTransfer = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumTransferPairRecipientOvumDetails.Any(y=>y.DonorOvumDetail.OvumFreezeId == null) ? true : false,
                 ovumFromCourseOfTreatmentSqlId = x.OvumFromCourseOfTreatment.SqlId,
-                day_Pickup = x.OvumPickupId == null ? 0 : (DateTime.Now.Date - x.CourseOfTreatment.SurgicalTime.Date).Days,
+                day_FreshPickup = x.OvumPickupId != null && x.OvumFreezeId == null ? (DateTime.Now.Date - x.CourseOfTreatment.SurgicalTime.Date).Days : 0,
+                day_FreezePickup = x.OvumPickupId != null && x.OvumFreezeId != null ? x.ObservationNotes.Where(y=>y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(y=>y.Day).FirstOrDefault() : 0,
                 day_FreezeTransfer = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumThawId == null && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId != null) ? x.OvumTransferPairRecipientOvumDetails.Select(y=>y.DonorOvumDetail.ObservationNotes.Where(z=>z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(z=>z.Day).FirstOrDefault()).FirstOrDefault() : 0,
                 day_TransferThaw = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumThaw != null ? ((DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days + x.OvumTransferPairRecipientOvumDetails.Select(y => y.DonorOvumDetail.ObservationNotes.Where(z => z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(z => z.Day).FirstOrDefault()).FirstOrDefault()) : 0,
                 day_FreshTransfer = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId == null) ? (DateTime.Now.Date - x.OvumTransferPairRecipientOvumDetails.Select(y=>y.DonorOvumDetail.CourseOfTreatment.SurgicalTime).FirstOrDefault().Date).Days : 0,
@@ -177,11 +181,19 @@ namespace prjProductiveLab_B.Services
                     ovumNumber = i.ovumNumber,
                     hasFertilization = i.hasFertilization,
                     observationNote = i.observationNote,
-                    ovumFromCourseOfTreatmentSqlId = i.ovumFromCourseOfTreatmentSqlId
+                    ovumFromCourseOfTreatmentSqlId = i.ovumFromCourseOfTreatmentSqlId,
+                    ovumSource = i.ovumSource
                 };
                 if (i.hasPickup)
                 {
-                    treatment.dateOfEmbryo = i.day_Pickup;
+                    if (i.isFreshPickup)
+                    {
+                        treatment.dateOfEmbryo = i.day_FreshPickup;
+                    }
+                    else if (i.isFreezePickup)
+                    {
+                        treatment.dateOfEmbryo = i.day_FreezePickup;
+                    }
                 }
                 else if (i.hasTransfer)
                 {
