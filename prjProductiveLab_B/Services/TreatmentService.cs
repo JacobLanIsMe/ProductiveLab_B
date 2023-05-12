@@ -485,7 +485,6 @@ namespace prjProductiveLab_B.Services
                         observationNoteCount = x.ObservationNotes.Count,
                         isTransferred = x.OvumTransferPairRecipientOvumDetails.Count > 0 ? true : false
                     });
-                    int count = 0;
                     foreach (var i in freezeOvumDetails)
                     {
                         i.ovumFreeze.IsThawed = true;
@@ -501,8 +500,13 @@ namespace prjProductiveLab_B.Services
                                 ThawOvumDetailId = i.ovumDetail.OvumDetailId
                             };
                             dbContext.OvumThawFreezePairs.Add(pair);
-                            dbContext.SaveChanges();
                         }
+                    }
+                    dbContext.SaveChanges();
+                    int count = 0;
+                    foreach (var i in freezeOvumDetails.ToList())
+                    {
+                        if (i.observationNoteCount == 0 && i.isTransferred){}
                         else
                         {
                             OvumDetail ovumDetail = new OvumDetail
@@ -525,7 +529,6 @@ namespace prjProductiveLab_B.Services
                             dbContext.OvumThawFreezePairs.Add(pair);
                             dbContext.SaveChanges();
                         }
-                        
                         count++;
                     }
                     dbContext.SaveChanges();
@@ -548,6 +551,27 @@ namespace prjProductiveLab_B.Services
             if (input.mediumInUseIds == null || input.mediumInUseIds.Count <= 0)
             {
                 throw new Exception("請選擇培養液");
+            }
+            var hasThawedOvumDetails = dbContext.OvumDetails.Where(x => input.freezeOvumDetailIds.Contains(x.OvumDetailId) && x.OvumThawFreezePairFreezeOvumDetails.Any()).GroupBy(x => x.CourseOfTreatment.SqlId).Select(y => new
+            {
+                courseOfTreatmentSqlId = y.Key,
+                ovumNumbers = y.Select(z => z.OvumNumber).OrderBy(z=>z).ToList()
+            });
+            if (hasThawedOvumDetails.Any())
+            {
+                string errorMessage = "";
+                foreach(var i in hasThawedOvumDetails)
+                {
+                    string message = $"療程編號: {i.courseOfTreatmentSqlId} ，卵子編號: ";
+                    foreach(var j in i.ovumNumbers)
+                    {
+                        message += $"{j}, ";
+                    }
+                    message = message.Substring(0, message.Length - 2);
+                    message += "已解凍\n";
+                    errorMessage += message;
+                }
+                throw new Exception(errorMessage);
             }
         }
 
