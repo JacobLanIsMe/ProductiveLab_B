@@ -319,25 +319,21 @@ namespace prjProductiveLab_B.Services
                     {
                         throw new Exception("spermThaw 資料表寫入錯誤");
                     }
-                    foreach (var i in input.spermFreezeIds)
+                    var spermFreezes = dbContext.SpermFreezes.Where(x => input.spermFreezeIds.Contains(x.SpermFreezeId)).Select(x => new
+                    {
+                        spermFreeze = x,
+                        storageUnit = x.StorageUnit
+                    });
+                    foreach (var i in spermFreezes)
                     {
                         SpermThawFreezePair pair = new SpermThawFreezePair
                         {
                             SpermThawId = latestSpermThawId,
-                            SpermFreezeId = i
+                            SpermFreezeId = i.spermFreeze.SpermFreezeId
                         };
                         dbContext.SpermThawFreezePairs.Add(pair);
-                        var spermFreeze = dbContext.SpermFreezes.Where(x => x.SpermFreezeId == i).Select(x => new
-                        {
-                            spermFreeze = x,
-                            storageUnit = x.StorageUnit
-                        }).FirstOrDefault();
-                        if (spermFreeze == null)
-                        {
-                            throw new Exception("SpermThawFreezePair資料表寫入錯誤");
-                        }
-                        spermFreeze.spermFreeze.IsThawed = true;
-                        spermFreeze.storageUnit.IsOccupied = false;
+                        i.spermFreeze.IsThawed = true;
+                        i.storageUnit.IsOccupied = false;
                     }
                     dbContext.SaveChanges();
                     scope.Complete();

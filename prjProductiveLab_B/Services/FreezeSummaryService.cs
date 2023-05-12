@@ -128,7 +128,7 @@ namespace prjProductiveLab_B.Services
             {
                 return new List<GetSpermFreezeSummaryDto>();
             }
-            var result = await dbContext.SpermFreezes.Where(x => x.CourseOfTreatment.CustomerId == customer.customerId).Select(x => new GetSpermFreezeSummaryDto
+            var result = await dbContext.SpermFreezes.Where(x => x.CourseOfTreatment.CustomerId == customer.customerId && !x.SpermThawFreezePairs.Any()).Select(x => new GetSpermFreezeSummaryDto
             {
                 spermSource = x.CourseOfTreatment.Treatment.SpermSource.Name,
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
