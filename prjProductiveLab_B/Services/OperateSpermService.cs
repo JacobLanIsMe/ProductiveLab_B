@@ -17,32 +17,33 @@ namespace prjProductiveLab_B.Services
             this.dbContext = dbContext;
             this.sharedFunction = sharedFunction;
         }
-        public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
-        {
-            var result = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseOperateSpermInfoDto
-            {
-                spermSituationName = x.Treatment.SpermSituation.Name,
-                spermRetrievalMethodName = x.SpermFromCourseOfTreatment.Treatment.SpermRetrievalMethod.Name,
-                spermOwner = new BaseCustomerInfoDto
-                {
-                    customerName = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.Name : x.Customer.SpouseNavigation.Name,
-                    customerSqlId = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.SqlId : x.Customer.SpouseNavigation.SqlId,
-                    birthday = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.Birthday : x.Customer.SpouseNavigation.Birthday
-                }
-            }).FirstOrDefaultAsync();
-            if (result == null)
-            {
-                return new BaseOperateSpermInfoDto();
-            }
-            else
-            {
-                return result;
-            }
-        }
+        //public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
+        //{
+        //    var result = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseOperateSpermInfoDto
+        //    {
+        //        spermSituationName = x.Treatment.SpermSituation.Name,
+        //        spermRetrievalMethodName = x.SpermFromCourseOfTreatment.Treatment.SpermRetrievalMethod.Name,
+        //        spermOwner = new BaseCustomerInfoDto
+        //        {
+        //            customerName = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.Name : x.Customer.SpouseNavigation.Name,
+        //            customerSqlId = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.SqlId : x.Customer.SpouseNavigation.SqlId,
+        //            birthday = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.Birthday : x.Customer.SpouseNavigation.Birthday
+        //        }
+        //    }).FirstOrDefaultAsync();
+        //    if (result == null)
+        //    {
+        //        return new BaseOperateSpermInfoDto();
+        //    }
+        //    else
+        //    {
+        //        return result;
+        //    }
+        //}
 
-        public async Task<List<SpermFreezeDto>> GetSpermFreeze(Guid spermFromCourseOfTreatmentId)
+        public async Task<List<SpermFreezeDto>> GetSpermFreeze(int customerSqlId)
         {
-            return await dbContext.SpermFreezes.Where(x => x.CourseOfTreatmentId == spermFromCourseOfTreatmentId && x.IsThawed == false).Select(x => new SpermFreezeDto
+
+            return await dbContext.SpermFreezes.Where(x => x.CourseOfTreatment.Customer.SqlId == customerSqlId && x.IsThawed == false).Select(x => new SpermFreezeDto
             {
                 spermFreezeId = x.SpermFreezeId,
                 vialNumber = x.VialNumber,
@@ -56,8 +57,34 @@ namespace prjProductiveLab_B.Services
         }
         public async Task<List<SpermScoreDto>> GetSpermScores(Guid courseOfTreatmentId)
         {
-            return await dbContext.SpermScores.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new SpermScoreDto
+            var courseOfTreatment = dbContext.CourseOfTreatments.FirstOrDefault(x=>x.CourseOfTreatmentId == courseOfTreatmentId);
+            if (courseOfTreatment == null)
             {
+                return new List<SpermScoreDto>();
+            }
+            var q = await dbContext.SpermScores.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new
+            {
+                isThawed = x.CourseOfTreatment.SpermThaws.Any() ? true : false,
+                baseSpermInfo_Thaw = new BaseOperateSpermInfoDto
+                {
+                    spermSituationName = x.CourseOfTreatment.Treatment.SpermSituation == null ? null : x.CourseOfTreatment.Treatment.SpermSituation.Name,
+                    //spermRetrievalMethodName = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment
+                    spermOwner = new BaseCustomerInfoDto
+                    {
+                        customerName = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment.SpermThaws.First().SpermThawFreezePairs.Select(y=>y.SpermFreeze.CourseOfTreatment.Customer.Name).FirstOrDefault() : null,
+                        customerSqlId = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment.SpermThaws.First().SpermThawFreezePairs.Select(y=>y.SpermFreeze.CourseOfTreatment.Customer.SqlId).FirstOrDefault() : default,
+                    }
+                },
+                baseSpermInfo_Fresh = new BaseOperateSpermInfoDto
+                {
+                    spermSituationName = x.CourseOfTreatment.Treatment.SpermSituation == null ? null : x.CourseOfTreatment.Treatment.SpermSituation.Name,
+                    //spermRetrievalMethodName = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment
+                    spermOwner = new BaseCustomerInfoDto
+                    {
+                        customerName = x.CourseOfTreatment.Customer.GenderId == (int)GenderEnum.female && x.CourseOfTreatment.Customer.SpouseNavigation != null ? x.CourseOfTreatment.Customer.SpouseNavigation.Name : x.CourseOfTreatment.Customer.Name,
+                        customerSqlId = x.CourseOfTreatment.Customer.GenderId == (int)GenderEnum.female && x.CourseOfTreatment.Customer.SpouseNavigation != null ? x.CourseOfTreatment.Customer.SpouseNavigation.SqlId : x.CourseOfTreatment.Customer.SqlId
+                    }
+                },
                 volume = x.Volume,
                 concentration = x.Concentration,
                 activityA = x.ActivityA,
@@ -74,6 +101,31 @@ namespace prjProductiveLab_B.Services
                 courseOfTreatmentId = x.CourseOfTreatmentId,
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId
             }).OrderBy(x => x.spermScoreTimePointId).ThenBy(x=>x.recordTime).ToListAsync();
+            List<SpermScoreDto> result = new List<SpermScoreDto>();
+            foreach (var i in q)
+            {
+                SpermScoreDto spermScore = new SpermScoreDto
+                {
+                    volume = i.volume,
+                    concentration = i.concentration,
+                    activityA = i.activityA,
+                    activityB = i.activityB,
+                    activityC = i.activityC,
+                    activityD = i.activityD,
+                    morphology = i.morphology,
+                    abstinence = i.abstinence,
+                    spermScoreTimePointId = i.spermScoreTimePointId,
+                    spermScoreTimePoint = i.spermScoreTimePoint,
+                    recordTime = i.recordTime,
+                    embryologist = i.embryologist,
+                    embryologistName = i.embryologistName,
+                    courseOfTreatmentId = i.courseOfTreatmentId,
+                    courseOfTreatmentSqlId = i.courseOfTreatmentSqlId
+                };
+                spermScore.baseSpermInfo = i.isThawed ? i.baseSpermInfo_Thaw : i.baseSpermInfo_Fresh;
+                result.Add(spermScore);
+            }
+            return result;
         }
         public BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore)
         {

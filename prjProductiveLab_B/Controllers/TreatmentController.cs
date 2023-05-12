@@ -27,6 +27,16 @@ namespace prjProductiveLab_B.Controllers
         {
             return await treatmentService.GetAllCustomer();
         }
+        [HttpGet("GetCustomerByCustomerSqlId")]
+        public async Task<BaseCustomerInfoDto> GetCustomerByCustomerSqlId(int customerSqlId)
+        {
+            return await treatmentService.GetCustomerByCustomerSqlId(customerSqlId);
+        }
+        [HttpGet("GetCustomerByCourseOfTreatmentId")]
+        public async Task<BaseCustomerInfoDto> GetCustomerByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        {
+            return await treatmentService.GetCustomerByCourseOfTreatmentId(courseOfTreatmentId);
+        }
         [HttpPost("AddCourseOfTreatment")]
         public async Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input)
         {

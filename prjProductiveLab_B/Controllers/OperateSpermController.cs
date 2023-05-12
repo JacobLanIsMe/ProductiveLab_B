@@ -14,11 +14,11 @@ namespace prjProductiveLab_B.Controllers
         {
             this.operateSpermService = operateSpermService;
         }
-        [HttpGet("GetOriginInfoOfSperm")]
-        public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
-        {
-            return await operateSpermService.GetOriginInfoOfSperm(courseOfTreatmentId);
-        }
+        //[HttpGet("GetOriginInfoOfSperm")]
+        //public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
+        //{
+        //    return await operateSpermService.GetOriginInfoOfSperm(courseOfTreatmentId);
+        //}
         [HttpPost("AddSpermScore")]
         public BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore)
         {
@@ -41,9 +41,9 @@ namespace prjProductiveLab_B.Controllers
             return await operateSpermService.AddSpermFreeze(input);
         }
         [HttpGet("GetSpermFreeze")]
-        public async Task<List<SpermFreezeDto>> GetSpermFreeze(Guid spermFromCourseOfTreatmentId)
+        public async Task<List<SpermFreezeDto>> GetSpermFreeze(int customerSqlId)
         {
-            return await operateSpermService.GetSpermFreeze(spermFromCourseOfTreatmentId);
+            return await operateSpermService.GetSpermFreeze(customerSqlId);
         }
         [HttpGet("GetSpermScores")]
         public async Task<List<SpermScoreDto>> GetSpermScores(Guid courseOfTreatmentId)

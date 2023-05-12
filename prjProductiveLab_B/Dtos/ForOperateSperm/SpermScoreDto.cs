@@ -17,5 +17,6 @@
         public string? embryologistName { get; set; }
         public Guid courseOfTreatmentId { get; set; }
         public int courseOfTreatmentSqlId { get; set; }
+        public BaseOperateSpermInfoDto? baseSpermInfo { get; set; }
     }
 }

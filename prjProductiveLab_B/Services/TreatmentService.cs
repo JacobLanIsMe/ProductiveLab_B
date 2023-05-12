@@ -156,18 +156,18 @@ namespace prjProductiveLab_B.Services
                 hasPickup = x.OvumPickupId == null ? false : true,
                 isFreshPickup = x.OvumPickupId != null && x.OvumFreezeId == null ? true : false,
                 isFreezePickup = x.OvumPickupId != null && x.OvumFreezeId != null ? true : false,
-                hasTransfer = x.OvumTransferPairRecipientOvumDetails.Count == 0 ? false : true,
-                hasThaw = x.OvumThawFreezePairThawOvumDetails.Count == 0 ? false : true,
-                isFreezeTransfer = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumThawId == null && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId != null) ? true : false,
-                isTransferThaw = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumThaw != null ? true : false,
-                isFreshTransfer = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumTransferPairRecipientOvumDetails.Any(y=>y.DonorOvumDetail.OvumFreezeId == null) ? true : false,
+                hasTransfer = x.OvumTransferPairRecipientOvumDetails.Any() ? true : false,
+                hasThaw = x.OvumThawFreezePairThawOvumDetails.Any() ? true : false,
+                isFreezeTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumThawId == null && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId != null) ? true : false,
+                isTransferThaw = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumThaw != null ? true : false,
+                isFreshTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumTransferPairRecipientOvumDetails.Any(y=>y.DonorOvumDetail.OvumFreezeId == null) ? true : false,
                 ovumFromCourseOfTreatmentSqlId = x.OvumFromCourseOfTreatment.SqlId,
                 day_FreshPickup = x.OvumPickupId != null && x.OvumFreezeId == null ? (DateTime.Now.Date - x.CourseOfTreatment.SurgicalTime.Date).Days : 0,
                 day_FreezePickup = x.OvumPickupId != null && x.OvumFreezeId != null ? x.ObservationNotes.Where(y=>y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(y=>y.Day).FirstOrDefault() : 0,
-                day_FreezeTransfer = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumThawId == null && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId != null) ? x.OvumTransferPairRecipientOvumDetails.Select(y=>y.DonorOvumDetail.ObservationNotes.Where(z=>z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(z=>z.Day).FirstOrDefault()).FirstOrDefault() : 0,
-                day_TransferThaw = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumThaw != null ? ((DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days + x.OvumTransferPairRecipientOvumDetails.Select(y => y.DonorOvumDetail.ObservationNotes.Where(z => z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(z => z.Day).FirstOrDefault()).FirstOrDefault()) : 0,
-                day_FreshTransfer = x.OvumTransferPairRecipientOvumDetails.Count != 0 && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId == null) ? (DateTime.Now.Date - x.OvumTransferPairRecipientOvumDetails.Select(y=>y.DonorOvumDetail.CourseOfTreatment.SurgicalTime).FirstOrDefault().Date).Days : 0,
-                day_Thaw = x.OvumThawFreezePairThawOvumDetails.Count == 0 ? 0 : x.OvumThawFreezePairThawOvumDetails.Select(y=>y.FreezeOvumDetail.ObservationNotes.Where(z=>z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(z=>z.Day).FirstOrDefault()).FirstOrDefault()
+                day_FreezeTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumThawId == null && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId != null) ? x.OvumTransferPairRecipientOvumDetails.Select(y=>y.DonorOvumDetail.ObservationNotes.Where(z=>z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(z=>z.Day).FirstOrDefault()).FirstOrDefault() : 0,
+                day_TransferThaw = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumThaw != null ? ((DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days + x.OvumTransferPairRecipientOvumDetails.Select(y => y.DonorOvumDetail.ObservationNotes.Where(z => z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(z => z.Day).FirstOrDefault()).FirstOrDefault()) : 0,
+                day_FreshTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId == null) ? (DateTime.Now.Date - x.OvumTransferPairRecipientOvumDetails.Select(y=>y.DonorOvumDetail.CourseOfTreatment.SurgicalTime).FirstOrDefault().Date).Days : 0,
+                day_Thaw = x.OvumThawFreezePairThawOvumDetails.Any() ? x.OvumThawFreezePairThawOvumDetails.Select(y=>y.FreezeOvumDetail.ObservationNotes.Where(z=>z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(z=>z.Day).FirstOrDefault()).FirstOrDefault() : 0
             }).OrderBy(x=>x.ovumNumber).ToListAsync();
 
             List<TreatmentSummaryDto> result = new List<TreatmentSummaryDto>();
@@ -250,6 +250,34 @@ namespace prjProductiveLab_B.Services
                 customerName = x.Name,
                 birthday = x.Birthday
             }).OrderBy(x => x.customerSqlId).ToListAsync();
+        }
+        public async Task<BaseCustomerInfoDto> GetCustomerByCustomerSqlId(int customerSqlId)
+        {
+            var result = await dbContext.Customers.Where(x=>x.SqlId == customerSqlId).Select(x=>new BaseCustomerInfoDto
+            {
+                customerId = x.CustomerId,
+                customerSqlId = x.SqlId,
+                customerName = x.Name,
+            }).FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return new BaseCustomerInfoDto();
+            }
+            return result;
+        }
+        public async Task<BaseCustomerInfoDto> GetCustomerByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        {
+            var result = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseCustomerInfoDto
+            {
+                customerId = x.CustomerId,
+                customerSqlId = x.Customer.SqlId,
+                customerName = x.Customer.Name
+            }).FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return new BaseCustomerInfoDto();
+            }
+            return result;
         }
         public async Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input)
         {
@@ -462,16 +490,18 @@ namespace prjProductiveLab_B.Services
                     {
                         i.ovumFreeze.IsThawed = true;
                         i.storageUnit.IsOccupied = false;
-                        OvumThawFreezePair pair = new OvumThawFreezePair
-                        {
-                            FreezeOvumDetailId = i.ovumDetail.OvumDetailId
-                        };
                         if (i.observationNoteCount == 0 && i.isTransferred)
                         {
                             i.ovumDetail.OvumFreezeId = null;
                             i.ovumDetail.OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation;
                             i.ovumDetail.OvumThawId = latestOvumThawId;
-                            pair.ThawOvumDetailId = i.ovumDetail.OvumDetailId;
+                            OvumThawFreezePair pair = new OvumThawFreezePair
+                            {
+                                FreezeOvumDetailId = i.ovumDetail.OvumDetailId,
+                                ThawOvumDetailId = i.ovumDetail.OvumDetailId
+                            };
+                            dbContext.OvumThawFreezePairs.Add(pair);
+                            dbContext.SaveChanges();
                         }
                         else
                         {
@@ -487,10 +517,15 @@ namespace prjProductiveLab_B.Services
                             dbContext.OvumDetails.Add(ovumDetail);
                             dbContext.SaveChanges();
                             Guid thawOvumDetailId = dbContext.OvumDetails.OrderByDescending(x => x.SqlId).Select(x => x.OvumDetailId).FirstOrDefault();
-                            pair.ThawOvumDetailId = thawOvumDetailId;
+                            OvumThawFreezePair pair = new OvumThawFreezePair
+                            {
+                                FreezeOvumDetailId = i.ovumDetail.OvumDetailId,
+                                ThawOvumDetailId = thawOvumDetailId
+                            };
+                            dbContext.OvumThawFreezePairs.Add(pair);
+                            dbContext.SaveChanges();
                         }
-                        dbContext.OvumThawFreezePairs.Add(pair);
-                        dbContext.SaveChanges();
+                        
                         count++;
                     }
                     dbContext.SaveChanges();
