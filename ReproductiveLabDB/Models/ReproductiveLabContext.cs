@@ -169,11 +169,6 @@ namespace ReproductiveLabDB.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CourseOfTreatment_Employee");
 
-                entity.HasOne(d => d.SpermFromCourseOfTreatment)
-                    .WithMany(p => p.InverseSpermFromCourseOfTreatment)
-                    .HasForeignKey(d => d.SpermFromCourseOfTreatmentId)
-                    .HasConstraintName("FK_CourseOfTreatment_CourseOfTreatment1");
-
                 entity.HasOne(d => d.Treatment)
                     .WithMany(p => p.CourseOfTreatments)
                     .HasForeignKey(d => d.TreatmentId)

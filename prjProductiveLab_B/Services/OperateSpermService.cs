@@ -17,28 +17,6 @@ namespace prjProductiveLab_B.Services
             this.dbContext = dbContext;
             this.sharedFunction = sharedFunction;
         }
-        //public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
-        //{
-        //    var result = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseOperateSpermInfoDto
-        //    {
-        //        spermSituationName = x.Treatment.SpermSituation.Name,
-        //        spermRetrievalMethodName = x.SpermFromCourseOfTreatment.Treatment.SpermRetrievalMethod.Name,
-        //        spermOwner = new BaseCustomerInfoDto
-        //        {
-        //            customerName = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.Name : x.Customer.SpouseNavigation.Name,
-        //            customerSqlId = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.SqlId : x.Customer.SpouseNavigation.SqlId,
-        //            birthday = (x.Treatment.SpermSituationId == (int)GermCellSituationEnum.thaw || x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze) ? x.SpermFromCourseOfTreatment.Customer.Birthday : x.Customer.SpouseNavigation.Birthday
-        //        }
-        //    }).FirstOrDefaultAsync();
-        //    if (result == null)
-        //    {
-        //        return new BaseOperateSpermInfoDto();
-        //    }
-        //    else
-        //    {
-        //        return result;
-        //    }
-        //}
 
         public async Task<List<SpermFreezeDto>> GetSpermFreeze(int customerSqlId)
         {

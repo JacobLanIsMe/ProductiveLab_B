@@ -7,7 +7,6 @@ namespace ReproductiveLabDB.Models
     {
         public CourseOfTreatment()
         {
-            InverseSpermFromCourseOfTreatment = new HashSet<CourseOfTreatment>();
             OvumDetailCourseOfTreatments = new HashSet<OvumDetail>();
             OvumDetailOvumFromCourseOfTreatments = new HashSet<OvumDetail>();
             SpermFreezes = new HashSet<SpermFreeze>();
@@ -23,14 +22,11 @@ namespace ReproductiveLabDB.Models
         public DateTime SurgicalTime { get; set; }
         public int TreatmentStatusId { get; set; }
         public string? Memo { get; set; }
-        public Guid? SpermFromCourseOfTreatmentId { get; set; }
 
         public virtual Customer Customer { get; set; } = null!;
         public virtual Employee DoctorNavigation { get; set; } = null!;
-        public virtual CourseOfTreatment? SpermFromCourseOfTreatment { get; set; }
         public virtual Treatment Treatment { get; set; } = null!;
         public virtual TreatmentStatus TreatmentStatus { get; set; } = null!;
-        public virtual ICollection<CourseOfTreatment> InverseSpermFromCourseOfTreatment { get; set; }
         public virtual ICollection<OvumDetail> OvumDetailCourseOfTreatments { get; set; }
         public virtual ICollection<OvumDetail> OvumDetailOvumFromCourseOfTreatments { get; set; }
         public virtual ICollection<SpermFreeze> SpermFreezes { get; set; }

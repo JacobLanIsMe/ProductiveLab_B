@@ -14,17 +14,11 @@ namespace prjProductiveLab_B.Controllers
         {
             this.operateSpermService = operateSpermService;
         }
-        //[HttpGet("GetOriginInfoOfSperm")]
-        //public async Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId)
-        //{
-        //    return await operateSpermService.GetOriginInfoOfSperm(courseOfTreatmentId);
-        //}
         [HttpPost("AddSpermScore")]
         public BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore)
         {
             return operateSpermService.AddSpermScore(addSpermScore);
         }
-        
         [HttpPut("UpdateExistingSpermScore")]
         public async Task<BaseResponseDto> UpdateExistingSpermScore(SpermScoreDto addSpermScore)
         {

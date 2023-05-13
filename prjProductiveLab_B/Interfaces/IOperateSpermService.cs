@@ -5,7 +5,6 @@ namespace prjProductiveLab_B.Interfaces
 {
     public interface IOperateSpermService
     {
-        //Task<BaseOperateSpermInfoDto> GetOriginInfoOfSperm(Guid courseOfTreatmentId);
         Task<List<SpermScoreDto>> GetSpermScores(Guid courseOfTreatmentId);
         Task<List<SpermFreezeDto>> GetSpermFreeze(int customerSqlId);
         BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore);
