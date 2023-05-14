@@ -1,4 +1,7 @@
-﻿namespace prjProductiveLab_B.Dtos.ForTreatment
+﻿using prjProductiveLab_B.Dtos.ForObservationNote;
+using prjProductiveLab_B.Dtos.ForStorage;
+
+namespace prjProductiveLab_B.Dtos.ForTreatment
 {
     public class TreatmentSummaryDto
     {
@@ -9,7 +12,8 @@
         public int dateOfEmbryo { get; set; }
         public int ovumNumber { get; set; }
         public bool hasFertilization { get; set; }
-        public string? observationNote { get; set; }
+        public GetObservationNoteNameDto? observationNote { get; set; }
         public string? ovumSource { get; set; }
+        public BaseStorage? freezeStorageInfo { get; set; }
     }
 }

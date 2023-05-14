@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using prjProductiveLab_B.Dtos;
+using prjProductiveLab_B.Dtos.ForObservationNote;
+using prjProductiveLab_B.Dtos.ForStorage;
 using prjProductiveLab_B.Dtos.ForTreatment;
 using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
@@ -13,10 +15,12 @@ namespace prjProductiveLab_B.Services
     {
         private readonly ReproductiveLabContext dbContext;
         private readonly ISharedFunctionService sharedFunction;
-        public TreatmentService(ReproductiveLabContext dbContext, ISharedFunctionService sharedFunction)
+        private readonly IWebHostEnvironment enviro;
+        public TreatmentService(ReproductiveLabContext dbContext, ISharedFunctionService sharedFunction, IWebHostEnvironment enviro)
         {
             this.dbContext = dbContext;
             this.sharedFunction = sharedFunction;
+            this.enviro = enviro;
         }
         public BaseResponseDto AddOvumPickupNote(AddOvumPickupNoteDto ovumPickupNote)
         {
@@ -151,7 +155,59 @@ namespace prjProductiveLab_B.Services
                 ovumDetailStatus = x.OvumDetailStatus.Name,
                 ovumNumber = x.OvumNumber,
                 hasFertilization = x.FertilisationId == null ? false : true,
-                observationNote = x.ObservationNotes.OrderByDescending(y => y.SqlId).Select(y => y.Memo).FirstOrDefault(),
+                observationNote = x.OvumFreezeId == null ? x.ObservationNotes.Where(y=>!y.IsDeleted).Select(y=>new GetObservationNoteNameDto
+                {
+                    fertilisationResultName = y.FertilisationResult == null ? null : y.FertilisationResult.Name,
+                    embryoStatusName = y.ObservationNoteEmbryoStatuses.Any() ? y.ObservationNoteEmbryoStatuses.Select(z=>z.EmbryoStatus.Name).ToList() : null,
+                    ovumMaturationName = y.OvumMaturation == null ? null : y.OvumMaturation.Name,
+                    pgtaNumber = y.Pgtanumber.ToString(),
+                    pgtaResult = y.Pgtaresult,
+                    kidScore = y.Kidscore.ToString(),
+                    observationTime = y.ObservationTime,
+                    observationTypeName = y.ObservationType == null ? null : y.ObservationType.Name,
+                    observationNotePhotos = y.ObservationNotePhotos.Where(z=>!z.IsDeleted && z.IsMainPhoto).Select(z=>new ObservationNotePhotoDto
+                    {
+                        observationNotePhotoId = z.ObservationNotePhotoId,
+                        photoName = z.PhotoName,
+                        isMainPhoto = z.IsMainPhoto
+                    }).ToList()
+                }).OrderByDescending(y=>y.observationTime).FirstOrDefault() : x.ObservationNotes.Where(y=>y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !y.IsDeleted).Select(y=>new GetObservationNoteNameDto
+                {
+                    fertilisationResultName = y.FertilisationResult == null ? null : y.FertilisationResult.Name,
+                    embryoStatusName = y.ObservationNoteEmbryoStatuses.Any() ? y.ObservationNoteEmbryoStatuses.Select(z => z.EmbryoStatus.Name).ToList() : null,
+                    ovumMaturationName = y.OvumMaturation == null ? null : y.OvumMaturation.Name,
+                    pgtaNumber = y.Pgtanumber.ToString(),
+                    pgtaResult = y.Pgtaresult,
+                    kidScore = y.Kidscore.ToString(),
+                    observationTime = y.ObservationTime,
+                    observationTypeName = y.ObservationType == null ? null : y.ObservationType.Name,
+                    observationNotePhotos = y.ObservationNotePhotos.Where(z => !z.IsDeleted && z.IsMainPhoto).Select(z => new ObservationNotePhotoDto
+                    {
+                        observationNotePhotoId = z.ObservationNotePhotoId,
+                        photoName = z.PhotoName,
+                        isMainPhoto = z.IsMainPhoto
+                    }).ToList()
+                }).FirstOrDefault(),
+                freezeStorageInfo = x.OvumFreeze == null ? null : new BaseStorage
+                {
+                    tankInfo = new StorageTankDto
+                    {
+                        tankName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
+                        tankTypeId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId
+                    },
+                    tankId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTankId,
+                    canistId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanistId,
+                    canistName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.CanistName,
+                    stripBoxId = x.OvumFreeze.StorageUnit.StorageStripBoxId,
+                    stripBoxName = x.OvumFreeze.StorageUnit.StorageStripBox.StripBoxName,
+                    topColorName = x.OvumFreeze.TopColor.Name,
+                    unitInfo = new StorageUnitDto
+                    {
+                        storageUnitId = x.OvumFreeze.StorageUnitId,
+                        unitName = x.OvumFreeze.StorageUnit.UnitName,
+                        isOccupied = x.OvumFreeze.StorageUnit.IsOccupied
+                    }
+                },
                 ovumSource = x.CourseOfTreatment.Treatment.OvumSource == null ? null : x.CourseOfTreatment.Treatment.OvumSource.Name,
                 hasPickup = x.OvumPickupId == null ? false : true,
                 isFreshPickup = x.OvumPickupId != null && x.OvumFreezeId == null ? true : false,
@@ -173,6 +229,21 @@ namespace prjProductiveLab_B.Services
             List<TreatmentSummaryDto> result = new List<TreatmentSummaryDto>();
             foreach (var i in q)
             {
+                if (i.observationNote != null)
+                {
+                    foreach (var j in i.observationNote.observationNotePhotos)
+                    {
+                        if (j.photoName != null)
+                        {
+                            string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", j.photoName);
+                            if (File.Exists(path))
+                            {
+                                j.imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
+                            }
+                        }
+                    }
+                }
+                
                 TreatmentSummaryDto treatment = new TreatmentSummaryDto
                 {
                     ovumDetailId = i.ovumDetailId,
@@ -182,7 +253,8 @@ namespace prjProductiveLab_B.Services
                     hasFertilization = i.hasFertilization,
                     observationNote = i.observationNote,
                     ovumFromCourseOfTreatmentSqlId = i.ovumFromCourseOfTreatmentSqlId,
-                    ovumSource = i.ovumSource
+                    ovumSource = i.ovumSource,
+                    freezeStorageInfo = i.freezeStorageInfo
                 };
                 if (i.hasPickup)
                 {
