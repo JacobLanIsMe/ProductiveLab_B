@@ -64,6 +64,16 @@ namespace prjProductiveLab_B.Controllers
         {
             return await treatmentService.AddOvumFreeze(input);
         }
+        [HttpPost("UpdateOvumFreeze")]
+        public async Task<BaseResponseDto> UpdateOvumFreeze(AddOvumFreezeDto input)
+        {
+            return await treatmentService.UpdateOvumFreeze(input);
+        }
+        [HttpGet("GetOvumFreeze")]
+        public async Task<AddOvumFreezeDto> GetOvumFreeze(Guid ovumDetailId)
+        {
+            return await treatmentService.GetOvumFreeze(ovumDetailId);
+        }
         [HttpGet("GetOvumOwnerInfo")]
         public async Task<BaseCustomerInfoDto> GetOvumOwnerInfo(Guid ovumDetailId)
         {

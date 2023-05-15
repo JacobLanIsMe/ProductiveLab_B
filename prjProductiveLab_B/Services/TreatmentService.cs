@@ -7,6 +7,7 @@ using prjProductiveLab_B.Dtos.ForTreatment;
 using prjProductiveLab_B.Enums;
 using prjProductiveLab_B.Interfaces;
 using ReproductiveLabDB.Models;
+using System.Text;
 using System.Transactions;
 
 namespace prjProductiveLab_B.Services
@@ -448,7 +449,57 @@ namespace prjProductiveLab_B.Services
                 throw new Exception($"卵子編號: {hasFreezeObservationNote.OvumNumber} 尚無冷凍觀察紀錄");
             }
         }
-
+        public async Task<BaseResponseDto> UpdateOvumFreeze(AddOvumFreezeDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using(TransactionScope scope = new TransactionScope())
+                {
+                    if (input.ovumDetailId.Count <= 0)
+                    {
+                        throw new Exception("請選擇要修改的卵子");
+                    }
+                    var ovumFreeze = dbContext.OvumDetails.Where(x => x.OvumDetailId == input.ovumDetailId[0]).Select(x => x.OvumFreeze).FirstOrDefault();
+                    if (ovumFreeze == null)
+                    {
+                        throw new Exception("無相關的卵子資訊");
+                    }
+                    ovumFreeze.FreezeTime = input.freezeTime;
+                    ovumFreeze.Embryologist = input.embryologist;
+                    ovumFreeze.OvumMorphologyA = input.ovumMorphology_A;
+                    ovumFreeze.OvumMorphologyB = input.ovumMorphology_B;
+                    ovumFreeze.OvumMorphologyC = input.ovumMorphology_C;
+                    ovumFreeze.MediumInUseId = input.mediumInUseId;
+                    ovumFreeze.OtherMediumName = input.otherMediumName;
+                    ovumFreeze.Memo = input.memo;
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch(Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            
+            return result; 
+        }
+        public async Task<AddOvumFreezeDto> GetOvumFreeze(Guid ovumDetailId)
+        {
+            var ovumFreeze = await dbContext.OvumDetails.Where(x => x.OvumDetailId == ovumDetailId).Select(x => new AddOvumFreezeDto
+            {
+                freezeTime = x.OvumFreeze == null ? default : x.OvumFreeze.FreezeTime,
+                embryologist = x.OvumFreeze == null ? default : x.OvumFreeze.Embryologist,
+                mediumInUseId = x.OvumFreeze == null ? default : x.OvumFreeze.MediumInUseId,
+                otherMediumName = x.OvumFreeze == null ? default : x.OvumFreeze.OtherMediumName,
+                ovumMorphology_A = x.OvumFreeze == null ? default : x.OvumFreeze.OvumMorphologyA,
+                ovumMorphology_B = x.OvumFreeze == null ? default : x.OvumFreeze.OvumMorphologyB,
+                ovumMorphology_C = x.OvumFreeze == null ? default : x.OvumFreeze.OvumMorphologyC,
+                memo = x.OvumFreeze == null ? default : x.OvumFreeze.Memo
+            }).FirstOrDefaultAsync();
+            return ovumFreeze;
+        }
         public async Task<BaseCustomerInfoDto> GetOvumOwnerInfo(Guid ovumDetailId)
         {
             var result = await dbContext.OvumDetails.Where(x => x.OvumDetailId == ovumDetailId).Select(x => new BaseCustomerInfoDto
