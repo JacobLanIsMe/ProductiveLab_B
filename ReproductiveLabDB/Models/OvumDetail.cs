@@ -21,12 +21,12 @@ namespace ReproductiveLabDB.Models
         public int OvumDetailStatusId { get; set; }
         public Guid? OvumFreezeId { get; set; }
         public Guid? OvumThawId { get; set; }
-        public Guid? FertilisationId { get; set; }
+        public Guid? FertilizationId { get; set; }
         public Guid CourseOfTreatmentId { get; set; }
         public Guid OvumFromCourseOfTreatmentId { get; set; }
 
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
-        public virtual Fertilisation? Fertilisation { get; set; }
+        public virtual Fertilization? Fertilization { get; set; }
         public virtual OvumDetailStatus OvumDetailStatus { get; set; } = null!;
         public virtual OvumFreeze? OvumFreeze { get; set; }
         public virtual CourseOfTreatment OvumFromCourseOfTreatment { get; set; } = null!;

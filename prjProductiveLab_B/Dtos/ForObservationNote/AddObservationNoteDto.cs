@@ -7,7 +7,7 @@
         public string? observationTypeId { get; set; }
         public string? ovumAbnormalityId { get; set; }
         public List<int>? ovumAbnormalityIds { get; set; }
-        public string? fertilisationResultId { get; set; }
+        public string? fertilizationResultId { get; set; }
         public string? blastomereScore_C_Id { get; set; }
         public string? blastomereScore_G_Id { get; set; }
         public string? blastomereScore_F_Id { get; set; }

@@ -35,10 +35,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return await observationNoteService.GetOvumAbnormality();
         }
-        [HttpGet("GetFertilisationResult")]
-        public async Task<List<CommonDto>> GetFertilisationResult()
+        [HttpGet("GetFertilizationResult")]
+        public async Task<List<CommonDto>> GetFertilizationResult()
         {
-            return await observationNoteService.GetFertilisationResult();
+            return await observationNoteService.GetFertilizationResult();
         }
         [HttpGet("GetBlastomereScore")]
         public async Task<BlastomereScoreDto> GetBlastomereScore()

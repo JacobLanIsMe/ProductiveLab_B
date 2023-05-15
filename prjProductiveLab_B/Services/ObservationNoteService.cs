@@ -82,9 +82,9 @@ namespace prjProductiveLab_B.Services
                 name = x.Name
             }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
         }
-        public async Task<List<CommonDto>> GetFertilisationResult()
+        public async Task<List<CommonDto>> GetFertilizationResult()
         {
-            return await dbContext.FertilisationResults.Select(x=>new CommonDto
+            return await dbContext.FertilizationResults.Select(x=>new CommonDto
             {
                 id=x.SqlId,
                 name=x.Name
@@ -240,13 +240,13 @@ namespace prjProductiveLab_B.Services
             {
                 observationNote.ObservationTypeId = null;
             }
-            if (Int32.TryParse(input.fertilisationResultId, out int fertilisationResultId))
+            if (Int32.TryParse(input.fertilizationResultId, out int fertilizationResultId))
             {
-                observationNote.FertilisationResultId = fertilisationResultId;
+                observationNote.FertilizationResultId = fertilizationResultId;
             }
             else
             {
-                observationNote.FertilisationResultId = null;
+                observationNote.FertilizationResultId = null;
             }
             if (Int32.TryParse(input.blastomereScore_C_Id, out int blastomereScore_C_Id))
             {
@@ -549,7 +549,7 @@ namespace prjProductiveLab_B.Services
                 ovumMaturationId = x.OvumMaturationId.ToString(),
                 observationTypeId = x.ObservationTypeId.ToString(),
                 ovumAbnormalityIds = x.ObservationNoteOvumAbnormalities.Where(y => y.IsDeleted == false).Select(y => y.OvumAbnormalityId).ToList(),
-                fertilisationResultId = x.FertilisationResultId.ToString(),
+                fertilizationResultId = x.FertilizationResultId.ToString(),
                 blastomereScore_C_Id = x.BlastomereScoreCId.ToString(),
                 blastomereScore_G_Id = x.BlastomereScoreGId.ToString(),
                 blastomereScore_F_Id = x.BlastomereScoreFId.ToString(),
@@ -605,7 +605,7 @@ namespace prjProductiveLab_B.Services
                 ovumMaturationName = x.OvumMaturation.Name,
                 observationTypeName = x.ObservationType.Name,
                 ovumAbnormalityName = x.ObservationNoteOvumAbnormalities.Where(y=> y.IsDeleted == false).Select(y=>y.OvumAbnormality.Name).ToList(),
-                fertilisationResultName = x.FertilisationResult.Name,
+                fertilizationResultName = x.FertilizationResult.Name,
                 blastomereScore_C_Name = x.BlastomereScoreC.Name,
                 blastomereScore_G_Name = x.BlastomereScoreG.Name,
                 blastomereScore_F_Name = x.BlastomereScoreF.Name,
@@ -699,7 +699,7 @@ namespace prjProductiveLab_B.Services
             {
                 ovumNumber = x.OvumDetail.OvumNumber,
                 day = x.Day,
-                fertilisationResultName = x.FertilisationResult.Name,
+                fertilizationResultName = x.FertilizationResult.Name,
                 observationTime = x.ObservationTime,
                 pgtaNumber = x.Pgtanumber.ToString(),
                 pgtaResult = x.Pgtaresult,

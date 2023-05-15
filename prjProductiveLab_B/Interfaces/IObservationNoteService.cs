@@ -9,7 +9,7 @@ namespace prjProductiveLab_B.Interfaces
         Task<List<CommonDto>> GetOvumMaturation();
         Task<List<CommonDto>> GetObservationType();
         Task<List<CommonDto>> GetOvumAbnormality();
-        Task<List<CommonDto>> GetFertilisationResult();
+        Task<List<CommonDto>> GetFertilizationResult();
         Task<BlastomereScoreDto> GetBlastomereScore();
         Task<List<CommonDto>> GetEmbryoStatus();
         Task<BlastocystScoreDto> GetBlastocystScore();

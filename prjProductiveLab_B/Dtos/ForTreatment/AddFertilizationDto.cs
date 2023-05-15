@@ -1,9 +1,9 @@
 ﻿namespace prjProductiveLab_B.Dtos.ForTreatment
 {
-    public class AddFertilisationDto
+    public class AddFertilizationDto
     {
-        public DateTime fertilisationTime { get; set; }
-        public int fertilisationMethodId { get; set; }
+        public DateTime fertilizationTime { get; set; }
+        public int fertilizationMethodId { get; set; }
         public int incubatorId { get; set; }
         public string? otherIncubator { get; set; }
         public List<Guid>? mediumInUseIds { get; set; }

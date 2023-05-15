@@ -84,20 +84,20 @@ namespace prjProductiveLab_B.Controllers
         {
             return await treatmentService.GetTopColors();
         }
-        [HttpGet("GetFertilisationMethods")]
-        public async Task<List<CommonDto>> GetFertilisationMethods()
+        [HttpGet("GetFertilizationMethods")]
+        public async Task<List<CommonDto>> GetFertilizationMethods()
         {
-            return await treatmentService.GetFertilisationMethods();
+            return await treatmentService.GetFertilizationMethods();
         }
         [HttpGet("GetIncubators")]
         public async Task<List<CommonDto>> GetIncubators()
         {
             return await treatmentService.GetIncubators();
         }
-        [HttpPost("AddFertilisation")]
-        public BaseResponseDto AddFertilisation(AddFertilisationDto input)
+        [HttpPost("AddFertilization")]
+        public BaseResponseDto AddFertilization(AddFertilizationDto input)
         {
-            return treatmentService.AddFertilisation(input);
+            return treatmentService.AddFertilization(input);
         }
         [HttpPost("AddOvumThaw")]
         public BaseResponseDto AddOvumThaw(AddOvumThawDto input)

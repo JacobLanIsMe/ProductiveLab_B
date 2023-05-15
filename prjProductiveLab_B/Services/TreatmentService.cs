@@ -155,10 +155,11 @@ namespace prjProductiveLab_B.Services
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
                 ovumDetailStatus = x.OvumDetailStatus.Name,
                 ovumNumber = x.OvumNumber,
-                hasFertilization = x.FertilisationId == null ? false : true,
+                fertilizationTime = x.Fertilization == null ? default : x.Fertilization.FertilizationTime,
+                fertilizationMethod = x.Fertilization == null ? null : x.Fertilization.FertilizationMethod.Name,
                 observationNote = x.OvumFreezeId == null ? x.ObservationNotes.Where(y=>!y.IsDeleted).Select(y=>new GetObservationNoteNameDto
                 {
-                    fertilisationResultName = y.FertilisationResult == null ? null : y.FertilisationResult.Name,
+                    fertilizationResultName = y.FertilizationResult == null ? null : y.FertilizationResult.Name,
                     embryoStatusName = y.ObservationNoteEmbryoStatuses.Any() ? y.ObservationNoteEmbryoStatuses.Select(z=>z.EmbryoStatus.Name).ToList() : null,
                     ovumMaturationName = y.OvumMaturation == null ? null : y.OvumMaturation.Name,
                     pgtaNumber = y.Pgtanumber.ToString(),
@@ -166,15 +167,22 @@ namespace prjProductiveLab_B.Services
                     kidScore = y.Kidscore.ToString(),
                     observationTime = y.ObservationTime,
                     observationTypeName = y.ObservationType == null ? null : y.ObservationType.Name,
-                    observationNotePhotos = y.ObservationNotePhotos.Where(z=>!z.IsDeleted && z.IsMainPhoto).Select(z=>new ObservationNotePhotoDto
-                    {
-                        observationNotePhotoId = z.ObservationNotePhotoId,
-                        photoName = z.PhotoName,
-                        isMainPhoto = z.IsMainPhoto
-                    }).ToList()
+                    ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Any() ? y.ObservationNoteOvumAbnormalities.Select(z=>z.OvumAbnormality.Name).ToList() : null,
+                    blastomereScore_C_Name = y.BlastomereScoreC.Name,
+                    blastomereScore_G_Name = y.BlastomereScoreG.Name,
+                    blastomereScore_F_Name = y.BlastomereScoreF.Name,
+                    blastocystScore_Expansion_Name = y.BlastocystScoreExpansion.Name,
+                    blastocystScore_ICE_Name = y.BlastocystScoreIce.Name,
+                    blastocystScore_TE_Name = y.BlastocystScoreTe.Name,
+                    //observationNotePhotos = y.ObservationNotePhotos.Where(z => !z.IsDeleted && z.IsMainPhoto).Select(z => new ObservationNotePhotoDto
+                    //{
+                    //    observationNotePhotoId = z.ObservationNotePhotoId,
+                    //    photoName = z.PhotoName,
+                    //    isMainPhoto = z.IsMainPhoto
+                    //}).ToList()
                 }).OrderByDescending(y=>y.observationTime).FirstOrDefault() : x.ObservationNotes.Where(y=>y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !y.IsDeleted).Select(y=>new GetObservationNoteNameDto
                 {
-                    fertilisationResultName = y.FertilisationResult == null ? null : y.FertilisationResult.Name,
+                    fertilizationResultName = y.FertilizationResult == null ? null : y.FertilizationResult.Name,
                     embryoStatusName = y.ObservationNoteEmbryoStatuses.Any() ? y.ObservationNoteEmbryoStatuses.Select(z => z.EmbryoStatus.Name).ToList() : null,
                     ovumMaturationName = y.OvumMaturation == null ? null : y.OvumMaturation.Name,
                     pgtaNumber = y.Pgtanumber.ToString(),
@@ -182,12 +190,19 @@ namespace prjProductiveLab_B.Services
                     kidScore = y.Kidscore.ToString(),
                     observationTime = y.ObservationTime,
                     observationTypeName = y.ObservationType == null ? null : y.ObservationType.Name,
-                    observationNotePhotos = y.ObservationNotePhotos.Where(z => !z.IsDeleted && z.IsMainPhoto).Select(z => new ObservationNotePhotoDto
-                    {
-                        observationNotePhotoId = z.ObservationNotePhotoId,
-                        photoName = z.PhotoName,
-                        isMainPhoto = z.IsMainPhoto
-                    }).ToList()
+                    ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Any() ? y.ObservationNoteOvumAbnormalities.Select(z => z.OvumAbnormality.Name).ToList() : null,
+                    blastomereScore_C_Name = y.BlastomereScoreC.Name,
+                    blastomereScore_G_Name = y.BlastomereScoreG.Name,
+                    blastomereScore_F_Name = y.BlastomereScoreF.Name,
+                    blastocystScore_Expansion_Name = y.BlastocystScoreExpansion.Name,
+                    blastocystScore_ICE_Name = y.BlastocystScoreIce.Name,
+                    blastocystScore_TE_Name = y.BlastocystScoreTe.Name,
+                    //observationNotePhotos = y.ObservationNotePhotos.Where(z => !z.IsDeleted && z.IsMainPhoto).Select(z => new ObservationNotePhotoDto
+                    //{
+                    //    observationNotePhotoId = z.ObservationNotePhotoId,
+                    //    photoName = z.PhotoName,
+                    //    isMainPhoto = z.IsMainPhoto
+                    //}).ToList()
                 }).FirstOrDefault(),
                 freezeStorageInfo = x.OvumFreeze == null ? null : new BaseStorage
                 {
@@ -230,28 +245,29 @@ namespace prjProductiveLab_B.Services
             List<TreatmentSummaryDto> result = new List<TreatmentSummaryDto>();
             foreach (var i in q)
             {
-                if (i.observationNote != null)
-                {
-                    foreach (var j in i.observationNote.observationNotePhotos)
-                    {
-                        if (j.photoName != null)
-                        {
-                            string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", j.photoName);
-                            if (File.Exists(path))
-                            {
-                                j.imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
-                            }
-                        }
-                    }
-                }
-                
+                //if (i.observationNote != null)
+                //{
+                //    foreach (var j in i.observationNote.observationNotePhotos)
+                //    {
+                //        if (j.photoName != null)
+                //        {
+                //            string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", j.photoName);
+                //            if (File.Exists(path))
+                //            {
+                //                j.imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
+                //            }
+                //        }
+                //    }
+                //}
+
                 TreatmentSummaryDto treatment = new TreatmentSummaryDto
                 {
                     ovumDetailId = i.ovumDetailId,
                     courseOfTreatmentSqlId = i.courseOfTreatmentSqlId,
                     ovumDetailStatus = i.ovumDetailStatus,
                     ovumNumber = i.ovumNumber,
-                    hasFertilization = i.hasFertilization,
+                    fertilizationTime = i.fertilizationTime == default ? null : i.fertilizationTime,
+                    fertilizationMethod = i.fertilizationMethod == null ? null : i.fertilizationMethod,
                     observationNote = i.observationNote,
                     ovumFromCourseOfTreatmentSqlId = i.ovumFromCourseOfTreatmentSqlId,
                     ovumSource = i.ovumSource,
@@ -526,9 +542,9 @@ namespace prjProductiveLab_B.Services
                 name = x.Name
             }).ToListAsync();
         }
-        public async Task<List<CommonDto>> GetFertilisationMethods()
+        public async Task<List<CommonDto>> GetFertilizationMethods()
         {
-            return await dbContext.FertilisationMethods.Select(x=>new CommonDto
+            return await dbContext.FertilizationMethods.Select(x=>new CommonDto
             {
                 id = x.SqlId,
                 name = x.Name
@@ -542,25 +558,25 @@ namespace prjProductiveLab_B.Services
                 name = x.Name
             }).OrderBy(x => x.id).ToListAsync();
         }
-        public BaseResponseDto AddFertilisation(AddFertilisationDto input)
+        public BaseResponseDto AddFertilization(AddFertilizationDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
             try
             {
                 using(TransactionScope scope = new TransactionScope())
                 {
-                    Fertilisation fertilisation = new Fertilisation
+                    Fertilization fertilization = new Fertilization
                     {
-                        FertilisationTime = input.fertilisationTime,
+                        FertilizationTime = input.fertilizationTime,
                         Embryologist = input.embryologist,
-                        FertilisationMethodId = input.fertilisationMethodId,
+                        FertilizationMethodId = input.fertilizationMethodId,
                         IncubatorId = input.incubatorId,
                         OtherIncubator = input.otherIncubator
                     };
-                    sharedFunction.SetMediumInUse(fertilisation, input.mediumInUseIds);
-                    dbContext.Fertilisations.Add(fertilisation);
+                    sharedFunction.SetMediumInUse(fertilization, input.mediumInUseIds);
+                    dbContext.Fertilizations.Add(fertilization);
                     dbContext.SaveChanges();
-                    Guid latestFertilisationId = dbContext.Fertilisations.OrderByDescending(x=>x.SqlId).Select(x=>x.FertilisationId).FirstOrDefault();
+                    Guid latestFertilisationId = dbContext.Fertilizations.OrderByDescending(x=>x.SqlId).Select(x=>x.FertilizationId).FirstOrDefault();
                     if (latestFertilisationId == Guid.Empty)
                     {
                         throw new Exception("Fertilisation 資料表寫入也誤");
@@ -568,7 +584,7 @@ namespace prjProductiveLab_B.Services
                     var ovumDetailIds = dbContext.OvumDetails.Where(x=>input.ovumDetailIds.Contains(x.OvumDetailId)).ToList();
                     foreach (var i in ovumDetailIds)
                     {
-                        i.FertilisationId = latestFertilisationId;
+                        i.FertilizationId = latestFertilisationId;
                     }
                     dbContext.SaveChanges();
                     scope.Complete();
@@ -642,7 +658,7 @@ namespace prjProductiveLab_B.Services
                                 OvumNumber = count + 1,
                                 OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation,
                                 OvumThawId = latestOvumThawId,
-                                FertilisationId = i.ovumDetail.FertilisationId,
+                                FertilizationId = i.ovumDetail.FertilizationId,
                                 OvumFromCourseOfTreatmentId = i.ovumDetail.OvumFromCourseOfTreatmentId
                             };
                             dbContext.OvumDetails.Add(ovumDetail);
@@ -732,7 +748,7 @@ namespace prjProductiveLab_B.Services
                         {
                             OvumNumber = i + 1,
                             OvumFreezeId = donorOvumDetails[i].OvumFreezeId,
-                            FertilisationId = donorOvumDetails[i].FertilisationId,
+                            FertilizationId = donorOvumDetails[i].FertilizationId,
                             CourseOfTreatmentId = recipientCourseOfTreatmentId,
                             OvumFromCourseOfTreatmentId = donorOvumDetails[i].OvumFromCourseOfTreatmentId
                         };

@@ -7,7 +7,7 @@
         public string? ovumMaturationName { get; set; }
         public string? observationTypeName { get; set; }
         public List<string>? ovumAbnormalityName { get; set; }
-        public string? fertilisationResultName { get; set; }
+        public string? fertilizationResultName { get; set; }
         public string? blastomereScore_C_Name { get; set; }
         public string? blastomereScore_G_Name { get; set; }
         public string? blastomereScore_F_Name { get; set; }

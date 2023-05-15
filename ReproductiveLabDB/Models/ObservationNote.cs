@@ -20,7 +20,7 @@ namespace ReproductiveLabDB.Models
         public Guid Embryologist { get; set; }
         public int? OvumMaturationId { get; set; }
         public int? ObservationTypeId { get; set; }
-        public int? FertilisationResultId { get; set; }
+        public int? FertilizationResultId { get; set; }
         public int? BlastomereScoreCId { get; set; }
         public int? BlastomereScoreGId { get; set; }
         public int? BlastomereScoreFId { get; set; }
@@ -42,7 +42,7 @@ namespace ReproductiveLabDB.Models
         public virtual BlastomereScoreF? BlastomereScoreF { get; set; }
         public virtual BlastomereScoreG? BlastomereScoreG { get; set; }
         public virtual Employee EmbryologistNavigation { get; set; } = null!;
-        public virtual FertilisationResult? FertilisationResult { get; set; }
+        public virtual FertilizationResult? FertilizationResult { get; set; }
         public virtual ObservationType? ObservationType { get; set; }
         public virtual OvumDetail OvumDetail { get; set; } = null!;
         public virtual OvumMaturation? OvumMaturation { get; set; }

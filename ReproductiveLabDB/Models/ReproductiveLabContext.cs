@@ -26,9 +26,9 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<EmbryoStatus> EmbryoStatuses { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
-        public virtual DbSet<Fertilisation> Fertilisations { get; set; } = null!;
-        public virtual DbSet<FertilisationMethod> FertilisationMethods { get; set; } = null!;
-        public virtual DbSet<FertilisationResult> FertilisationResults { get; set; } = null!;
+        public virtual DbSet<Fertilization> Fertilizations { get; set; } = null!;
+        public virtual DbSet<FertilizationMethod> FertilizationMethods { get; set; } = null!;
+        public virtual DbSet<FertilizationResult> FertilizationResults { get; set; } = null!;
         public virtual DbSet<FrequentlyUsedMedium> FrequentlyUsedMedia { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
         public virtual DbSet<FunctionType> FunctionTypes { get; set; } = null!;
@@ -247,71 +247,74 @@ namespace ReproductiveLabDB.Models
                     .HasConstraintName("FK_Staff_Identity");
             });
 
-            modelBuilder.Entity<Fertilisation>(entity =>
+            modelBuilder.Entity<Fertilization>(entity =>
             {
-                entity.HasKey(e => e.FertilisationId)
+                entity.HasKey(e => e.FertilizationId)
+                    .HasName("PK_Fertilisation")
                     .IsClustered(false);
 
-                entity.ToTable("Fertilisation");
+                entity.ToTable("Fertilization");
 
                 entity.HasIndex(e => e.SqlId, "IX_Fertilisation")
                     .IsClustered();
 
-                entity.Property(e => e.FertilisationId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.FertilizationId).HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.FertilisationTime).HasColumnType("datetime");
+                entity.Property(e => e.FertilizationTime).HasColumnType("datetime");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.EmbryologistNavigation)
-                    .WithMany(p => p.Fertilisations)
+                    .WithMany(p => p.Fertilizations)
                     .HasForeignKey(d => d.Embryologist)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Fertilisation_Employee");
 
-                entity.HasOne(d => d.FertilisationMethod)
-                    .WithMany(p => p.Fertilisations)
-                    .HasForeignKey(d => d.FertilisationMethodId)
+                entity.HasOne(d => d.FertilizationMethod)
+                    .WithMany(p => p.Fertilizations)
+                    .HasForeignKey(d => d.FertilizationMethodId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Fertilisation_FertilisationMethod");
 
                 entity.HasOne(d => d.Incubator)
-                    .WithMany(p => p.Fertilisations)
+                    .WithMany(p => p.Fertilizations)
                     .HasForeignKey(d => d.IncubatorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Fertilisation_Incubator");
 
                 entity.HasOne(d => d.MediumInUseId1Navigation)
-                    .WithMany(p => p.FertilisationMediumInUseId1Navigations)
+                    .WithMany(p => p.FertilizationMediumInUseId1Navigations)
                     .HasForeignKey(d => d.MediumInUseId1)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Fertilisation_MediumInUse");
 
                 entity.HasOne(d => d.MediumInUseId2Navigation)
-                    .WithMany(p => p.FertilisationMediumInUseId2Navigations)
+                    .WithMany(p => p.FertilizationMediumInUseId2Navigations)
                     .HasForeignKey(d => d.MediumInUseId2)
                     .HasConstraintName("FK_Fertilisation_MediumInUse1");
 
                 entity.HasOne(d => d.MediumInUseId3Navigation)
-                    .WithMany(p => p.FertilisationMediumInUseId3Navigations)
+                    .WithMany(p => p.FertilizationMediumInUseId3Navigations)
                     .HasForeignKey(d => d.MediumInUseId3)
                     .HasConstraintName("FK_Fertilisation_MediumInUse2");
             });
 
-            modelBuilder.Entity<FertilisationMethod>(entity =>
+            modelBuilder.Entity<FertilizationMethod>(entity =>
             {
-                entity.HasKey(e => e.SqlId);
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_FertilisationMethod");
 
-                entity.ToTable("FertilisationMethod");
+                entity.ToTable("FertilizationMethod");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<FertilisationResult>(entity =>
+            modelBuilder.Entity<FertilizationResult>(entity =>
             {
-                entity.HasKey(e => e.SqlId);
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_FertilisationResult");
 
-                entity.ToTable("FertilisationResult");
+                entity.ToTable("FertilizationResult");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
             });
@@ -524,9 +527,9 @@ namespace ReproductiveLabDB.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ObservationNote_Employee");
 
-                entity.HasOne(d => d.FertilisationResult)
+                entity.HasOne(d => d.FertilizationResult)
                     .WithMany(p => p.ObservationNotes)
-                    .HasForeignKey(d => d.FertilisationResultId)
+                    .HasForeignKey(d => d.FertilizationResultId)
                     .HasConstraintName("FK_ObservationNote_FertilisationResult");
 
                 entity.HasOne(d => d.ObservationType)
@@ -696,9 +699,9 @@ namespace ReproductiveLabDB.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumDetail_CourseOfTreatment");
 
-                entity.HasOne(d => d.Fertilisation)
+                entity.HasOne(d => d.Fertilization)
                     .WithMany(p => p.OvumDetails)
-                    .HasForeignKey(d => d.FertilisationId)
+                    .HasForeignKey(d => d.FertilizationId)
                     .HasConstraintName("FK_OvumPickupDetail_Fertilisation");
 
                 entity.HasOne(d => d.OvumDetailStatus)

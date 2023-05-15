@@ -60,7 +60,7 @@ namespace prjProductiveLab_B.Services
                     observationNoteId = y.ObservationNoteId,
                     day = y.Day,
                     memo = y.Memo,
-                    fertilisationResultName = y.FertilisationResult.Name,
+                    fertilizationResultName = y.FertilizationResult.Name,
                     blastomereScore_C_Name = y.BlastomereScoreC.Name,
                     blastomereScore_G_Name = y.BlastomereScoreG.Name,
                     blastomereScore_F_Name = y.BlastomereScoreF.Name,
@@ -152,7 +152,7 @@ namespace prjProductiveLab_B.Services
                 return new List<GetOvumFreezeSummaryDto>();
             }
             Guid customerId = customer.CustomerId;
-            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.OvumFreezeId != null);
+            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilizationId == null && x.OvumFreezeId != null);
 
             var result = await GetOvumDetailInfos(ovumDetails);
             ConvertPhotoToBase64String(result);
@@ -167,7 +167,7 @@ namespace prjProductiveLab_B.Services
                 return new List<GetOvumFreezeSummaryDto>();
             }
             Guid customerId = customer.CustomerId;
-            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilisationId == null && x.CourseOfTreatment.Treatment.OvumSourceId == (int)GermCellSourceEnum.OD && x.OvumTransferPairDonorOvumDetails.Count <= 0);
+            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilizationId == null && x.CourseOfTreatment.Treatment.OvumSourceId == (int)GermCellSourceEnum.OD && x.OvumTransferPairDonorOvumDetails.Count <= 0);
             var result = await GetOvumDetailInfos(ovumDetails);
             ConvertPhotoToBase64String(result);
             return result;
@@ -181,7 +181,7 @@ namespace prjProductiveLab_B.Services
                 return new List<GetOvumFreezeSummaryDto>();
             }
             Guid customerId = courseOfTreatment.CustomerId;
-            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null && x.FertilisationId != null);
+            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.OvumFreezeId != null && x.FertilizationId != null);
             var result = await GetOvumDetailInfos(ovumDetails);
             ConvertPhotoToBase64String(result);
             return result;

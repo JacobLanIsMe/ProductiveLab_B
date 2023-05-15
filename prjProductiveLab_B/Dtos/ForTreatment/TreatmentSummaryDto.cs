@@ -11,7 +11,8 @@ namespace prjProductiveLab_B.Dtos.ForTreatment
         public string? ovumDetailStatus { get; set; }
         public int dateOfEmbryo { get; set; }
         public int ovumNumber { get; set; }
-        public bool hasFertilization { get; set; }
+        public DateTime? fertilizationTime { get; set; }
+        public string? fertilizationMethod { get; set; }
         public GetObservationNoteNameDto? observationNote { get; set; }
         public string? ovumSource { get; set; }
         public BaseStorage? freezeStorageInfo { get; set; }
