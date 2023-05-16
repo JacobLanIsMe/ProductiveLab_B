@@ -54,12 +54,13 @@ namespace prjProductiveLab_B.Services
                 ovumPickupTime = x.OvumPickup == null ? null : x.OvumPickup.StartTime,
                 freezeTime = x.OvumFreeze == null ? null : x.OvumFreeze.FreezeTime,
                 thawTime = x.OvumThaw == null ? null : x.OvumThaw.ThawTime,
-                freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
+                freezeObservationNoteInfo = x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !y.IsDeleted).OrderByDescending(y => y.ObservationTime).Select(y => new GetObservationNoteNameDto
                 {
                     ovumDetailId = y.OvumDetailId,
                     observationNoteId = y.ObservationNoteId,
                     day = y.Day,
                     memo = y.Memo,
+                    ovumMaturationName = y.OvumMaturation.Name,
                     fertilizationResultName = y.FertilizationResult.Name,
                     blastomereScore_C_Name = y.BlastomereScoreC.Name,
                     blastomereScore_G_Name = y.BlastomereScoreG.Name,

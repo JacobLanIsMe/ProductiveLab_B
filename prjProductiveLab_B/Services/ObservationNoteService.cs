@@ -41,11 +41,7 @@ namespace prjProductiveLab_B.Services
                 {
                     if (j.mainPhoto != null)
                     {
-                        string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", j.mainPhoto);
-                        if (File.Exists(path))
-                        {
-                            j.mainPhotoBase64 = Convert.ToBase64String(File.ReadAllBytes(path));
-                        }
+                        j.mainPhotoBase64 = ConvertPhotoNameToBase64String(j.mainPhoto);
                     }
                 }
                 List<List<Observation>> observationList = new List<List<Observation>>();
@@ -57,7 +53,7 @@ namespace prjProductiveLab_B.Services
             }
             return result;
         }
-
+        
         public async Task<List<CommonDto>> GetOvumMaturation()
         {
             return await dbContext.OvumMaturations.Select(x => new CommonDto
@@ -589,10 +585,11 @@ namespace prjProductiveLab_B.Services
             }
 
         }
-        public async Task<GetObservationNoteNameDto?> GetExistingObservationNoteName(Guid observationNoteId)
+        public async Task<List<GetObservationNoteNameDto>> GetObservationNoteNameByObservationNoteIds(List<Guid> observationNoteIds)
         {
-            var result = await dbContext.ObservationNotes.Where(x => x.ObservationNoteId == observationNoteId).Select(x => new GetObservationNoteNameDto
+            var result = await dbContext.ObservationNotes.Where(x=>observationNoteIds.Contains(x.ObservationNoteId)).Select(x => new GetObservationNoteNameDto
             {
+                observationNoteId = x.ObservationNoteId,
                 ovumDetailId = x.OvumDetailId,
                 observationTime = x.ObservationTime,
                 memo = x.Memo,
@@ -604,23 +601,44 @@ namespace prjProductiveLab_B.Services
                 embryologist = x.EmbryologistNavigation.Name,
                 ovumMaturationName = x.OvumMaturation.Name,
                 observationTypeName = x.ObservationType.Name,
-                ovumAbnormalityName = x.ObservationNoteOvumAbnormalities.Where(y=> y.IsDeleted == false).Select(y=>y.OvumAbnormality.Name).ToList(),
                 fertilizationResultName = x.FertilizationResult.Name,
                 blastomereScore_C_Name = x.BlastomereScoreC.Name,
                 blastomereScore_G_Name = x.BlastomereScoreG.Name,
                 blastomereScore_F_Name = x.BlastomereScoreF.Name,
-                embryoStatusName = x.ObservationNoteEmbryoStatuses.Where(y=>y.IsDeleted == false).Select(y=>y.EmbryoStatus.Name).ToList(),
                 blastocystScore_Expansion_Name = x.BlastocystScoreExpansion.Name,
                 blastocystScore_ICE_Name = x.BlastocystScoreIce.Name,
                 blastocystScore_TE_Name = x.BlastocystScoreTe.Name,
-                observationNotePhotos = x.ObservationNotePhotos.Where(y=>y.IsDeleted == false).Select(y => new ObservationNotePhotoDto
+                observationNotePhotos = x.ObservationNotePhotos.Where(y => y.IsDeleted == false).Select(y => new ObservationNotePhotoDto
                 {
                     observationNotePhotoId = y.ObservationNotePhotoId,
                     photoName = y.PhotoName,
                     isMainPhoto = y.IsMainPhoto
                 }).ToList()
-            }).AsNoTracking().FirstOrDefaultAsync();
-            if (result == null)
+            }).ToListAsync();
+            var ovumAbnormalityNames = dbContext.ObservationNoteOvumAbnormalities.Where(x => observationNoteIds.Contains(x.ObservationNoteId) && !x.IsDeleted).Select(x => new
+            {
+                observationNoteId = x.ObservationNoteId,
+                ovumAbnormalityName = x.OvumAbnormality.Name
+            }).ToList();
+            var embryoStatusNames = dbContext.ObservationNoteEmbryoStatuses.Where(x => observationNoteIds.Contains(x.ObservationNoteId) && !x.IsDeleted).Select(x => new
+            {
+                observationNoteId = x.ObservationNoteId,
+                embryoStatusName = x.EmbryoStatus.Name,
+            }).ToList();
+            foreach (var i in result)
+            {
+                i.ovumAbnormalityName = ovumAbnormalityNames.Where(x => x.observationNoteId == i.observationNoteId).Select(x => x.ovumAbnormalityName).ToList();
+                i.embryoStatusName = embryoStatusNames.Where(x => x.observationNoteId == i.observationNoteId).Select(x => x.embryoStatusName).ToList();
+            }
+
+            return result;
+        }
+
+        public async Task<GetObservationNoteNameDto?> GetExistingObservationNoteName(Guid observationNoteId)
+        {
+            List<Guid> observationNoteIds = new List<Guid> { observationNoteId };
+            List<GetObservationNoteNameDto> observationNotes = await GetObservationNoteNameByObservationNoteIds(observationNoteIds);
+            if (observationNotes.Count != 1)
             {
                 return null;
             }
@@ -632,27 +650,35 @@ namespace prjProductiveLab_B.Services
                     operationTypeId = x.OperationTypeId,
                     spindleResult = x.SpindleResult
                 }).ToList();
-                result.operationTypeName = q.Select(x => x.operationTypeName).ToList();
-                result.spindleResult = q.Where(x => x.operationTypeId == (int)OperationTypeEnum.Spindle && x.spindleResult != null).Select(x => x.spindleResult).FirstOrDefault();
-                if (result.observationNotePhotos != null && result.observationNotePhotos.Count != 0)
+                observationNotes[0].operationTypeName = q.Select(x => x.operationTypeName).ToList();
+                observationNotes[0].spindleResult = q.Where(x => x.operationTypeId == (int)OperationTypeEnum.Spindle && x.spindleResult != null).Select(x => x.spindleResult).FirstOrDefault();
+                if (observationNotes[0].observationNotePhotos != null && observationNotes[0].observationNotePhotos.Count != 0)
                 {
-                    GetObservationNotePhotoBase64String(result.observationNotePhotos);
+                    GetObservationNotePhotoBase64String(observationNotes[0].observationNotePhotos);
                 }
-                return result;
+                return observationNotes[0];
             }
         }
         private void GetObservationNotePhotoBase64String(List<ObservationNotePhotoDto> observationNotePhotos)
         {
             foreach (var i in observationNotePhotos)
             {
-                string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", i.photoName);
-                if (File.Exists(path))
-                {
-                    i.imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
-                }
+                i.imageBase64String = ConvertPhotoNameToBase64String(i.photoName);
             }
         }
 
+        private string? ConvertPhotoNameToBase64String(string? photoName)
+        {
+            string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", photoName);
+            if (File.Exists(path))
+            {
+                return Convert.ToBase64String(File.ReadAllBytes(path));
+            }
+            else
+            {
+                return null;
+            }
+        }
         public async Task<BaseResponseDto> DeleteObservationNote(Guid observationNoteId)
         {
             BaseResponseDto result = new BaseResponseDto();

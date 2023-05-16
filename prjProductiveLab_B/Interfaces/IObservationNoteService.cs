@@ -15,6 +15,7 @@ namespace prjProductiveLab_B.Interfaces
         Task<BlastocystScoreDto> GetBlastocystScore();
         Task<List<CommonDto>> GetOperationType();
         Task<BaseResponseDto> AddObservationNote(AddObservationNoteDto input);
+        Task<List<GetObservationNoteNameDto>> GetObservationNoteNameByObservationNoteIds(List<Guid> observationNoteIds);
         Task<GetObservationNoteDto?> GetExistingObservationNote(Guid observationNoteId);
         Task<GetObservationNoteNameDto?> GetExistingObservationNoteName(Guid observationNoteId);
         Task<BaseResponseDto> DeleteObservationNote(Guid observationNoteId);

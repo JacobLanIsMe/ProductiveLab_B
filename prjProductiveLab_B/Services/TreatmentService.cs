@@ -16,12 +16,13 @@ namespace prjProductiveLab_B.Services
     {
         private readonly ReproductiveLabContext dbContext;
         private readonly ISharedFunctionService sharedFunction;
-        private readonly IWebHostEnvironment enviro;
-        public TreatmentService(ReproductiveLabContext dbContext, ISharedFunctionService sharedFunction, IWebHostEnvironment enviro)
+        private readonly IObservationNoteService observationNoteService;
+
+        public TreatmentService(ReproductiveLabContext dbContext, ISharedFunctionService sharedFunction, IObservationNoteService observationNoteService)
         {
             this.dbContext = dbContext;
             this.sharedFunction = sharedFunction;
-            this.enviro = enviro;
+            this.observationNoteService = observationNoteService;
         }
         public BaseResponseDto AddOvumPickupNote(AddOvumPickupNoteDto ovumPickupNote)
         {
@@ -155,55 +156,9 @@ namespace prjProductiveLab_B.Services
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
                 ovumDetailStatus = x.OvumDetailStatus.Name,
                 ovumNumber = x.OvumNumber,
-                fertilizationTime = x.Fertilization == null ? default : x.Fertilization.FertilizationTime,
+                fertilizationTime = x.Fertilization == null ? new DateTime(1753, 1, 1, 0, 0, 0) : x.Fertilization.FertilizationTime,
                 fertilizationMethod = x.Fertilization == null ? null : x.Fertilization.FertilizationMethod.Name,
-                observationNote = x.OvumFreezeId == null ? x.ObservationNotes.Where(y=>!y.IsDeleted).Select(y=>new GetObservationNoteNameDto
-                {
-                    fertilizationResultName = y.FertilizationResult == null ? null : y.FertilizationResult.Name,
-                    embryoStatusName = y.ObservationNoteEmbryoStatuses.Any() ? y.ObservationNoteEmbryoStatuses.Select(z=>z.EmbryoStatus.Name).ToList() : null,
-                    ovumMaturationName = y.OvumMaturation == null ? null : y.OvumMaturation.Name,
-                    pgtaNumber = y.Pgtanumber.ToString(),
-                    pgtaResult = y.Pgtaresult,
-                    kidScore = y.Kidscore.ToString(),
-                    observationTime = y.ObservationTime,
-                    observationTypeName = y.ObservationType == null ? null : y.ObservationType.Name,
-                    ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Any() ? y.ObservationNoteOvumAbnormalities.Select(z=>z.OvumAbnormality.Name).ToList() : null,
-                    blastomereScore_C_Name = y.BlastomereScoreC.Name,
-                    blastomereScore_G_Name = y.BlastomereScoreG.Name,
-                    blastomereScore_F_Name = y.BlastomereScoreF.Name,
-                    blastocystScore_Expansion_Name = y.BlastocystScoreExpansion.Name,
-                    blastocystScore_ICE_Name = y.BlastocystScoreIce.Name,
-                    blastocystScore_TE_Name = y.BlastocystScoreTe.Name,
-                    //observationNotePhotos = y.ObservationNotePhotos.Where(z => !z.IsDeleted && z.IsMainPhoto).Select(z => new ObservationNotePhotoDto
-                    //{
-                    //    observationNotePhotoId = z.ObservationNotePhotoId,
-                    //    photoName = z.PhotoName,
-                    //    isMainPhoto = z.IsMainPhoto
-                    //}).ToList()
-                }).OrderByDescending(y=>y.observationTime).FirstOrDefault() : x.ObservationNotes.Where(y=>y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !y.IsDeleted).Select(y=>new GetObservationNoteNameDto
-                {
-                    fertilizationResultName = y.FertilizationResult == null ? null : y.FertilizationResult.Name,
-                    embryoStatusName = y.ObservationNoteEmbryoStatuses.Any() ? y.ObservationNoteEmbryoStatuses.Select(z => z.EmbryoStatus.Name).ToList() : null,
-                    ovumMaturationName = y.OvumMaturation == null ? null : y.OvumMaturation.Name,
-                    pgtaNumber = y.Pgtanumber.ToString(),
-                    pgtaResult = y.Pgtaresult,
-                    kidScore = y.Kidscore.ToString(),
-                    observationTime = y.ObservationTime,
-                    observationTypeName = y.ObservationType == null ? null : y.ObservationType.Name,
-                    ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Any() ? y.ObservationNoteOvumAbnormalities.Select(z => z.OvumAbnormality.Name).ToList() : null,
-                    blastomereScore_C_Name = y.BlastomereScoreC.Name,
-                    blastomereScore_G_Name = y.BlastomereScoreG.Name,
-                    blastomereScore_F_Name = y.BlastomereScoreF.Name,
-                    blastocystScore_Expansion_Name = y.BlastocystScoreExpansion.Name,
-                    blastocystScore_ICE_Name = y.BlastocystScoreIce.Name,
-                    blastocystScore_TE_Name = y.BlastocystScoreTe.Name,
-                    //observationNotePhotos = y.ObservationNotePhotos.Where(z => !z.IsDeleted && z.IsMainPhoto).Select(z => new ObservationNotePhotoDto
-                    //{
-                    //    observationNotePhotoId = z.ObservationNotePhotoId,
-                    //    photoName = z.PhotoName,
-                    //    isMainPhoto = z.IsMainPhoto
-                    //}).ToList()
-                }).FirstOrDefault(),
+                observationNoteId = x.OvumFreezeId == null ? x.ObservationNotes.Where(y=>!y.IsDeleted).OrderByDescending(y=>y.SqlId).Select(y=>y.ObservationNoteId).FirstOrDefault() : x.ObservationNotes.Where(y=>!y.IsDeleted && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(y=>y.ObservationNoteId).FirstOrDefault(),
                 freezeStorageInfo = x.OvumFreeze == null ? null : new BaseStorage
                 {
                     tankInfo = new StorageTankDto
@@ -225,6 +180,7 @@ namespace prjProductiveLab_B.Services
                     }
                 },
                 ovumSource = x.CourseOfTreatment.Treatment.OvumSource == null ? null : x.CourseOfTreatment.Treatment.OvumSource.Name,
+                ovumFromCourseOfTreatmentSqlId = x.OvumFromCourseOfTreatment.SqlId,
                 hasPickup = x.OvumPickupId == null ? false : true,
                 isFreshPickup = x.OvumPickupId != null && x.OvumFreezeId == null ? true : false,
                 hasFreeze = x.OvumFreezeId != null ? true : false,
@@ -232,43 +188,31 @@ namespace prjProductiveLab_B.Services
                 hasThaw = x.OvumThawFreezePairThawOvumDetails.Any() ? true : false,
                 isFreezeTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumThawId == null && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId != null) ? true : false,
                 isTransferThaw = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumThaw != null ? true : false,
-                isFreshTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumTransferPairRecipientOvumDetails.Any(y=>y.DonorOvumDetail.OvumFreezeId == null) ? true : false,
-                ovumFromCourseOfTreatmentSqlId = x.OvumFromCourseOfTreatment.SqlId,
+                isFreshTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId == null) ? true : false,
                 day_FreshPickup = x.OvumPickupId != null && x.OvumFreezeId == null ? (DateTime.Now.Date - x.CourseOfTreatment.SurgicalTime.Date).Days : 0,
-                day_Freeze = x.OvumFreezeId != null ? x.ObservationNotes.Where(y=>y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !y.IsDeleted).Select(y=>y.Day).FirstOrDefault() : 0,
-                day_FreezeTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumThawId == null && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId != null) ? x.OvumTransferPairRecipientOvumDetails.Select(y=>y.DonorOvumDetail.ObservationNotes.Where(z=>z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !z.IsDeleted).Select(z=>z.Day).FirstOrDefault()).FirstOrDefault() : 0,
+                day_Freeze = x.OvumFreezeId != null ? x.ObservationNotes.Where(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !y.IsDeleted).Select(y => y.Day).FirstOrDefault() : 0,
+                day_FreezeTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumThawId == null && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId != null) ? x.OvumTransferPairRecipientOvumDetails.Select(y => y.DonorOvumDetail.ObservationNotes.Where(z => z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !z.IsDeleted).Select(z => z.Day).FirstOrDefault()).FirstOrDefault() : 0,
                 day_TransferThaw = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumThaw != null ? ((DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days + x.OvumTransferPairRecipientOvumDetails.Select(y => y.DonorOvumDetail.ObservationNotes.Where(z => z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !z.IsDeleted).Select(z => z.Day).FirstOrDefault()).FirstOrDefault()) : 0,
-                day_FreshTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId == null) ? (DateTime.Now.Date - x.OvumTransferPairRecipientOvumDetails.Select(y=>y.DonorOvumDetail.CourseOfTreatment.SurgicalTime).FirstOrDefault().Date).Days : 0,
-                day_Thaw = x.OvumThawFreezePairThawOvumDetails.Any() && x.OvumThaw != null ? (DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days + x.OvumThawFreezePairThawOvumDetails.Select(y=>y.FreezeOvumDetail.ObservationNotes.Where(z=>z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !z.IsDeleted).Select(z=>z.Day).FirstOrDefault()).FirstOrDefault() : 0,
+                day_FreshTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId == null) ? (DateTime.Now.Date - x.OvumTransferPairRecipientOvumDetails.Select(y => y.DonorOvumDetail.CourseOfTreatment.SurgicalTime).FirstOrDefault().Date).Days : 0,
+                day_Thaw = x.OvumThawFreezePairThawOvumDetails.Any() && x.OvumThaw != null ? (DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days + x.OvumThawFreezePairThawOvumDetails.Select(y => y.FreezeOvumDetail.ObservationNotes.Where(z => z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !z.IsDeleted).Select(z => z.Day).FirstOrDefault()).FirstOrDefault() : 0,
             }).OrderBy(x=>x.ovumNumber).ToListAsync();
+
+            List<Guid> observationNoteIds = q.Select(x => x.observationNoteId).ToList();
+            var observationNotes = await observationNoteService.GetObservationNoteNameByObservationNoteIds(observationNoteIds);
+
 
             List<TreatmentSummaryDto> result = new List<TreatmentSummaryDto>();
             foreach (var i in q)
             {
-                //if (i.observationNote != null)
-                //{
-                //    foreach (var j in i.observationNote.observationNotePhotos)
-                //    {
-                //        if (j.photoName != null)
-                //        {
-                //            string path = Path.Combine(enviro.ContentRootPath, "uploads", "images", j.photoName);
-                //            if (File.Exists(path))
-                //            {
-                //                j.imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
-                //            }
-                //        }
-                //    }
-                //}
-
                 TreatmentSummaryDto treatment = new TreatmentSummaryDto
                 {
                     ovumDetailId = i.ovumDetailId,
                     courseOfTreatmentSqlId = i.courseOfTreatmentSqlId,
                     ovumDetailStatus = i.ovumDetailStatus,
                     ovumNumber = i.ovumNumber,
-                    fertilizationTime = i.fertilizationTime == default ? null : i.fertilizationTime,
+                    fertilizationTime = i.fertilizationTime == new DateTime(1753, 1, 1, 0, 0, 0) ? null : i.fertilizationTime,
                     fertilizationMethod = i.fertilizationMethod == null ? null : i.fertilizationMethod,
-                    observationNote = i.observationNote,
+                    observationNote = observationNotes.FirstOrDefault(x=>x.ovumDetailId == i.ovumDetailId),
                     ovumFromCourseOfTreatmentSqlId = i.ovumFromCourseOfTreatmentSqlId,
                     ovumSource = i.ovumSource,
                     freezeStorageInfo = i.freezeStorageInfo
