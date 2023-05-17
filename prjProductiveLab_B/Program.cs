@@ -23,6 +23,7 @@ builder.Services.AddScoped<IOperateSpermService, OperateSpermService>();
 builder.Services.AddScoped<IStorageService, StorageService>();
 builder.Services.AddScoped<IObservationNoteService, ObservationNoteService>();
 builder.Services.AddScoped<IFreezeSummaryService, FreezeSummaryService>();
+builder.Services.AddScoped<ITransferInService, TransferInService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
