@@ -132,16 +132,15 @@ namespace prjProductiveLab_B.Services
                 doctor = x.DoctorNavigation.Name,
                 treatment = new TreatmentDto
                 {
-                    treatmentId = x.TreatmentId,
-                    ovumSituationName = x.Treatment.OvumSituation.Name,
-                    ovumSourceName = x.Treatment.OvumSource.Name,
-                    ovumOperationName = x.Treatment.OvumOperation.Name,
-                    spermSituationName = x.Treatment.SpermSituation.Name,
-                    spermSourceName = x.Treatment.SpermSource.Name,
-                    spermOperationName = x.Treatment.SpermOperation.Name,
-                    spermRetrievalMethodName = x.Treatment.SpermRetrievalMethod.Name,
-                    embryoSituationName = x.Treatment.EmbryoSituation.Name,
-                    embryoOperationName = x.Treatment.EmbryoOperation.Name
+                    ovumSituationName = x.OvumSituation.Name,
+                    ovumSourceName = x.OvumSource.Name,
+                    ovumOperationName = x.OvumOperation.Name,
+                    spermSituationName = x.SpermSituation.Name,
+                    spermSourceName = x.SpermSource.Name,
+                    spermOperationName = x.SpermOperation.Name,
+                    spermRetrievalMethodName = x.SpermRetrievalMethod.Name,
+                    embryoSituationName = x.EmbryoSituation.Name,
+                    embryoOperationName = x.EmbryoOperation.Name
                 },
                 memo = x.Memo
             }).AsNoTracking().FirstOrDefaultAsync();
@@ -179,7 +178,7 @@ namespace prjProductiveLab_B.Services
                         isOccupied = x.OvumFreeze.StorageUnit.IsOccupied
                     }
                 },
-                ovumSource = x.CourseOfTreatment.Treatment.OvumSource == null ? null : x.CourseOfTreatment.Treatment.OvumSource.Name,
+                ovumSource = x.CourseOfTreatment.OvumSource == null ? null : x.CourseOfTreatment.OvumSource.Name,
                 ovumFromCourseOfTreatmentSqlId = x.OvumFromCourseOfTreatment.SqlId,
                 hasPickup = x.OvumPickupId == null ? false : true,
                 isFreshPickup = x.OvumPickupId != null && x.OvumFreezeId == null ? true : false,
@@ -260,24 +259,38 @@ namespace prjProductiveLab_B.Services
             return result;
         }
 
-        public async Task<List<TreatmentDto>> GetAllTreatment()
+        public async Task<List<CommonDto>> GetGermCellSituations()
         {
-            var treatments = await dbContext.Treatments.Select(x => new TreatmentDto
+            return await dbContext.GermCellSituations.Select(x => new CommonDto
             {
-                treatmentId = x.SqlId,
-                ovumSituationName = x.OvumSituation.Name,
-                ovumSourceName = x.OvumSource.Name,
-                ovumOperationName = x.OvumOperation.Name,
-                spermSituationName = x.SpermSituation.Name,
-                spermSourceName = x.SpermSource.Name,
-                spermOperationName = x.SpermOperation.Name,
-                spermRetrievalMethodName = x.SpermRetrievalMethod.Name,
-                embryoSituationName = x.EmbryoSituation.Name,
-                embryoOperationName = x.EmbryoOperation.Name
-            }).OrderBy(x => x.treatmentId).AsNoTracking().ToListAsync();
-            return treatments;
+                id = x.SqlId,
+                name = x.Name
+            }).ToListAsync();
         }
-
+        public async Task<List<CommonDto>> GetGermCellSources()
+        {
+            return await dbContext.GermCellSources.Select(x => new CommonDto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).ToListAsync();
+        }
+        public async Task<List<CommonDto>> GetGermCellOperations()
+        {
+            return await dbContext.GermCellOperations.Select(x => new CommonDto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).ToListAsync();
+        }
+        public async Task<List<CommonDto>> GetSpermRetrievalMethods()
+        {
+            return await dbContext.SpermRetrievalMethods.Select(x => new CommonDto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).ToListAsync();
+        }
         public async Task<List<BaseCustomerInfoDto>> GetAllCustomer()
         {
             return await dbContext.Customers.Select(x => new BaseCustomerInfoDto
@@ -327,11 +340,46 @@ namespace prjProductiveLab_B.Services
                     {
                         Doctor = input.doctorId,
                         CustomerId = input.customerId,
-                        TreatmentId = input.treatmentId,
                         SurgicalTime = input.surgicalTime,
                         TreatmentStatusId = 1,
                         Memo = input.memo,
                     };
+                    if (int.TryParse(input.ovumSituationId, out int ovumSituationId))
+                    {
+                        course.OvumSituationId = ovumSituationId;
+                    }
+                    if (int.TryParse(input.ovumSourceId, out int ovumSourceId))
+                    {
+                        course.OvumSourceId = ovumSourceId;
+                    }
+                    if (int.TryParse(input.ovumOperationId, out int ovumOperationId))
+                    {
+                        course.OvumOperationId = ovumOperationId;
+                    }
+                    if (int.TryParse(input.spermSituationId, out int spermSituationId))
+                    {
+                        course.SpermSituationId = spermSituationId;
+                    }
+                    if (int.TryParse(input.spermSourceId, out int spermSourceId))
+                    {
+                        course.SpermSourceId = spermSourceId;
+                    }
+                    if (int.TryParse(input.spermOperationId, out int spermOperationId))
+                    {
+                        course.SpermOperationId = spermOperationId;
+                    }
+                    if (int.TryParse(input.SpermRetrievalMethodId, out int spermRetrievalMethodId))
+                    {
+                        course.SpermRetrievalMethodId = spermRetrievalMethodId;
+                    }
+                    if (int.TryParse(input.embryoSituationId, out int embryoSituationId))
+                    {
+                        course.EmbryoSituationId = embryoSituationId;
+                    }
+                    if (int.TryParse(input.embryoOperationId, out int embryoOperationId))
+                    {
+                        course.EmbryoOperationId = embryoOperationId;
+                    }
                     dbContext.CourseOfTreatments.Add(course);
                     dbContext.SaveChanges();
                     scope.Complete();

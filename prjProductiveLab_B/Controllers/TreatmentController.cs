@@ -17,10 +17,26 @@ namespace prjProductiveLab_B.Controllers
             this.treatmentService = treatmentService;
             this.operateSpermService = operateSpermService;
         }
-        [HttpGet("GetAllTreatment")]
-        public async Task<List<TreatmentDto>> GetAllTreatment()
+       
+        [HttpGet("GetGermCellSituations")]
+        public async Task<List<CommonDto>> GetGermCellSituations()
         {
-            return await this.treatmentService.GetAllTreatment();
+            return await treatmentService.GetGermCellSituations();
+        }
+        [HttpGet("GetGermCellSources")]
+        public async Task<List<CommonDto>> GetGermCellSources()
+        {
+            return await treatmentService.GetGermCellSources();
+        }
+        [HttpGet("GetGermCellOperations")]
+        public async Task<List<CommonDto>> GetGermCellOperations()
+        {
+            return await treatmentService.GetGermCellOperations();
+        }
+        [HttpGet("GetSpermRetrievalMethods")]
+        public async Task<List<CommonDto>> GetSpermRetrievalMethods()
+        {
+            return await treatmentService.GetSpermRetrievalMethods();
         }
         [HttpGet("GetAllCustomer")]
         public async Task<List<BaseCustomerInfoDto>> GetAllCustomer()

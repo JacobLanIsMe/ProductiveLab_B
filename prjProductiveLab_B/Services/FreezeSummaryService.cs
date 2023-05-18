@@ -42,7 +42,7 @@ namespace prjProductiveLab_B.Services
                 courseOfTreatmentId = x.CourseOfTreatmentId,
                 ovumFromCourseOfTreatmentSqlId = x.OvumFromCourseOfTreatment.SqlId,
                 ovumFromCourseOfTreatmentId = x.OvumFromCourseOfTreatmentId,
-                ovumSource = x.CourseOfTreatment.Treatment.OvumSource.Name,
+                ovumSource = x.CourseOfTreatment.OvumSource.Name,
                 ovumSourceOwner = new BaseCustomerInfoDto
                 {
                     customerSqlId = x.OvumFromCourseOfTreatment.Customer.SqlId,
@@ -123,7 +123,7 @@ namespace prjProductiveLab_B.Services
         {
             var customer = await dbContext.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new
             {
-                customerId = x.Treatment.SpermOperationId == (int)GermCellOperationEnum.freeze ? x.CustomerId : x.Customer.Spouse
+                customerId = x.SpermOperationId == (int)GermCellOperationEnum.freeze ? x.CustomerId : x.Customer.Spouse
             }).FirstOrDefaultAsync();
             if (customer == null || customer.customerId == null)
             {
@@ -131,9 +131,9 @@ namespace prjProductiveLab_B.Services
             }
             var result = await dbContext.SpermFreezes.Where(x => x.CourseOfTreatment.CustomerId == customer.customerId && !x.SpermThawFreezePairs.Any()).Select(x => new GetSpermFreezeSummaryDto
             {
-                spermSource = x.CourseOfTreatment.Treatment.SpermSource.Name,
+                spermSource = x.CourseOfTreatment.SpermSource.Name,
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
-                spermSituation = x.CourseOfTreatment.Treatment.SpermSituation.Name,
+                spermSituation = x.CourseOfTreatment.SpermSituation.Name,
                 surgicalTime = x.CourseOfTreatment.SurgicalTime,
                 freezeTime = x.SpermFreezeSituation.FreezeTime,
                 vialNumber = x.VialNumber,
@@ -168,7 +168,7 @@ namespace prjProductiveLab_B.Services
                 return new List<GetOvumFreezeSummaryDto>();
             }
             Guid customerId = customer.CustomerId;
-            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilizationId == null && x.CourseOfTreatment.Treatment.OvumSourceId == (int)GermCellSourceEnum.OD && x.OvumTransferPairDonorOvumDetails.Count <= 0);
+            var ovumDetails = dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId && x.FertilizationId == null && x.CourseOfTreatment.OvumSourceId == (int)GermCellSourceEnum.OD && x.OvumTransferPairDonorOvumDetails.Count <= 0);
             var result = await GetOvumDetailInfos(ovumDetails);
             ConvertPhotoToBase64String(result);
             return result;

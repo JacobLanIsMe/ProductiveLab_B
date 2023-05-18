@@ -2,7 +2,6 @@
 {
     public class TreatmentDto
     {
-        public int treatmentId { get; set; }
         public string? ovumSituationName { get; set; }
         public string? ovumSourceName { get; set; }
         public string? ovumOperationName { get; set; }

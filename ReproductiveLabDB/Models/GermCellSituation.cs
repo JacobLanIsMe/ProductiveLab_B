@@ -7,16 +7,16 @@ namespace ReproductiveLabDB.Models
     {
         public GermCellSituation()
         {
-            TreatmentEmbryoSituations = new HashSet<Treatment>();
-            TreatmentOvumSituations = new HashSet<Treatment>();
-            TreatmentSpermSituations = new HashSet<Treatment>();
+            CourseOfTreatmentEmbryoSituations = new HashSet<CourseOfTreatment>();
+            CourseOfTreatmentOvumSituations = new HashSet<CourseOfTreatment>();
+            CourseOfTreatmentSpermSituations = new HashSet<CourseOfTreatment>();
         }
 
         public int SqlId { get; set; }
         public string Name { get; set; } = null!;
 
-        public virtual ICollection<Treatment> TreatmentEmbryoSituations { get; set; }
-        public virtual ICollection<Treatment> TreatmentOvumSituations { get; set; }
-        public virtual ICollection<Treatment> TreatmentSpermSituations { get; set; }
+        public virtual ICollection<CourseOfTreatment> CourseOfTreatmentEmbryoSituations { get; set; }
+        public virtual ICollection<CourseOfTreatment> CourseOfTreatmentOvumSituations { get; set; }
+        public virtual ICollection<CourseOfTreatment> CourseOfTreatmentSpermSituations { get; set; }
     }
 }

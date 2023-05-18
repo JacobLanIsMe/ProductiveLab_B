@@ -45,7 +45,7 @@ namespace prjProductiveLab_B.Services
                 isThawed = x.CourseOfTreatment.SpermThaws.Any() ? true : false,
                 baseSpermInfo_Thaw = new BaseOperateSpermInfoDto
                 {
-                    spermSituationName = x.CourseOfTreatment.Treatment.SpermSituation == null ? null : x.CourseOfTreatment.Treatment.SpermSituation.Name,
+                    spermSituationName = x.CourseOfTreatment.SpermSituation == null ? null : x.CourseOfTreatment.SpermSituation.Name,
                     //spermRetrievalMethodName = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment
                     spermOwner = new BaseCustomerInfoDto
                     {
@@ -55,7 +55,7 @@ namespace prjProductiveLab_B.Services
                 },
                 baseSpermInfo_Fresh = new BaseOperateSpermInfoDto
                 {
-                    spermSituationName = x.CourseOfTreatment.Treatment.SpermSituation == null ? null : x.CourseOfTreatment.Treatment.SpermSituation.Name,
+                    spermSituationName = x.CourseOfTreatment.SpermSituation == null ? null : x.CourseOfTreatment.SpermSituation.Name,
                     //spermRetrievalMethodName = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment
                     spermOwner = new BaseCustomerInfoDto
                     {

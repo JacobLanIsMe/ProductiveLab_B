@@ -26,16 +26,15 @@ namespace prjProductiveLab_B.Services
                 doctor = x.DoctorNavigation.Name,
                 treatment = new TreatmentDto
                 {
-                    treatmentId = x.TreatmentId,
-                    ovumSituationName = x.Treatment.OvumSituation.Name,
-                    ovumSourceName = x.Treatment.OvumSource.Name,
-                    ovumOperationName = x.Treatment.OvumOperation.Name,
-                    spermSituationName = x.Treatment.SpermSituation.Name,
-                    spermSourceName = x.Treatment.SpermSource.Name,
-                    spermOperationName = x.Treatment.SpermOperation.Name,
-                    spermRetrievalMethodName = x.Treatment.SpermRetrievalMethod.Name,
-                    embryoSituationName = x.Treatment.EmbryoSituation.Name,
-                    embryoOperationName = x.Treatment.EmbryoOperation.Name
+                    ovumSituationName = x.OvumSituation.Name,
+                    ovumSourceName = x.OvumSource.Name,
+                    ovumOperationName = x.OvumOperation.Name,
+                    spermSituationName = x.SpermSituation.Name,
+                    spermSourceName = x.SpermSource.Name,
+                    spermOperationName = x.SpermOperation.Name,
+                    spermRetrievalMethodName = x.SpermRetrievalMethod.Name,
+                    embryoSituationName = x.EmbryoSituation.Name,
+                    embryoOperationName = x.EmbryoOperation.Name
                 },
                 treatmentStatus = x.TreatmentStatus.Name
             }).OrderByDescending(x=>x.surgicalTime).ToListAsync();

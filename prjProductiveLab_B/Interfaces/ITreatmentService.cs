@@ -8,7 +8,10 @@ namespace prjProductiveLab_B.Interfaces
         BaseResponseDto AddOvumPickupNote(AddOvumPickupNoteDto ovumPickupNote);
         Task<BaseTreatmentInfoDto> GetBaseTreatmentInfo(Guid courseOfTreatmentId);
         Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId);
-        Task<List<TreatmentDto>> GetAllTreatment();
+        Task<List<CommonDto>> GetGermCellSituations();
+        Task<List<CommonDto>> GetGermCellSources();
+        Task<List<CommonDto>> GetGermCellOperations();
+        Task<List<CommonDto>> GetSpermRetrievalMethods();
         Task<List<BaseCustomerInfoDto>> GetAllCustomer();
         Task<BaseCustomerInfoDto> GetCustomerByCustomerSqlId(int customerSqlId);
         Task<BaseCustomerInfoDto> GetCustomerByCourseOfTreatmentId(Guid courseOfTreatmentId);

@@ -72,7 +72,6 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<StorageTankType> StorageTankTypes { get; set; } = null!;
         public virtual DbSet<StorageUnit> StorageUnits { get; set; } = null!;
         public virtual DbSet<TopColor> TopColors { get; set; } = null!;
-        public virtual DbSet<Treatment> Treatments { get; set; } = null!;
         public virtual DbSet<TreatmentStatus> TreatmentStatuses { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -169,11 +168,50 @@ namespace ReproductiveLabDB.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CourseOfTreatment_Employee");
 
-                entity.HasOne(d => d.Treatment)
+                entity.HasOne(d => d.EmbryoOperation)
+                    .WithMany(p => p.CourseOfTreatmentEmbryoOperations)
+                    .HasForeignKey(d => d.EmbryoOperationId)
+                    .HasConstraintName("FK_CourseOfTreatment_GermCellOperation2");
+
+                entity.HasOne(d => d.EmbryoSituation)
+                    .WithMany(p => p.CourseOfTreatmentEmbryoSituations)
+                    .HasForeignKey(d => d.EmbryoSituationId)
+                    .HasConstraintName("FK_CourseOfTreatment_GermCellSituation2");
+
+                entity.HasOne(d => d.OvumOperation)
+                    .WithMany(p => p.CourseOfTreatmentOvumOperations)
+                    .HasForeignKey(d => d.OvumOperationId)
+                    .HasConstraintName("FK_CourseOfTreatment_GermCellOperation");
+
+                entity.HasOne(d => d.OvumSituation)
+                    .WithMany(p => p.CourseOfTreatmentOvumSituations)
+                    .HasForeignKey(d => d.OvumSituationId)
+                    .HasConstraintName("FK_CourseOfTreatment_GermCellSituation");
+
+                entity.HasOne(d => d.OvumSource)
+                    .WithMany(p => p.CourseOfTreatmentOvumSources)
+                    .HasForeignKey(d => d.OvumSourceId)
+                    .HasConstraintName("FK_CourseOfTreatment_GermCellSource");
+
+                entity.HasOne(d => d.SpermOperation)
+                    .WithMany(p => p.CourseOfTreatmentSpermOperations)
+                    .HasForeignKey(d => d.SpermOperationId)
+                    .HasConstraintName("FK_CourseOfTreatment_GermCellOperation1");
+
+                entity.HasOne(d => d.SpermRetrievalMethod)
                     .WithMany(p => p.CourseOfTreatments)
-                    .HasForeignKey(d => d.TreatmentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CourseOfTreatment_Treatment");
+                    .HasForeignKey(d => d.SpermRetrievalMethodId)
+                    .HasConstraintName("FK_CourseOfTreatment_SpermRetrievalMethod");
+
+                entity.HasOne(d => d.SpermSituation)
+                    .WithMany(p => p.CourseOfTreatmentSpermSituations)
+                    .HasForeignKey(d => d.SpermSituationId)
+                    .HasConstraintName("FK_CourseOfTreatment_GermCellSituation1");
+
+                entity.HasOne(d => d.SpermSource)
+                    .WithMany(p => p.CourseOfTreatmentSpermSources)
+                    .HasForeignKey(d => d.SpermSourceId)
+                    .HasConstraintName("FK_CourseOfTreatment_GermCellSource1");
 
                 entity.HasOne(d => d.TreatmentStatus)
                     .WithMany(p => p.CourseOfTreatments)
@@ -1267,60 +1305,6 @@ namespace ReproductiveLabDB.Models
                 entity.ToTable("TopColor");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
-            });
-
-            modelBuilder.Entity<Treatment>(entity =>
-            {
-                entity.HasKey(e => e.SqlId);
-
-                entity.ToTable("Treatment");
-
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
-
-                entity.HasOne(d => d.EmbryoOperation)
-                    .WithMany(p => p.TreatmentEmbryoOperations)
-                    .HasForeignKey(d => d.EmbryoOperationId)
-                    .HasConstraintName("FK_Treatment_GermCellOperation3");
-
-                entity.HasOne(d => d.EmbryoSituation)
-                    .WithMany(p => p.TreatmentEmbryoSituations)
-                    .HasForeignKey(d => d.EmbryoSituationId)
-                    .HasConstraintName("FK_Treatment_GermCellSituation3");
-
-                entity.HasOne(d => d.OvumOperation)
-                    .WithMany(p => p.TreatmentOvumOperations)
-                    .HasForeignKey(d => d.OvumOperationId)
-                    .HasConstraintName("FK_Treatment_GermCellOperation1");
-
-                entity.HasOne(d => d.OvumSituation)
-                    .WithMany(p => p.TreatmentOvumSituations)
-                    .HasForeignKey(d => d.OvumSituationId)
-                    .HasConstraintName("FK_Treatment_GermCellSituation1");
-
-                entity.HasOne(d => d.OvumSource)
-                    .WithMany(p => p.TreatmentOvumSources)
-                    .HasForeignKey(d => d.OvumSourceId)
-                    .HasConstraintName("FK_Treatment_GermCellSource1");
-
-                entity.HasOne(d => d.SpermOperation)
-                    .WithMany(p => p.TreatmentSpermOperations)
-                    .HasForeignKey(d => d.SpermOperationId)
-                    .HasConstraintName("FK_Treatment_GermCellOperation2");
-
-                entity.HasOne(d => d.SpermRetrievalMethod)
-                    .WithMany(p => p.Treatments)
-                    .HasForeignKey(d => d.SpermRetrievalMethodId)
-                    .HasConstraintName("FK_Treatment_SpermRetrievalMethod");
-
-                entity.HasOne(d => d.SpermSituation)
-                    .WithMany(p => p.TreatmentSpermSituations)
-                    .HasForeignKey(d => d.SpermSituationId)
-                    .HasConstraintName("FK_Treatment_GermCellSituation2");
-
-                entity.HasOne(d => d.SpermSource)
-                    .WithMany(p => p.TreatmentSpermSources)
-                    .HasForeignKey(d => d.SpermSourceId)
-                    .HasConstraintName("FK_Treatment_GermCellSource2");
             });
 
             modelBuilder.Entity<TreatmentStatus>(entity =>
