@@ -24,6 +24,7 @@ namespace ReproductiveLabDB.Models
         public Guid? FertilizationId { get; set; }
         public Guid CourseOfTreatmentId { get; set; }
         public Guid OvumFromCourseOfTreatmentId { get; set; }
+        public Guid? TransferInId { get; set; }
 
         public virtual CourseOfTreatment CourseOfTreatment { get; set; } = null!;
         public virtual Fertilization? Fertilization { get; set; }
@@ -32,6 +33,7 @@ namespace ReproductiveLabDB.Models
         public virtual CourseOfTreatment OvumFromCourseOfTreatment { get; set; } = null!;
         public virtual OvumPickup? OvumPickup { get; set; }
         public virtual OvumThaw? OvumThaw { get; set; }
+        public virtual TransferIn? TransferIn { get; set; }
         public virtual ICollection<ObservationNote> ObservationNotes { get; set; }
         public virtual ICollection<OvumThawFreezePair> OvumThawFreezePairFreezeOvumDetails { get; set; }
         public virtual ICollection<OvumThawFreezePair> OvumThawFreezePairThawOvumDetails { get; set; }

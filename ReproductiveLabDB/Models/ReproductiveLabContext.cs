@@ -72,6 +72,7 @@ namespace ReproductiveLabDB.Models
         public virtual DbSet<StorageTankType> StorageTankTypes { get; set; } = null!;
         public virtual DbSet<StorageUnit> StorageUnits { get; set; } = null!;
         public virtual DbSet<TopColor> TopColors { get; set; } = null!;
+        public virtual DbSet<TransferIn> TransferIns { get; set; } = null!;
         public virtual DbSet<TreatmentStatus> TreatmentStatuses { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -768,6 +769,11 @@ namespace ReproductiveLabDB.Models
                     .WithMany(p => p.OvumDetails)
                     .HasForeignKey(d => d.OvumThawId)
                     .HasConstraintName("FK_OvumPickupDetail_OvumThaw");
+
+                entity.HasOne(d => d.TransferIn)
+                    .WithMany(p => p.OvumDetails)
+                    .HasForeignKey(d => d.TransferInId)
+                    .HasConstraintName("FK_OvumDetail_TransferIn");
             });
 
             modelBuilder.Entity<OvumDetailStatus>(entity =>
@@ -1305,6 +1311,23 @@ namespace ReproductiveLabDB.Models
                 entity.ToTable("TopColor");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<TransferIn>(entity =>
+            {
+                entity.HasKey(e => e.TransferInId)
+                    .IsClustered(false);
+
+                entity.ToTable("TransferIn");
+
+                entity.HasIndex(e => e.SqlId, "IX_TransferIn")
+                    .IsClustered();
+
+                entity.Property(e => e.TransferInId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.TransferInTime).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<TreatmentStatus>(entity =>

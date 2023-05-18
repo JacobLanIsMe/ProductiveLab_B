@@ -13,7 +13,6 @@
         public string? SpermRetrievalMethodId { get; set; }
         public string? embryoSituationId { get; set; }
         public string? embryoOperationId { get; set; }
-
         public DateTime surgicalTime { get; set; }
         public string? memo { get; set; }
     }

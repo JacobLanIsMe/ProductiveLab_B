@@ -5,8 +5,9 @@ namespace prjProductiveLab_B.Dtos.ForTransferIn
     public class AddTransferInDto
     {
         public DateTime transferInTime { get; set; }
+        public Guid embryologist { get; set; }
         public string? transferInCellType { get; set; }
-        public string? germSource { get; set; }
+        public string? germSourceId { get; set; }
         public DateTime freezeTime { get; set; }
         public Guid freezeMediumId { get; set; }
         public string? otherFreezeMedium { get; set; }
@@ -31,7 +32,7 @@ namespace prjProductiveLab_B.Dtos.ForTransferIn
         public string? blastocystScore_ICE_Id { get; set; }
         public string? blastocystScore_TE_Id { get; set; }
         public string? day { get; set; }
-        public decimal? kidScore { get; set; }
+        public string? kidScore { get; set; }
         public string? pgtaNumber { get; set; }
         public string? pgtaResult { get; set; }
         public string? pgtmResult { get; set; }
