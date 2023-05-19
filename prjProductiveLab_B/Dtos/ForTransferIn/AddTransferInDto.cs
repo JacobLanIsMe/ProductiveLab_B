@@ -4,6 +4,7 @@ namespace prjProductiveLab_B.Dtos.ForTransferIn
 {
     public class AddTransferInDto
     {
+        public Guid courseOfTreatmentId { get; set; }
         public DateTime transferInTime { get; set; }
         public Guid embryologist { get; set; }
         public string? transferInCellType { get; set; }
