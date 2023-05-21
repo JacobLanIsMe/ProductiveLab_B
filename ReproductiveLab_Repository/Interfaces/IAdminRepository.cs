@@ -11,9 +11,9 @@ namespace ReproductiveLab_Repository.Interfaces
     public interface IAdminRepository
     {
         void AddCustomer(CustomerModel input);
-        Task<Customer?> GetLatestCustomer();
-        Task<Customer?> GetCustomerById(Guid customerId);
+        Customer? GetLatestCustomer();
+        Customer? GetCustomerById(Guid customerId);
         void UpdateSpouse(Customer customer, Guid spouseCustomerId);
-        Task<List<Gender>> GetGenders();
+        List<Gender> GetGenders();
     }
 }

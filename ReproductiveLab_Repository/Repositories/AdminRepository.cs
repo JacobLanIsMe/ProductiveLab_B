@@ -30,13 +30,13 @@ namespace ReproductiveLab_Repository.Repositories
             _dbContext.Customers.Add(customer);
             _dbContext.SaveChanges();
         }
-        public async Task<Customer?> GetLatestCustomer()
+        public Customer? GetLatestCustomer()
         {
-            return await _dbContext.Customers.OrderByDescending(x => x.SqlId).FirstOrDefaultAsync();
+            return _dbContext.Customers.OrderByDescending(x => x.SqlId).FirstOrDefault();
         }
-        public async Task<Customer?> GetCustomerById(Guid customerId)
+        public Customer? GetCustomerById(Guid customerId)
         {
-            return await _dbContext.Customers.FirstOrDefaultAsync(x => x.CustomerId == customerId);
+            return _dbContext.Customers.FirstOrDefault(x => x.CustomerId == customerId);
         }
         public void UpdateSpouse(Customer customer, Guid spouseCustomerId)
         {
@@ -44,9 +44,9 @@ namespace ReproductiveLab_Repository.Repositories
             _dbContext.SaveChanges();
         }
 
-        public async Task<List<Gender>> GetGenders()
+        public List<Gender> GetGenders()
         {
-            return await _dbContext.Genders.ToListAsync();
+            return _dbContext.Genders.ToList();
         }
     }
 }

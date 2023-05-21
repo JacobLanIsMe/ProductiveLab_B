@@ -33,14 +33,14 @@ namespace ReproductiveLab_Service.Services
                     _adminRepository.AddCustomer(new CustomerModel(input.name, input.genderId, input.birthday));
                     if (input.spouseName != null && input.spouseGenderId != null && input.spouseBirthday != null)
                     {
-                        var latestCustomer = await _adminRepository.GetLatestCustomer();
+                        var latestCustomer = _adminRepository.GetLatestCustomer();
                         _sharedFunctions.ThrowExceptionIfNull(latestCustomer, "Table Customer has no date");
                         Guid latestCustomerId = latestCustomer.CustomerId;
                         _adminRepository.AddCustomer(new CustomerModel(input.spouseName, (int)input.spouseGenderId, (DateTime)input.spouseBirthday, latestCustomerId));
-                        var spouse = await _adminRepository.GetLatestCustomer();
+                        var spouse = _adminRepository.GetLatestCustomer();
                         _sharedFunctions.ThrowExceptionIfNull(spouse, "Insertion of spouse is failed");
                         Guid spouseCustomerId = spouse.CustomerId;
-                        var customer = await _adminRepository.GetCustomerById(latestCustomerId);
+                        var customer = _adminRepository.GetCustomerById(latestCustomerId);
                         _sharedFunctions.ThrowExceptionIfNull(customer, "Customer is not found");
                         _adminRepository.UpdateSpouse(customer, spouseCustomerId);
                     }
@@ -57,7 +57,7 @@ namespace ReproductiveLab_Service.Services
 
         public async Task<List<Common1Dto>> GetGenders()
         {
-            var genders = await _adminRepository.GetGenders();
+            var genders = _adminRepository.GetGenders();
             return genders.Select(x => new Common1Dto
             {
                 id = x.SqlId,
