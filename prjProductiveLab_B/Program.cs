@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Interfaces;
 using prjProductiveLab_B.Services;
+using ReproductiveLab_Repository.Interfaces;
+using ReproductiveLab_Repository.Repositories;
+using ReproductiveLab_Service.Interfaces;
+using ReproductiveLab_Service.Services;
 using ReproductiveLabDB.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +21,7 @@ builder.Services.AddScoped<ISharedFunctionService, SharedFunctionService>();
 builder.Services.AddScoped<ILabMainPage, LabMainPageService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IMediumService, MediumService>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<ITreatmentService, TreatmentService>();
 builder.Services.AddScoped<IOperateSpermService, OperateSpermService>();

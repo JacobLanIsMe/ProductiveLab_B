@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ReproductiveLabDB\ReproductiveLabDB.csproj" />
+    <ProjectReference Include="..\ReproductiveLab_Repository\ReproductiveLab_Repository.csproj" />
+    <ProjectReference Include="..\ReproductiveLab_Service\ReproductiveLab_Service.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ReproductiveLab_Repository\ReproductiveLab_Repository.csproj" />
+  </ItemGroup>
+
 </Project>

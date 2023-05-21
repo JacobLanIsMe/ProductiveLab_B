@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Service.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
