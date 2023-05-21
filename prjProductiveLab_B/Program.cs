@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using prjProductiveLab_B.Interfaces;
 using prjProductiveLab_B.Services;
+using ReproductiveLab_Common.Interfaces;
+using ReproductiveLab_Common.Services;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLab_Repository.Repositories;
 using ReproductiveLab_Service.Interfaces;
@@ -16,6 +18,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ReproductiveLabContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ReproductiveLabDatabase")));
+builder.Services.AddScoped<ISharedFunction, SharedFunction>();
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ISharedFunctionService, SharedFunctionService>();
 builder.Services.AddScoped<ILabMainPage, LabMainPageService>();

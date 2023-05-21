@@ -11,20 +11,20 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class EmployeeManagerController : ControllerBase
     {
-        private readonly IEmployeeService employeeService;
+        private readonly IEmployeeService _employeeService;
         public EmployeeManagerController(IEmployeeService employeeService)
         {
-            this.employeeService = employeeService;
+            _employeeService = employeeService;
         }
         [HttpGet("GetAllEmbryologist")]
         public async Task<List<EmployeeDto>> GetAllEmbryologist()
         {
-            return await employeeService.GetAllEmbryologist();
+            return await _employeeService.GetAllEmbryologist();
         }
         [HttpGet("GetAllDoctor")]
         public async Task<List<EmployeeDto>> GetAllDoctor()
         {
-            return await employeeService.GetAllDoctor();
+            return await _employeeService.GetAllDoctor();
         }
     }
 }

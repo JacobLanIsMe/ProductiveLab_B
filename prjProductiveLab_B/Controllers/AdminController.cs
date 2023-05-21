@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Service.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -9,20 +9,20 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly IAdminService adminService;
+        private readonly IAdminService _adminService;
         public AdminController(IAdminService adminService)
         {
-            this.adminService = adminService;
+            _adminService = adminService;
         }
         [HttpPost("AddCustomer")]
-        public BaseResponseDto AddCustomer(AddCustomerDto input)
+        public async Task<ResponseDto> AddCustomer(AddCustomerDto input)
         {
-            return adminService.AddCustomer(input);
+            return await _adminService.AddCustomer(input);
         }
         [HttpGet("GetGenders")]
-        public async Task<List<CommonDto>> GetGenders()
+        public async Task<List<Common1Dto>> GetGenders()
         {
-            return await adminService.GetGenders();
+            return await _adminService.GetGenders();
         }
     }
 }
