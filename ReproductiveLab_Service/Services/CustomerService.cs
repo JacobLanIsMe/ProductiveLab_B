@@ -14,11 +14,11 @@ using System.Transactions;
 
 namespace ReproductiveLab_Service.Services
 {
-    public class AdminService : IAdminService
+    public class CustomerService : ICustomerService
     {
-        private readonly IAdminRepository _adminRepository;
+        private readonly ICustomerRepository _adminRepository;
         private readonly ISharedFunction _sharedFunctions;
-        public AdminService(IAdminRepository adminRepository, ISharedFunction sharedFunction)
+        public CustomerService(ICustomerRepository adminRepository, ISharedFunction sharedFunction)
         {
             _adminRepository = adminRepository;
             _sharedFunctions = sharedFunction;

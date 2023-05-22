@@ -9,8 +9,8 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly IAdminService _adminService;
-        public AdminController(IAdminService adminService)
+        private readonly ICustomerService _adminService;
+        public AdminController(ICustomerService adminService)
         {
             _adminService = adminService;
         }

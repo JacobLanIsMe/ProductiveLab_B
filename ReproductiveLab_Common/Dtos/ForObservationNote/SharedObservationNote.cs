@@ -1,9 +1,15 @@
-﻿namespace prjProductiveLab_B.Dtos
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ReproductiveLab_Common.Dtos.ForObservationNote
 {
     public class SharedObservationNote
     {
         public Guid ovumDetailId { get; set; }
-        
+
         public DateTime? observationTime { get; set; }
         public string? memo { get; set; }
         public string? kidScore { get; set; }

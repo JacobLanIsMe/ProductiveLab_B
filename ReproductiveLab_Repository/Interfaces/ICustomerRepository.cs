@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace ReproductiveLab_Repository.Interfaces
 {
-    public interface IAdminRepository
+    public interface ICustomerRepository
     {
+        Guid? GetCustomerIdByCourseOfTreatmentId(Guid courseOfTreatmentId);
         void AddCustomer(CustomerModel input);
         Customer? GetLatestCustomer();
         Customer? GetCustomerById(Guid customerId);
         void UpdateSpouse(Customer customer, Guid spouseCustomerId);
         List<Gender> GetGenders();
+        Customer? GetCustomerBySqlId(int customerSqlId);
     }
 }

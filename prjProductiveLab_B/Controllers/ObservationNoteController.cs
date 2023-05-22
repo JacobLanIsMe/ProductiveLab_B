@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using prjProductiveLab_B.Dtos;
 using prjProductiveLab_B.Dtos.ForObservationNote;
 using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos.ForObservationNote;
 
 namespace prjProductiveLab_B.Controllers
 {

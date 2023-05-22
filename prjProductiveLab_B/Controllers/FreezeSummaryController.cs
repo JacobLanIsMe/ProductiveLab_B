@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos.ForFreezeSummary;
-using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos.ForFreezeSummary;
+using ReproductiveLab_Service.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -9,40 +9,40 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class FreezeSummaryController : ControllerBase
     {
-        private readonly IFreezeSummaryService freezeSummaryService;
+        private readonly IFreezeSummaryService _freezeSummaryService;
         public FreezeSummaryController(IFreezeSummaryService freezeSummaryService)
         {
-            this.freezeSummaryService = freezeSummaryService;
+            _freezeSummaryService = freezeSummaryService;
         }
         [HttpGet("GetOvumFreezeSummary")]
-        public async Task<List<GetOvumFreezeSummaryDto>> GetOvumFreezeSummary(Guid courseOfTreatmentId)
+        public List<GetOvumFreezeSummaryDto> GetOvumFreezeSummary(Guid courseOfTreatmentId)
         {
-            return await freezeSummaryService.GetOvumFreezeSummary(courseOfTreatmentId);
+            return _freezeSummaryService.GetOvumFreezeSummary(courseOfTreatmentId);
         }
         [HttpGet("GetSpermFreezeSummary")]
-        public async Task<List<GetSpermFreezeSummaryDto>> GetSpermFreezeSummary(Guid courseOfTreatmentId)
+        public List<GetSpermFreezeSummaryDto> GetSpermFreezeSummary(Guid courseOfTreatmentId)
         {
-            return await freezeSummaryService.GetSpermFreezeSummary(courseOfTreatmentId);
+            return _freezeSummaryService.GetSpermFreezeSummary(courseOfTreatmentId);
         }
         [HttpGet("GetRecipientOvumFreezes")]
-        public async Task<List<GetOvumFreezeSummaryDto>> GetRecipientOvumFreezes(Guid courseOfTreatmentId)
+        public List<GetOvumFreezeSummaryDto> GetRecipientOvumFreezes(Guid courseOfTreatmentId)
         {
-            return await freezeSummaryService.GetRecipientOvumFreezes(courseOfTreatmentId);
+            return _freezeSummaryService.GetRecipientOvumFreezes(courseOfTreatmentId);
         }
         [HttpGet("GetDonorOvums")]
-        public async Task<List<GetOvumFreezeSummaryDto>> GetDonorOvums(int customerSqlId)
+        public List<GetOvumFreezeSummaryDto> GetDonorOvums(int customerSqlId)
         {
-            return await freezeSummaryService.GetDonorOvums(customerSqlId);
+            return _freezeSummaryService.GetDonorOvums(customerSqlId);
         }
         [HttpGet("GetEmbryoFreezes")]
-        public async Task<List<GetOvumFreezeSummaryDto>> GetEmbryoFreezes(Guid courseOfTreatmentId)
+        public List<GetOvumFreezeSummaryDto> GetEmbryoFreezes(Guid courseOfTreatmentId)
         {
-            return await freezeSummaryService.GetEmbryoFreezes(courseOfTreatmentId);
+            return _freezeSummaryService.GetEmbryoFreezes(courseOfTreatmentId);
         }
         [HttpPost("GetUnFreezingObservationNoteOvumDetails")]
-        public async Task<List<Guid>> GetUnFreezingObservationNoteOvumDetails(List<Guid> ovumDetailIds)
+        public List<Guid> GetUnFreezingObservationNoteOvumDetails(List<Guid> ovumDetailIds)
         {
-            return await freezeSummaryService.GetUnFreezingObservationNoteOvumDetails(ovumDetailIds);
+            return _freezeSummaryService.GetUnFreezingObservationNoteOvumDetails(ovumDetailIds);
         }
     }
 }

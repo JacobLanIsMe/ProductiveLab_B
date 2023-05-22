@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ReproductiveLab_Service.Interfaces
 {
-    public interface IAdminService
+    public interface ICustomerService
     {
         Task<ResponseDto> AddCustomer(AddCustomerDto input);
         Task<List<Common1Dto>> GetGenders();
