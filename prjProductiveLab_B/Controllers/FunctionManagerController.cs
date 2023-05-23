@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Service.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -9,21 +10,21 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class FunctionManagerController : ControllerBase
     {
-        private readonly IFunctionService functionService;
+        private readonly IFunctionService _functionService;
         public FunctionManagerController(IFunctionService functionService)
         {
-            this.functionService = functionService;
+            _functionService = functionService;
         } 
 
         [HttpGet("GetAllFunctions")]
-        public async Task<List<FunctionDto>> GetAllFunctions()
+        public List<FunctionDto> GetAllFunctions()
         {
-            return await functionService.GetAllFunctions();
+            return _functionService.GetAllFunctions();
         }
         [HttpGet("GetSubfunctions")]
-        public async Task<List<FunctionDto>> GetSubfunctions(int functionId)
+        public List<FunctionDto> GetSubfunctions(int functionId)
         {
-            return await functionService.GetSubfunctions(functionId);
+            return _functionService.GetSubfunctions(functionId);
         }
     }
 }
