@@ -1,6 +1,11 @@
-﻿using prjProductiveLab_B.Dtos.ForTreatment;
+﻿using ReproductiveLab_Common.Dtos.ForTreatment;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace prjProductiveLab_B.Dtos
+namespace ReproductiveLab_Common.Dtos
 {
     public class LabMainPageDto
     {
@@ -22,13 +27,7 @@ namespace prjProductiveLab_B.Dtos
         public TreatmentDto? treatment { get; set; }
         // 療程狀態
         public string? treatmentStatus { get; set; }
-        
+
         public Guid? spermFromCourseOfTreatmentId { get; set; }
-
-
-
-
-
-
     }
 }

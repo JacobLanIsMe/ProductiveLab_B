@@ -28,7 +28,8 @@ builder.Services.AddScoped<ReproductiveLab_Service.Interfaces.IFunctionService, 
 builder.Services.AddScoped<IMediumService, MediumService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<ITreatmentService, TreatmentService>();
+builder.Services.AddScoped<ICourseOfTreatmentRepository, CourseOfTreatmentRepository>();
+builder.Services.AddScoped<ReproductiveLab_Service.Interfaces.ITreatmentService, ReproductiveLab_Service.Services.TreatmentService>();
 builder.Services.AddScoped<IOperateSpermService, OperateSpermService>();
 builder.Services.AddScoped<IStorageService, StorageService>();
 builder.Services.AddScoped<IObservationNoteService, ObservationNoteService>();

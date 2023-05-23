@@ -1,16 +1,14 @@
 ﻿using ReproductiveLab_Common.Dtos;
-using ReproductiveLabDB.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReproductiveLab_Repository.Interfaces
+namespace ReproductiveLab_Service.Interfaces
 {
-    public interface ICourseOfTreatmentRepository
+    public interface ITreatmentService
     {
-        CourseOfTreatment? GetCourseOfTreatmentById(Guid courseOfTreatmentId);
         List<LabMainPageDto> GetMainPageInfo();
     }
 }

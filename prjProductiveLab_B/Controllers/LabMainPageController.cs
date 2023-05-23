@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Repository.Interfaces;
+using ReproductiveLab_Service.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -8,17 +9,16 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class LabMainPageController : ControllerBase
     {
-        private readonly ILabMainPage labMainPage;
-        public LabMainPageController(ILabMainPage labMainPage)
+        private readonly ITreatmentService _treatmentService;
+        public LabMainPageController(ITreatmentService treatmentService)
         {
-            this.labMainPage = labMainPage;        
+            _treatmentService = treatmentService;        
         }
         // 回傳實驗室主畫面的資料
         [HttpGet("GetMainPageInfo")]
-        public async Task<ActionResult<IEnumerable<LabMainPageDto>>> GetMainPageInfo()
+        public List<LabMainPageDto> GetMainPageInfo()
         {
-            IEnumerable<LabMainPageDto> result = await labMainPage.GetMainPageInfo();
-            return Ok(result);
+            return _treatmentService.GetMainPageInfo();
         }
     }
 }
