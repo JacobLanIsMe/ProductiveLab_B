@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Dtos.ForMedium;
 using prjProductiveLab_B.Enums;
-using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Dtos.ForMedium;
+using ReproductiveLab_Service.Interfaces;
 using ReproductiveLabDB.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,31 +13,31 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class MediumManagerController : ControllerBase
     {
-        private readonly IMediumService mediumService;
+        private readonly IMediumService _mediumService;
         public MediumManagerController(IMediumService mediumService)
         {
-            this.mediumService = mediumService;
+            _mediumService = mediumService;
         }
 
         [HttpPost("AddMediumInUse")]
-        public async Task<BaseResponseDto> AddMediumInUse(AddMediumInUseDto medium)
+        public BaseResponseDto AddMediumInUse(AddMediumInUseDto medium)
         {
-            return await mediumService.AddMediumInUse(medium);            
+            return _mediumService.AddMediumInUse(medium);            
         }
         [HttpGet("GetInUseMediums")]
-        public async Task<List<InUseMediumDto>> GetInUseMediums()
+        public List<InUseMediumDto> GetInUseMediums()
         {
-            return await mediumService.GetInUseMediums();
+            return _mediumService.GetInUseMediums();
         }
         [HttpGet("GetMediumTypes")]
-        public async Task<List<CommonDto>> GetMediumTypes()
+        public List<Common1Dto> GetMediumTypes()
         {
-            return await mediumService.GetMediumTypes();
+            return _mediumService.GetMediumTypes();
         }
         [HttpGet("GetFrequentlyUsedMediums")]
-        public async Task<List<FrequentlyUsedMediumDto>> GetFrequentlyUsedMediums()
+        public List<FrequentlyUsedMediumDto> GetFrequentlyUsedMediums()
         {
-            return await mediumService.GetFrequentlyUsedMediums();
+            return _mediumService.GetFrequentlyUsedMediums();
         }
     }
 }
