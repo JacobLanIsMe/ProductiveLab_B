@@ -106,12 +106,24 @@ namespace ReproductiveLab_Common.Services
             {
                 if (i.freezeObservationNoteInfo != null && i.freezeObservationNoteInfo.observationNotePhotos != null && i.freezeObservationNoteInfo.observationNotePhotos.Count > 0 && !string.IsNullOrEmpty(i.freezeObservationNoteInfo.observationNotePhotos[0].photoName))
                 {
-                    string path = Path.Combine(_env.ContentRootPath, "uploads", "images", i.freezeObservationNoteInfo.observationNotePhotos[0].photoName);
-                    if (File.Exists(path))
-                    {
-                        i.freezeObservationNoteInfo.observationNotePhotos[0].imageBase64String = Convert.ToBase64String(File.ReadAllBytes(path));
-                    }
+                    i.freezeObservationNoteInfo.observationNotePhotos[0].imageBase64String = GetBase64String(i.freezeObservationNoteInfo.observationNotePhotos[0].photoName);
                 }
+            }
+        }
+        public string? GetBase64String(string? photoName)
+        {
+            if (photoName == null)
+            {
+                return null;
+            }
+            string path = Path.Combine(_env.ContentRootPath, "uploads", "images", photoName);
+            if (File.Exists(path))
+            {
+                return Convert.ToBase64String(File.ReadAllBytes(path));
+            }
+            else
+            {
+                return null;
             }
         }
     }

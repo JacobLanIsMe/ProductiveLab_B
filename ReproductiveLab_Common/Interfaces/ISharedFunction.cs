@@ -13,5 +13,6 @@ namespace ReproductiveLab_Common.Interfaces
         void ThrowExceptionIfNull<T>(T item, string errorMessage);
         List<GetOvumFreezeSummaryDto> GetOvumDetailInfos(IQueryable<OvumDetail> ovumDetails);
         void ConvertPhotoToBase64String(List<GetOvumFreezeSummaryDto> result);
+        string? GetBase64String(string? photoName);
     }
 }
