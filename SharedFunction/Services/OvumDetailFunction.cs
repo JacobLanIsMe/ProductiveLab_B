@@ -1,33 +1,20 @@
-﻿using ReproductiveLab_Common.Dtos.ForFreezeSummary;
+﻿using Reproductive_SharedFunction.Interfaces;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Dtos.ForFreezeSummary;
 using ReproductiveLab_Common.Dtos.ForObservationNote;
 using ReproductiveLab_Common.Dtos.ForStorage;
-using ReproductiveLab_Common.Dtos;
-using ReproductiveLab_Common.Interfaces;
+using ReproductiveLab_Common.Enums;
+using ReproductiveLabDB.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ReproductiveLabDB.Models;
-using ReproductiveLab_Common.Enums;
-using Microsoft.AspNetCore.Hosting;
 
-namespace ReproductiveLab_Common.Services
+namespace Reproductive_SharedFunction.Services
 {
-    public  class SharedFunction : ISharedFunction
+    public class OvumDetailFunction : IOvumDetailFunction
     {
-        private readonly IWebHostEnvironment _env;
-        public SharedFunction(IWebHostEnvironment env)
-        {
-            _env = env;
-        }
-        public void ThrowExceptionIfNull<T>(T item, string errorMessage)
-        {
-            if (item == null)
-            {
-                throw new Exception(errorMessage);
-            }
-        }
         public List<GetOvumFreezeSummaryDto> GetOvumDetailInfos(IQueryable<OvumDetail> ovumDetails)
         {
             var q = ovumDetails.Select(x => new GetOvumFreezeSummaryDto
@@ -99,32 +86,6 @@ namespace ReproductiveLab_Common.Services
 
             List<GetOvumFreezeSummaryDto> result = q.Where(x => !x.isThawed).ToList();
             return result;
-        }
-        public void ConvertPhotoToBase64String(List<GetOvumFreezeSummaryDto> result)
-        {
-            foreach (var i in result)
-            {
-                if (i.freezeObservationNoteInfo != null && i.freezeObservationNoteInfo.observationNotePhotos != null && i.freezeObservationNoteInfo.observationNotePhotos.Count > 0 && !string.IsNullOrEmpty(i.freezeObservationNoteInfo.observationNotePhotos[0].photoName))
-                {
-                    i.freezeObservationNoteInfo.observationNotePhotos[0].imageBase64String = GetBase64String(i.freezeObservationNoteInfo.observationNotePhotos[0].photoName);
-                }
-            }
-        }
-        public string? GetBase64String(string? photoName)
-        {
-            if (photoName == null)
-            {
-                return null;
-            }
-            string path = Path.Combine(_env.ContentRootPath, "uploads", "images", photoName);
-            if (File.Exists(path))
-            {
-                return Convert.ToBase64String(File.ReadAllBytes(path));
-            }
-            else
-            {
-                return null;
-            }
         }
     }
 }

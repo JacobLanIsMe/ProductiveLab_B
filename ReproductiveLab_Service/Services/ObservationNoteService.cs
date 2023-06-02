@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Reproductive_SharedFunction.Interfaces;
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForObservationNote;
-using ReproductiveLab_Common.Interfaces;
+using ReproductiveLab_Common.Enums;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLab_Service.Interfaces;
 using ReproductiveLabDB.Models;
@@ -20,22 +21,24 @@ namespace ReproductiveLab_Service.Services
     public class ObservationNoteService : IObservationNoteService
     {
         private readonly IObservationNoteRepository _observationNoteRepository;
-        private readonly ISharedFunction _sharedFunction;
-        public ObservationNoteService(IObservationNoteRepository observationNoteRepository, ISharedFunction sharedFunction)
+        private readonly IPhotoFunction _photoFunction;
+        private readonly IObservationNoteFunction _observationNoteFunction;
+        public ObservationNoteService(IObservationNoteRepository observationNoteRepository, IPhotoFunction photoFunction, IObservationNoteFunction observationNoteFunction)
         {
             _observationNoteRepository = observationNoteRepository;
-            _sharedFunction = sharedFunction;
+            _photoFunction = photoFunction;
+            _observationNoteFunction = observationNoteFunction;
         }
-        public async Task<List<ObservationNoteDto>> GetObservationNote(Guid courseOfTreatmentId)
+        public List<ObservationNoteDto> GetObservationNote(Guid courseOfTreatmentId)
         {
-            var result = _observationNoteRepository.GetObservationNote(courseOfTreatmentId);
+            var result = _observationNoteRepository.GetObservationNoteByCourseOfTreatmentId(courseOfTreatmentId);
             foreach (var i in result)
             {
                 foreach (var j in i.observationNote)
                 {
                     if (j.mainPhoto != null)
                     {
-                        j.mainPhotoBase64 = _sharedFunction.GetBase64String(j.mainPhoto);
+                        j.mainPhotoBase64 = _photoFunction.GetBase64String(j.mainPhoto);
                     }
                 }
                 List<List<Observation>> observationList = new List<List<Observation>>();
@@ -97,20 +100,19 @@ namespace ReproductiveLab_Service.Services
         {
             return _observationNoteRepository.GetOperationType();
         }
-        public async Task<BaseResponseDto> AddObservationNote(AddObservationNoteDto input)
+        public BaseResponseDto AddObservationNote(AddObservationNoteDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
             try
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    ObservationNote observationNote = GenerateObservationNote(new ObservationNote(), input);
-                    _observationNoteRepository.AddObservationNote(observationNote);
+                    _observationNoteRepository.AddObservationNote(input);
                     Guid latestObservationNoteId = _observationNoteRepository.GetLatestObservationNoteId();
-                    AddObservationNoteEmbryoStatus(latestObservationNoteId, input);
-                    AddObservationNoteOvumAbnormality(latestObservationNoteId, input);
-                    AddObservationNoteOperation(latestObservationNoteId, input);
-                    AddObservationNotePhoto(input.photos, input.mainPhotoIndex, latestObservationNoteId, false);
+                    _observationNoteFunction.AddObservationNoteEmbryoStatus(latestObservationNoteId, input);
+                    _observationNoteFunction.AddObservationNoteOvumAbnormality(latestObservationNoteId, input);
+                    _observationNoteFunction.AddObservationNoteOperation(latestObservationNoteId, input);
+                    _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, latestObservationNoteId, false);
                     scope.Complete();
                 }
                 result.SetSuccess();
@@ -125,174 +127,8 @@ namespace ReproductiveLab_Service.Services
             }
             return result;
         }
-        private ObservationNote GenerateObservationNote(ObservationNote observationNote, AddObservationNoteDto input)
-        {
-            observationNote.OvumDetailId = input.ovumDetailId;
-            observationNote.Embryologist = input.embryologist;
-            observationNote.Day = input.day;
-            observationNote.IsDeleted = false;
-            if (DateTime.TryParse(input.observationTime.ToString(), out DateTime nowTime))
-            {
-                observationNote.ObservationTime = nowTime;
-            }
-            else
-            {
-                throw new Exception("時間資訊有誤");
-            }
-            if (input.memo != "null")
-            {
-                observationNote.Memo = input.memo;
-            }
-            if (input.pgtaResult != "null")
-            {
-                observationNote.Pgtaresult = input.pgtaResult;
-            }
-            if (input.pgtmResult != "null")
-            {
-                observationNote.Pgtmresult = input.pgtmResult;
-            }
-            if (Int32.TryParse(input.pgtaNumber, out int pgtaNumber))
-            {
-                observationNote.Pgtanumber = pgtaNumber;
-            }
-            else
-            {
-                observationNote.Pgtanumber = null;
-            }
-            if (Int32.TryParse(input.ovumMaturationId, out int ovumMaturationId))
-            {
-                observationNote.OvumMaturationId = ovumMaturationId;
-            }
-            else
-            {
-                observationNote.OvumMaturationId = null;
-            }
-            if (Int32.TryParse(input.observationTypeId, out int observationTypeId))
-            {
-                observationNote.ObservationTypeId = observationTypeId;
-            }
-            else
-            {
-                observationNote.ObservationTypeId = null;
-            }
-            if (Int32.TryParse(input.fertilizationResultId, out int fertilizationResultId))
-            {
-                observationNote.FertilizationResultId = fertilizationResultId;
-            }
-            else
-            {
-                observationNote.FertilizationResultId = null;
-            }
-            if (Int32.TryParse(input.blastomereScore_C_Id, out int blastomereScore_C_Id))
-            {
-                observationNote.BlastomereScoreCId = blastomereScore_C_Id;
-            }
-            else
-            {
-                observationNote.BlastomereScoreCId = null;
-            }
-            if (Int32.TryParse(input.blastomereScore_G_Id, out int blastomereScore_G_Id))
-            {
-                observationNote.BlastomereScoreGId = blastomereScore_G_Id;
-            }
-            else
-            {
-                observationNote.BlastomereScoreGId = null;
-            }
-            if (Int32.TryParse(input.blastomereScore_F_Id, out int blastomereScore_F_Id))
-            {
-                observationNote.BlastomereScoreFId = blastomereScore_F_Id;
-            }
-            else
-            {
-                observationNote.BlastomereScoreFId = null;
-            }
 
-            if (Int32.TryParse(input.blastocystScore_Expansion_Id, out int blastocystScore_Expansion_Id))
-            {
-                observationNote.BlastocystScoreExpansionId = blastocystScore_Expansion_Id;
-            }
-            else
-            {
-                observationNote.BlastocystScoreExpansionId = null;
-            }
-            if (Int32.TryParse(input.blastocystScore_ICE_Id, out int blastocystScore_ICE_Id))
-            {
-                observationNote.BlastocystScoreIceId = blastocystScore_ICE_Id;
-            }
-            else
-            {
-                observationNote.BlastocystScoreIceId = null;
-            }
-            if (Int32.TryParse(input.blastocystScore_TE_Id, out int blastocystScore_TE_Id))
-            {
-                observationNote.BlastocystScoreTeId = blastocystScore_TE_Id;
-            }
-            else
-            {
-                observationNote.BlastocystScoreTeId = null;
-            }
-
-            if (decimal.TryParse(input.kidScore, out decimal kidScore))
-            {
-                if (kidScore >= 0 && kidScore <= Convert.ToDecimal(9.9))
-                {
-                    observationNote.Kidscore = kidScore;
-                }
-                else
-                {
-                    throw new Exception("KID Score 數值需落在 0 - 9.9");
-                }
-            }
-            else
-            {
-                observationNote.Kidscore = null;
-            }
-            return observationNote;
-        }
-        private void AddObservationNoteEmbryoStatus(Guid observationNoteId, AddObservationNoteDto input)
-        {
-            List<int> embryoStatusIds = JsonSerializer.Deserialize<List<int>>(input.embryoStatusId);
-            _observationNoteRepository.AddObservationNoteEmbryoStatus(observationNoteId, embryoStatusIds);
-        }
-        private void AddObservationNoteOvumAbnormality(Guid observationNoteId, AddObservationNoteDto input)
-        {
-            List<int> ovumAbnormalityIds = JsonSerializer.Deserialize<List<int>>(input.ovumAbnormalityId);
-            _observationNoteRepository.AddObservationNoteOvumAbnormality(observationNoteId, ovumAbnormalityIds);
-        }
-        private void AddObservationNoteOperation(Guid observationNoteId, AddObservationNoteDto input)
-        {
-            List<int> operationTypeIds = JsonSerializer.Deserialize<List<int>>(input.operationTypeId);
-            _observationNoteRepository.AddObservationNoteOperation(observationNoteId, input, operationTypeIds);
-        }
-        private void AddObservationNotePhoto(List<IFormFile>? photos, string inputMainPhotoIndex, Guid observationNoteId, bool hasAlreadyMainPhotoIndex)
-        {
-            if (photos != null)
-            {
-                int mainPhotoIndex = 0;
-                if (!hasAlreadyMainPhotoIndex)
-                {
-                    if (!Int32.TryParse(inputMainPhotoIndex, out mainPhotoIndex))
-                    {
-                        throw new FormatException("主照片選項有誤");
-                    }
-                }
-                _observationNoteRepository.AddObservationNotePhoto(photos, observationNoteId, hasAlreadyMainPhotoIndex, mainPhotoIndex);
-            }
-        }
-        private void deleteObservationNoteEmbryoStatus(Guid observationNoteId)
-        {
-            _observationNoteRepository.deleteObservationNoteEmbryoStatus(observationNoteId);
-        }
-        private void deleteObservationNoteOperation(Guid observationNoteId)
-        {
-            _observationNoteRepository.deleteObservationNoteOperation(observationNoteId);
-        }
-        private void deleteObservationNoteOvumAbnormality(Guid observationNoteId)
-        {
-            _observationNoteRepository.deleteObservationNoteOvumAbnormality(observationNoteId);
-        }
-        public async Task<BaseResponseDto> UpdateObservationNote(UpdateObservationNoteDto input)
+        public BaseResponseDto UpdateObservationNote(UpdateObservationNoteDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
             var existingObservationNote = _observationNoteRepository.GetObservationNoteById(input.observationNoteId);
@@ -303,14 +139,13 @@ namespace ReproductiveLab_Service.Services
                     using (TransactionScope scope = new TransactionScope())
                     {
                         AddObservationNoteDto inputTemp = (AddObservationNoteDto)input;
-                        GenerateObservationNote(existingObservationNote, inputTemp);
-                        dbContext.SaveChanges();
-                        deleteObservationNoteEmbryoStatus(input.observationNoteId);
-                        AddObservationNoteEmbryoStatus(input.observationNoteId, inputTemp);
-                        deleteObservationNoteOperation(input.observationNoteId);
-                        AddObservationNoteOperation(input.observationNoteId, inputTemp);
-                        deleteObservationNoteOvumAbnormality(input.observationNoteId);
-                        AddObservationNoteOvumAbnormality(input.observationNoteId, inputTemp);
+                        _observationNoteRepository.UpdateObservationNote(existingObservationNote, inputTemp);
+                        _observationNoteFunction.DeleteObservationNoteEmbryoStatus(input.observationNoteId);
+                        _observationNoteFunction.AddObservationNoteEmbryoStatus(input.observationNoteId, inputTemp);
+                        _observationNoteFunction.DeleteObservationNoteOperation(input.observationNoteId);
+                        _observationNoteFunction.AddObservationNoteOperation(input.observationNoteId, inputTemp);
+                        _observationNoteFunction.DeleteObservationNoteOvumAbnormality(input.observationNoteId);
+                        _observationNoteFunction.AddObservationNoteOvumAbnormality(input.observationNoteId, inputTemp);
                         var existingPhotos = _observationNoteRepository.GetObservatioNotePhotosByObservationNoteId(input.observationNoteId);
                         if (input.existingPhotos != null)
                         {
@@ -327,19 +162,18 @@ namespace ReproductiveLab_Service.Services
                             }
                             else if (!modifiedPhotos.Any(x => x.IsMainPhoto == true) && input.photos != null)
                             {
-                                AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
+                                _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
                             }
                             else if (modifiedPhotos.Any(x => x.IsMainPhoto == true) && input.photos != null)
                             {
-                                AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, true);
+                                _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, true);
                             }
                         }
                         else
                         {
                             _observationNoteRepository.DeleteObservationNotePhoto(existingPhotos);
-                            AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
+                            _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
                         }
-                        dbContext.SaveChanges();
                         scope.Complete();
                     }
                     result.SetSuccess();
@@ -356,5 +190,264 @@ namespace ReproductiveLab_Service.Services
             }
             return result;
         }
+        public GetObservationNoteDto? GetExistingObservationNote(Guid observationNoteId)
+        {
+            var result = _observationNoteRepository.GetExistingObservationNote(observationNoteId);
+            if (result == null)
+            {
+                return null;
+            }
+            else
+            {
+                result.ovumAbnormalityId = JsonSerializer.Serialize(result.ovumAbnormalityIds);
+                result.embryoStatusId = JsonSerializer.Serialize(result.embryoStatusIds);
+                result.operationTypeId = JsonSerializer.Serialize(result.operationTypeIds);
+                if (result.observationNotePhotos != null && result.observationNotePhotos.Count != 0)
+                {
+                    _photoFunction.GetObservationNotePhotoBase64String(result.observationNotePhotos);
+                }
+                return result;
+            }
+
+        }
+
+        public List<GetObservationNoteNameDto> GetObservationNoteNameByObservationNoteIds(List<Guid> observationNoteIds)
+        {
+            var result = _observationNoteRepository.GetObservationNoteNameByObservationNoteIds(observationNoteIds);
+            var ovumAbnormalityNames = _observationNoteRepository.GetObservationNoteOvumAbnormalityNameByObservationNoteIds(observationNoteIds);
+            var embryoStatusNames = _observationNoteRepository.GetObservationNoteEmbryoStatuseNameByObservationNoteIds(observationNoteIds);
+            foreach (var i in result)
+            {
+                i.ovumAbnormalityName = ovumAbnormalityNames.Where(x => x.id == i.observationNoteId).Select(x => x.name).ToList();
+                i.embryoStatusName = embryoStatusNames.Where(x => x.id == i.observationNoteId).Select(x => x.name).ToList();
+            }
+            return result;
+        }
+        public GetObservationNoteNameDto? GetExistingObservationNoteName(Guid observationNoteId)
+        {
+            List<Guid> observationNoteIds = new List<Guid> { observationNoteId };
+            List<GetObservationNoteNameDto> observationNotes = GetObservationNoteNameByObservationNoteIds(observationNoteIds);
+            if (observationNotes.Count != 1)
+            {
+                return null;
+            }
+            List<ObservationNoteOperationDto> observationNoteOperations = _observationNoteRepository.GetObservationNoteOperationNameByObservationNoteId(observationNoteId);
+            observationNotes[0].operationTypeName = observationNoteOperations.Select(x => x.operationTypeName).ToList();
+            observationNotes[0].spindleResult = observationNoteOperations.Where(x => x.operationTypeId == (int)OperationTypeEnum.Spindle && x.spindleResult != null).Select(x => x.spindleResult).FirstOrDefault();
+            if (observationNotes[0].observationNotePhotos != null && observationNotes[0].observationNotePhotos.Count != 0)
+            {
+                _photoFunction.GetObservationNotePhotoBase64String(observationNotes[0].observationNotePhotos);
+            }
+            return observationNotes[0];
+        }
+        public BaseResponseDto DeleteObservationNote(Guid observationNoteId)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    var observationNote = _observationNoteRepository.GetObservationNoteById(observationNoteId);
+                    if (observationNote == null)
+                    {
+                        throw new Exception("找不到此筆觀察紀錄");
+                    }
+                    else if (observationNote.IsDeleted == true)
+                    {
+                        throw new Exception("此筆觀察紀錄異常");
+                    }
+                    else
+                    {
+                        observationNote.IsDeleted = true;
+                    }
+                    _observationNoteRepository.DeleteObservationNotePhoto(observationNoteId);
+                    _observationNoteFunction.DeleteObservationNoteOperation(observationNoteId);
+                    _observationNoteFunction.DeleteObservationNoteOvumAbnormality(observationNoteId);
+                    _observationNoteFunction.DeleteObservationNoteEmbryoStatus(observationNoteId);
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch (Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+
+            return result;
+        }
+
+        public List<GetObservationNoteNameDto> GetFreezeObservationNotes(List<Guid> ovumDetailIds)
+        {
+            return _observationNoteRepository.GetFreezeObservationNotes(ovumDetailIds);
+
+        }
+
+        //private ObservationNote GenerateObservationNote(ObservationNote observationNote, AddObservationNoteDto input)
+        //{
+        //    observationNote.OvumDetailId = input.ovumDetailId;
+        //    observationNote.Embryologist = input.embryologist;
+        //    observationNote.Day = input.day;
+        //    observationNote.IsDeleted = false;
+        //    if (DateTime.TryParse(input.observationTime.ToString(), out DateTime nowTime))
+        //    {
+        //        observationNote.ObservationTime = nowTime;
+        //    }
+        //    else
+        //    {
+        //        throw new Exception("時間資訊有誤");
+        //    }
+        //    if (input.memo != "null")
+        //    {
+        //        observationNote.Memo = input.memo;
+        //    }
+        //    if (input.pgtaResult != "null")
+        //    {
+        //        observationNote.Pgtaresult = input.pgtaResult;
+        //    }
+        //    if (input.pgtmResult != "null")
+        //    {
+        //        observationNote.Pgtmresult = input.pgtmResult;
+        //    }
+        //    if (Int32.TryParse(input.pgtaNumber, out int pgtaNumber))
+        //    {
+        //        observationNote.Pgtanumber = pgtaNumber;
+        //    }
+        //    else
+        //    {
+        //        observationNote.Pgtanumber = null;
+        //    }
+        //    if (Int32.TryParse(input.ovumMaturationId, out int ovumMaturationId))
+        //    {
+        //        observationNote.OvumMaturationId = ovumMaturationId;
+        //    }
+        //    else
+        //    {
+        //        observationNote.OvumMaturationId = null;
+        //    }
+        //    if (Int32.TryParse(input.observationTypeId, out int observationTypeId))
+        //    {
+        //        observationNote.ObservationTypeId = observationTypeId;
+        //    }
+        //    else
+        //    {
+        //        observationNote.ObservationTypeId = null;
+        //    }
+        //    if (Int32.TryParse(input.fertilizationResultId, out int fertilizationResultId))
+        //    {
+        //        observationNote.FertilizationResultId = fertilizationResultId;
+        //    }
+        //    else
+        //    {
+        //        observationNote.FertilizationResultId = null;
+        //    }
+        //    if (Int32.TryParse(input.blastomereScore_C_Id, out int blastomereScore_C_Id))
+        //    {
+        //        observationNote.BlastomereScoreCId = blastomereScore_C_Id;
+        //    }
+        //    else
+        //    {
+        //        observationNote.BlastomereScoreCId = null;
+        //    }
+        //    if (Int32.TryParse(input.blastomereScore_G_Id, out int blastomereScore_G_Id))
+        //    {
+        //        observationNote.BlastomereScoreGId = blastomereScore_G_Id;
+        //    }
+        //    else
+        //    {
+        //        observationNote.BlastomereScoreGId = null;
+        //    }
+        //    if (Int32.TryParse(input.blastomereScore_F_Id, out int blastomereScore_F_Id))
+        //    {
+        //        observationNote.BlastomereScoreFId = blastomereScore_F_Id;
+        //    }
+        //    else
+        //    {
+        //        observationNote.BlastomereScoreFId = null;
+        //    }
+
+        //    if (Int32.TryParse(input.blastocystScore_Expansion_Id, out int blastocystScore_Expansion_Id))
+        //    {
+        //        observationNote.BlastocystScoreExpansionId = blastocystScore_Expansion_Id;
+        //    }
+        //    else
+        //    {
+        //        observationNote.BlastocystScoreExpansionId = null;
+        //    }
+        //    if (Int32.TryParse(input.blastocystScore_ICE_Id, out int blastocystScore_ICE_Id))
+        //    {
+        //        observationNote.BlastocystScoreIceId = blastocystScore_ICE_Id;
+        //    }
+        //    else
+        //    {
+        //        observationNote.BlastocystScoreIceId = null;
+        //    }
+        //    if (Int32.TryParse(input.blastocystScore_TE_Id, out int blastocystScore_TE_Id))
+        //    {
+        //        observationNote.BlastocystScoreTeId = blastocystScore_TE_Id;
+        //    }
+        //    else
+        //    {
+        //        observationNote.BlastocystScoreTeId = null;
+        //    }
+
+        //    if (decimal.TryParse(input.kidScore, out decimal kidScore))
+        //    {
+        //        if (kidScore >= 0 && kidScore <= Convert.ToDecimal(9.9))
+        //        {
+        //            observationNote.Kidscore = kidScore;
+        //        }
+        //        else
+        //        {
+        //            throw new Exception("KID Score 數值需落在 0 - 9.9");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        observationNote.Kidscore = null;
+        //    }
+        //    return observationNote;
+        //}
+        //private void AddObservationNoteEmbryoStatus(Guid observationNoteId, AddObservationNoteDto input)
+        //{
+        //    List<int> embryoStatusIds = JsonSerializer.Deserialize<List<int>>(input.embryoStatusId);
+        //    _observationNoteRepository.AddObservationNoteEmbryoStatus(observationNoteId, embryoStatusIds);
+        //}
+        //private void AddObservationNoteOvumAbnormality(Guid observationNoteId, AddObservationNoteDto input)
+        //{
+        //    List<int> ovumAbnormalityIds = JsonSerializer.Deserialize<List<int>>(input.ovumAbnormalityId);
+        //    _observationNoteRepository.AddObservationNoteOvumAbnormality(observationNoteId, ovumAbnormalityIds);
+        //}
+        //private void AddObservationNoteOperation(Guid observationNoteId, AddObservationNoteDto input)
+        //{
+        //    List<int> operationTypeIds = JsonSerializer.Deserialize<List<int>>(input.operationTypeId);
+        //    _observationNoteRepository.AddObservationNoteOperation(observationNoteId, input, operationTypeIds);
+        //}
+        //private void AddObservationNotePhoto(List<IFormFile>? photos, string inputMainPhotoIndex, Guid observationNoteId, bool hasAlreadyMainPhotoIndex)
+        //{
+        //    if (photos != null)
+        //    {
+        //        int mainPhotoIndex = 0;
+        //        if (!hasAlreadyMainPhotoIndex)
+        //        {
+        //            if (!Int32.TryParse(inputMainPhotoIndex, out mainPhotoIndex))
+        //            {
+        //                throw new FormatException("主照片選項有誤");
+        //            }
+        //        }
+        //        _observationNoteRepository.AddObservationNotePhoto(photos, observationNoteId, hasAlreadyMainPhotoIndex, mainPhotoIndex);
+        //    }
+        //}
+        //private void deleteObservationNoteEmbryoStatus(Guid observationNoteId)
+        //{
+        //    _observationNoteRepository.deleteObservationNoteEmbryoStatus(observationNoteId);
+        //}
+        //private void deleteObservationNoteOperation(Guid observationNoteId)
+        //{
+        //    _observationNoteRepository.deleteObservationNoteOperation(observationNoteId);
+        //}
+        //private void deleteObservationNoteOvumAbnormality(Guid observationNoteId)
+        //{
+        //    _observationNoteRepository.deleteObservationNoteOvumAbnormality(observationNoteId);
+        //}
     }
 }

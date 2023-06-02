@@ -13,7 +13,7 @@ namespace ReproductiveLab_Repository.Interfaces
     public interface IObservationNoteRepository
     {
         IQueryable<ObservationNote> GetObservationNotesByOvumDetailIds(List<Guid> ovumDetailIds);
-        List<ObservationNoteDto> GetObservationNote(Guid courseOfTreatmentId);
+        List<ObservationNoteDto> GetObservationNoteByCourseOfTreatmentId(Guid courseOfTreatmentId);
         List<Common1Dto> GetOvumMaturation();
         List<Common1Dto> GetObservationType();
         List<Common1Dto> GetOvumAbnormality();
@@ -26,7 +26,8 @@ namespace ReproductiveLab_Repository.Interfaces
         Task<List<Common1Dto>> GetBlastocystScoreIce();
         Task<List<Common1Dto>> GetBlastocystScoreTe();
         List<Common1Dto> GetOperationType();
-        void AddObservationNote(ObservationNote input);
+        void AddObservationNote(AddObservationNoteDto input);
+        void UpdateObservationNote(ObservationNote existingObservationNote, AddObservationNoteDto input);
         Guid GetLatestObservationNoteId();
         void AddObservationNoteEmbryoStatus(Guid observationNoteId, List<int> embryoStatusIds);
         void AddObservationNoteOvumAbnormality(Guid observationNoteId, List<int> ovumAbnormalityIds);
@@ -37,7 +38,14 @@ namespace ReproductiveLab_Repository.Interfaces
         void deleteObservationNoteOperation(Guid observationNoteId);
         void deleteObservationNoteOvumAbnormality(Guid observationNoteId);
         IQueryable<ObservationNotePhoto> GetObservatioNotePhotosByObservationNoteId(Guid observationNoteId);
+        void DeleteObservationNotePhoto(Guid observationNoteId);
         void UpdateObservationNotePhoto(IQueryable<ObservationNotePhoto> existingPhotos, List<ObservationNotePhotoDto> inputExistingPhotos);
         void DeleteObservationNotePhoto(IQueryable<ObservationNotePhoto> existingPhotos);
+        GetObservationNoteDto? GetExistingObservationNote(Guid observationNoteId);
+        List<GetObservationNoteNameDto> GetObservationNoteNameByObservationNoteIds(List<Guid> observationNoteIds);
+        List<Common2Dto> GetObservationNoteOvumAbnormalityNameByObservationNoteIds(List<Guid> observationNoteIds);
+        List<Common2Dto> GetObservationNoteEmbryoStatuseNameByObservationNoteIds(List<Guid> observationNoteIds);
+        List<ObservationNoteOperationDto> GetObservationNoteOperationNameByObservationNoteId(Guid observationNoteId);
+        List<GetObservationNoteNameDto> GetFreezeObservationNotes(List<Guid> ovumDetailIds);
     }
 }

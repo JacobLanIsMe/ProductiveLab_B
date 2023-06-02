@@ -100,5 +100,20 @@ namespace ReproductiveLab_Repository.Repositories
                 mediumTypeId = x.MediumTypeId,
             }).OrderBy(x => x.id).AsNoTracking().ToList();
         }
+        public void SetMediumInUse<T>(T mediumTable, List<Guid> inputMediums)
+        {
+            if (inputMediums.Count > 0)
+            {
+                mediumTable.GetType().GetProperty("MediumInUseId1").SetValue(mediumTable, inputMediums[0]);
+            }
+            if (inputMediums.Count > 1)
+            {
+                mediumTable.GetType().GetProperty("MediumInUseId2").SetValue(mediumTable, inputMediums[1]);
+            }
+            if (inputMediums.Count > 2)
+            {
+                mediumTable.GetType().GetProperty("MediumInUseId3").SetValue(mediumTable, inputMediums[2]);
+            }
+        }
     }
 }

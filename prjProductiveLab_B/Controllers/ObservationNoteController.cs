@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Dtos.ForObservationNote;
-using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos;
+//using prjProductiveLab_B.Dtos;
+//using prjProductiveLab_B.Dtos.ForObservationNote;
+//using prjProductiveLab_B.Interfaces;
 using ReproductiveLab_Common.Dtos.ForObservationNote;
+using ReproductiveLab_Service.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -11,85 +13,85 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class ObservationNoteController : ControllerBase
     {
-        private readonly IObservationNoteService observationNoteService;
+        private readonly IObservationNoteService _observationNoteService;
         public ObservationNoteController(IObservationNoteService observationNoteService)
         {
-            this.observationNoteService = observationNoteService;
+            _observationNoteService = observationNoteService;
         }
         [HttpGet("GetObservationNote")]
-        public async Task<List<ObservationNoteDto>> GetObservationNote(Guid courseOfTreatmentId)
+        public List<ObservationNoteDto> GetObservationNote(Guid courseOfTreatmentId)
         {
-            return await observationNoteService.GetObservationNote(courseOfTreatmentId);
+            return _observationNoteService.GetObservationNote(courseOfTreatmentId);
         }
         [HttpGet("GetOvumMaturation")]
-        public async Task<List<CommonDto>> GetOvumMaturation()
+        public List<Common1Dto> GetOvumMaturation()
         {
-            return await observationNoteService.GetOvumMaturation();
+            return _observationNoteService.GetOvumMaturation();
         }
         [HttpGet("GetObservationType")]
-        public async Task<List<CommonDto>> GetObservationType()
+        public List<Common1Dto> GetObservationType()
         {
-            return await observationNoteService.GetObservationType();
+            return _observationNoteService.GetObservationType();
         }
         [HttpGet("GetOvumAbnormality")]
-        public async Task<List<CommonDto>> GetOvumAbnormality()
+        public List<Common1Dto> GetOvumAbnormality()
         {
-            return await observationNoteService.GetOvumAbnormality();
+            return _observationNoteService.GetOvumAbnormality();
         }
         [HttpGet("GetFertilizationResult")]
-        public async Task<List<CommonDto>> GetFertilizationResult()
+        public List<Common1Dto> GetFertilizationResult()
         {
-            return await observationNoteService.GetFertilizationResult();
+            return _observationNoteService.GetFertilizationResult();
         }
         [HttpGet("GetBlastomereScore")]
         public async Task<BlastomereScoreDto> GetBlastomereScore()
         {
-            return await observationNoteService.GetBlastomereScore();
+            return await _observationNoteService.GetBlastomereScore();
         }
         [HttpGet("GetEmbryoStatus")]
-        public async Task<List<CommonDto>> GetEmbryoStatus()
+        public List<Common1Dto> GetEmbryoStatus()
         {
-            return await observationNoteService.GetEmbryoStatus();
+            return _observationNoteService.GetEmbryoStatus();
         }
         [HttpGet("GetBlastocystScore")]
         public async Task<BlastocystScoreDto> GetBlastocystScore()
         {
-            return await observationNoteService.GetBlastocystScore();
+            return await _observationNoteService.GetBlastocystScore();
         }
         [HttpGet("GetOperationType")]
-        public async Task<List<CommonDto>> GetOperationType()
+        public List<Common1Dto> GetOperationType()
         {
-            return await observationNoteService.GetOperationType();
+            return _observationNoteService.GetOperationType();
         }
         [HttpPost("AddObservationNote")]
-        public async Task<BaseResponseDto> AddObservationNote([FromForm] AddObservationNoteDto input)
+        public BaseResponseDto AddObservationNote([FromForm] AddObservationNoteDto input)
         {
-            return await observationNoteService.AddObservationNote(input);
+            return _observationNoteService.AddObservationNote(input);
         }
         [HttpGet("GetExistingObservationNote")]
-        public async Task<GetObservationNoteDto?> GetExistingObservationNote(Guid observationNoteId)
+        public GetObservationNoteDto? GetExistingObservationNote(Guid observationNoteId)
         {
-            return await observationNoteService.GetExistingObservationNote(observationNoteId);
+            return _observationNoteService.GetExistingObservationNote(observationNoteId);
         }
         [HttpGet("GetExistingObservationNoteName")]
-        public async Task<GetObservationNoteNameDto?> GetExistingObservationNoteName(Guid observationNoteId)
+        public GetObservationNoteNameDto? GetExistingObservationNoteName(Guid observationNoteId)
         {
-            return await observationNoteService.GetExistingObservationNoteName(observationNoteId);
+            return _observationNoteService.GetExistingObservationNoteName(observationNoteId);
         }
         [HttpGet("DeleteObservationNote")]
-        public async Task<BaseResponseDto> DeleteObservationNote(Guid observationNoteId)
+        public BaseResponseDto DeleteObservationNote(Guid observationNoteId)
         {
-            return await observationNoteService.DeleteObservationNote(observationNoteId);
+            return _observationNoteService.DeleteObservationNote(observationNoteId);
         }
         [HttpPost("UpdateObservationNote")]
-        public async Task<BaseResponseDto> UpdateObservationNote([FromForm] UpdateObservationNoteDto input)
+        public BaseResponseDto UpdateObservationNote([FromForm] UpdateObservationNoteDto input)
         {
-            return await observationNoteService.UpdateObservationNote(input);
+            return _observationNoteService.UpdateObservationNote(input);
         }
         [HttpPost("GetFreezeObservationNotes")]
-        public async Task<List<GetObservationNoteNameDto>> GetFreezeObservationNotes(List<Guid> ovumDetailIds)
+        public List<GetObservationNoteNameDto> GetFreezeObservationNotes(List<Guid> ovumDetailIds)
         {
-            return await observationNoteService.GetFreezeObservationNotes(ovumDetailIds);
+            return _observationNoteService.GetFreezeObservationNotes(ovumDetailIds);
         }
     }
 }

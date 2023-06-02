@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ReproductiveLab_Common\ReproductiveLab_Common.csproj" />
     <ProjectReference Include="..\ReproductiveLab_Repository\ReproductiveLab_Repository.csproj" />
-    <ProjectReference Include="..\SharedFunction\Reproductive_SharedFunction.csproj" />
   </ItemGroup>
 
 </Project>

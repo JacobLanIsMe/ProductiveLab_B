@@ -6,13 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReproductiveLab_Common.Interfaces
+namespace Reproductive_SharedFunction.Interfaces
 {
-    public interface ISharedFunction
+    public interface IOvumDetailFunction
     {
-        void ThrowExceptionIfNull<T>(T item, string errorMessage);
         List<GetOvumFreezeSummaryDto> GetOvumDetailInfos(IQueryable<OvumDetail> ovumDetails);
-        void ConvertPhotoToBase64String(List<GetOvumFreezeSummaryDto> result);
-        string? GetBase64String(string? photoName);
     }
 }

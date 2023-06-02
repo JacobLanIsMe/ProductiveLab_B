@@ -1,15 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Reproductive_SharedFunction.Interfaces;
 using ReproductiveLab_Common.Dtos;
-using ReproductiveLab_Common.Interfaces;
 using ReproductiveLab_Common.Models;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLab_Service.Interfaces;
-using ReproductiveLabDB.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace ReproductiveLab_Service.Services
@@ -17,11 +10,11 @@ namespace ReproductiveLab_Service.Services
     public class CustomerService : ICustomerService
     {
         private readonly ICustomerRepository _adminRepository;
-        private readonly ISharedFunction _sharedFunctions;
-        public CustomerService(ICustomerRepository adminRepository, ISharedFunction sharedFunction)
+        private readonly IErrorFunction _errorFunctions;
+        public CustomerService(ICustomerRepository adminRepository, IErrorFunction errorFunctions)
         {
             _adminRepository = adminRepository;
-            _sharedFunctions = sharedFunction;
+            _errorFunctions = errorFunctions;
         }
         public async Task<ResponseDto> AddCustomer(AddCustomerDto input)
         {
@@ -34,14 +27,14 @@ namespace ReproductiveLab_Service.Services
                     if (input.spouseName != null && input.spouseGenderId != null && input.spouseBirthday != null)
                     {
                         var latestCustomer = _adminRepository.GetLatestCustomer();
-                        _sharedFunctions.ThrowExceptionIfNull(latestCustomer, "Table Customer has no date");
+                        _errorFunctions.ThrowExceptionIfNull(latestCustomer, "Table Customer has no date");
                         Guid latestCustomerId = latestCustomer.CustomerId;
                         _adminRepository.AddCustomer(new CustomerModel(input.spouseName, (int)input.spouseGenderId, (DateTime)input.spouseBirthday, latestCustomerId));
                         var spouse = _adminRepository.GetLatestCustomer();
-                        _sharedFunctions.ThrowExceptionIfNull(spouse, "Insertion of spouse is failed");
+                        _errorFunctions.ThrowExceptionIfNull(spouse, "Insertion of spouse is failed");
                         Guid spouseCustomerId = spouse.CustomerId;
                         var customer = _adminRepository.GetCustomerById(latestCustomerId);
-                        _sharedFunctions.ThrowExceptionIfNull(customer, "Customer is not found");
+                        _errorFunctions.ThrowExceptionIfNull(customer, "Customer is not found");
                         _adminRepository.UpdateSpouse(customer, spouseCustomerId);
                     }
                     scope.Complete();

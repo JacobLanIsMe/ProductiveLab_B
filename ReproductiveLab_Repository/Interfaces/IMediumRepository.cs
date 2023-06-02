@@ -14,5 +14,6 @@ namespace ReproductiveLab_Repository.Interfaces
         List<InUseMediumDto> GetInUseMediums();
         List<Common1Dto> GetMediumTypes();
         List<FrequentlyUsedMediumDto> GetFrequentlyUsedMediums();
+        void SetMediumInUse<T>(T mediumTable, List<Guid> inputMediums);
     }
 }
