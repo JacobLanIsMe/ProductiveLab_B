@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Dtos.ForStorage;
-using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Dtos.ForStorage;
+using ReproductiveLab_Service.Interfaces;
+//using prjProductiveLab_B.Dtos;
+//using prjProductiveLab_B.Dtos.ForStorage;
+//using prjProductiveLab_B.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -16,31 +19,31 @@ namespace prjProductiveLab_B.Controllers
             this.storageService = storageService;
         }
         [HttpGet("GetStorageTankStatus")]
-        public async Task<List<StorageTankStatusDto>> GetStorageTankStatus()
+        public List<StorageTankStatusDto> GetStorageTankStatus()
         {
-            return await storageService.GetStorageTankStatus();
+            return storageService.GetStorageTankStatus();
         }
         [HttpGet("GetStorageUnitStatus")]
-        public async Task<List<StorageUnitStatusDto>> GetStorageUnitStatus(int tankId, int canistId)
+        public List<StorageUnitStatusDto> GetStorageUnitStatus(int tankId, int canistId)
         {
-            return await storageService.GetStorageUnitStatus(tankId, canistId);
+            return storageService.GetStorageUnitStatus(tankId, canistId);
         }
 
         [HttpPost("AddStorageTank")]
-        public async Task<BaseResponseDto> AddStorageTank(StorageAddNewTankDto storageAddNewTankDto)
+        public BaseResponseDto AddStorageTank(StorageAddNewTankDto storageAddNewTankDto)
         {
-            return await storageService.AddStorageTank(storageAddNewTankDto);
+            return storageService.AddStorageTank(storageAddNewTankDto);
         }
 
         [HttpGet("GetStorageTankType")]
-        public async Task<List<StorageTankTypeDto>> GetStorageTankType()
+        public List<StorageTankTypeDto> GetStorageTankType()
         {
-            return await storageService.GetStorageTankType();
+            return storageService.GetStorageTankType();
         }
         [HttpGet("GetOvumFreezeStorageInfo")]
-        public async Task<List<OvumFreezeStorageDto>> GetOvumFreezeStorageInfo(Guid ovumDetailId)
+        public List<OvumFreezeStorageDto> GetOvumFreezeStorageInfo(Guid ovumDetailId)
         {
-            return await storageService.GetOvumFreezeStorageInfo(ovumDetailId);
+            return storageService.GetOvumFreezeStorageInfo(ovumDetailId);
         }
     }
 }

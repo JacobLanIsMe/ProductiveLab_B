@@ -17,5 +17,6 @@ namespace ReproductiveLab_Repository.Interfaces
         void UpdateSpouse(Customer customer, Guid spouseCustomerId);
         List<Gender> GetGenders();
         Customer? GetCustomerBySqlId(int customerSqlId);
+        Guid GetCustomerIdByOvumDetailId(Guid ovumDetailId);
     }
 }

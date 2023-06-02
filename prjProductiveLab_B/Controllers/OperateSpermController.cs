@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Dtos.ForOperateSperm;
-using prjProductiveLab_B.Interfaces;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Dtos.ForOperateSperm;
+using ReproductiveLab_Service.Interfaces;
+//using prjProductiveLab_B.Dtos;
+//using prjProductiveLab_B.Dtos.ForOperateSperm;
+//using prjProductiveLab_B.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -9,50 +12,50 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class OperateSpermController : ControllerBase
     {
-        private readonly IOperateSpermService operateSpermService;
+        private readonly IOperateSpermService _operateSpermService;
         public OperateSpermController(IOperateSpermService operateSpermService)
         {
-            this.operateSpermService = operateSpermService;
+            _operateSpermService = operateSpermService;
         }
         [HttpPost("AddSpermScore")]
         public BaseResponseDto AddSpermScore(SpermScoreDto addSpermScore)
         {
-            return operateSpermService.AddSpermScore(addSpermScore);
+            return _operateSpermService.AddSpermScore(addSpermScore);
         }
         [HttpPut("UpdateExistingSpermScore")]
-        public async Task<BaseResponseDto> UpdateExistingSpermScore(SpermScoreDto addSpermScore)
+        public BaseResponseDto UpdateExistingSpermScore(SpermScoreDto addSpermScore)
         {
-            return await operateSpermService.UpdateExistingSpermScore(addSpermScore);
+            return _operateSpermService.UpdateExistingSpermScore(addSpermScore);
         }
         [HttpGet("GetSpermFreezeOperationMethod")]
-        public async Task<List<CommonDto>> GetSpermFreezeOperationMethod()
+        public List<Common1Dto> GetSpermFreezeOperationMethod()
         {
-            return await operateSpermService.GetSpermFreezeOperationMethod();
+            return _operateSpermService.GetSpermFreezeOperationMethod();
         }
         [HttpPost("AddSpermFreeze")]
-        public async Task<BaseResponseDto> AddSpermFreeze(AddSpermFreezeDto input)
+        public BaseResponseDto AddSpermFreeze(AddSpermFreezeDto input)
         {
-            return await operateSpermService.AddSpermFreeze(input);
+            return _operateSpermService.AddSpermFreeze(input);
         }
         [HttpGet("GetSpermFreeze")]
-        public async Task<List<SpermFreezeDto>> GetSpermFreeze(int customerSqlId)
+        public List<SpermFreezeDto> GetSpermFreeze(int customerSqlId)
         {
-            return await operateSpermService.GetSpermFreeze(customerSqlId);
+            return _operateSpermService.GetSpermFreeze(customerSqlId);
         }
         [HttpGet("GetSpermScores")]
-        public async Task<List<SpermScoreDto>> GetSpermScores(Guid courseOfTreatmentId)
+        public List<SpermScoreDto> GetSpermScores(Guid courseOfTreatmentId)
         {
-            return await operateSpermService.GetSpermScores(courseOfTreatmentId);
+            return _operateSpermService.GetSpermScores(courseOfTreatmentId);
         }
         [HttpGet("GetSpermThawMethods")]
-        public async Task<List<CommonDto>> GetSpermThawMethods()
+        public List<Common1Dto> GetSpermThawMethods()
         {
-            return await operateSpermService.GetSpermThawMethods();
+            return _operateSpermService.GetSpermThawMethods();
         }
         [HttpPost("AddSpermThaw")]
         public BaseResponseDto AddSpermThaw(AddSpermThawDto input)
         {
-            return operateSpermService.AddSpermThaw(input);
+            return _operateSpermService.AddSpermThaw(input);
         }
     }
 }

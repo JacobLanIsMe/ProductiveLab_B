@@ -14,14 +14,14 @@ namespace ReproductiveLab_Repository.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {
-        private readonly ReproductiveLabContext _dbContext;
-        public CustomerRepository(ReproductiveLabContext dbContext)
+        private readonly ReproductiveLabContext _db;
+        public CustomerRepository(ReproductiveLabContext db)
         {
-            _dbContext = dbContext;
+            _db = db;
         }
         public Guid? GetCustomerIdByCourseOfTreatmentId(Guid courseOfTreatmentId)
         {
-            return _dbContext.CourseOfTreatments.Where(x=>x.CourseOfTreatmentId == courseOfTreatmentId).Select(x=> x.SpermOperationId == (int)GermCellOperationEnum.freeze ? x.CustomerId : x.Customer.Spouse).FirstOrDefault();
+            return _db.CourseOfTreatments.Where(x=>x.CourseOfTreatmentId == courseOfTreatmentId).Select(x=> x.SpermOperationId == (int)GermCellOperationEnum.freeze ? x.CustomerId : x.Customer.Spouse).FirstOrDefault();
         }
         public void AddCustomer(CustomerModel input)
         {
@@ -32,30 +32,34 @@ namespace ReproductiveLab_Repository.Repositories
                 Birthday = input.birthday,
                 Spouse = input.spouse
             };
-            _dbContext.Customers.Add(customer);
-            _dbContext.SaveChanges();
+            _db.Customers.Add(customer);
+            _db.SaveChanges();
         }
         public Customer? GetLatestCustomer()
         {
-            return _dbContext.Customers.OrderByDescending(x => x.SqlId).FirstOrDefault();
+            return _db.Customers.OrderByDescending(x => x.SqlId).FirstOrDefault();
         }
         public Customer? GetCustomerById(Guid customerId)
         {
-            return _dbContext.Customers.FirstOrDefault(x => x.CustomerId == customerId);
+            return _db.Customers.FirstOrDefault(x => x.CustomerId == customerId);
         }
         public void UpdateSpouse(Customer customer, Guid spouseCustomerId)
         {
             customer.Spouse = spouseCustomerId;
-            _dbContext.SaveChanges();
+            _db.SaveChanges();
         }
 
         public List<Gender> GetGenders()
         {
-            return _dbContext.Genders.ToList();
+            return _db.Genders.ToList();
         }
         public Customer? GetCustomerBySqlId(int customerSqlId)
         {
-            return _dbContext.Customers.FirstOrDefault(x=>x.SqlId == customerSqlId);
+            return _db.Customers.FirstOrDefault(x=>x.SqlId == customerSqlId);
+        }
+        public Guid GetCustomerIdByOvumDetailId(Guid ovumDetailId)
+        {
+            return _db.OvumDetails.Where(x => x.OvumDetailId == ovumDetailId).Select(x => x.CourseOfTreatment.CustomerId).FirstOrDefault();
         }
     }
 }
