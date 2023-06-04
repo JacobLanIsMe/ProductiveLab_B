@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Reproductive_SharedFunction.Interfaces;
 using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Dtos.ForStorage;
 using ReproductiveLab_Common.Dtos.ForTreatment;
+using ReproductiveLab_Common.Enums;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLab_Service.Interfaces;
 using ReproductiveLabDB.Models;
@@ -16,9 +19,16 @@ namespace ReproductiveLab_Service.Services
     public class TreatmentService : ITreatmentService
     {
         private readonly ICourseOfTreatmentRepository _courseOfTreatmentRepository;
-        public TreatmentService(ICourseOfTreatmentRepository courseOfTreatmentRepository)
+        private readonly ITreatmentFunction _treatmentFunction;
+        private readonly ITreatmentRepository _treatmentRepository;
+        private readonly IObservationNoteService _observationNoteService;
+        
+        public TreatmentService(ICourseOfTreatmentRepository courseOfTreatmentRepository, ITreatmentFunction treatmentFunction, ITreatmentRepository treatmentRepository, IObservationNoteService observationNoteService)
         {
             _courseOfTreatmentRepository = courseOfTreatmentRepository;
+            _treatmentFunction = treatmentFunction;
+            _treatmentRepository = treatmentRepository;
+            _observationNoteService = observationNoteService;
         }
         public List<LabMainPageDto> GetMainPageInfo()
         {
@@ -33,44 +43,20 @@ namespace ReproductiveLab_Service.Services
         public BaseResponseDto AddOvumPickupNote(AddOvumPickupNoteDto ovumPickupNote)
         {
             BaseResponseDto result = new BaseResponseDto();
-            string errorMessage = OvumPickupNoteValidation(ovumPickupNote);
+            string errorMessage = _treatmentFunction.OvumPickupNoteValidation(ovumPickupNote);
             if (string.IsNullOrEmpty(errorMessage))
             {
                 try
                 {
                     using (TransactionScope scope = new TransactionScope())
                     {
-                        OvumPickup ovumPickup = new OvumPickup()
-                        {
-                            TriggerTime = (DateTime)ovumPickupNote.operationTime.triggerTime,
-                            StartTime = (DateTime)ovumPickupNote.operationTime.startTime,
-                            EndTime = (DateTime)ovumPickupNote.operationTime.endTime,
-                            CocGrade5 = ovumPickupNote.ovumPickupNumber.coc_Grade5,
-                            CocGrade4 = ovumPickupNote.ovumPickupNumber.coc_Grade4,
-                            CocGrade3 = ovumPickupNote.ovumPickupNumber.coc_Grade3,
-                            CocGrade2 = ovumPickupNote.ovumPickupNumber.coc_Grade2,
-                            CocGrade1 = ovumPickupNote.ovumPickupNumber.coc_Grade1,
-                            Embryologist = Guid.Parse(ovumPickupNote.embryologist),
-                            UpdateTime = DateTime.Now
-                        };
-                        sharedFunction.SetMediumInUse<OvumPickup>(ovumPickup, ovumPickupNote.mediumInUse);
-                        dbContext.OvumPickups.Add(ovumPickup);
-                        dbContext.SaveChanges();
-                        Guid latestOvumPickupId = dbContext.OvumPickups.OrderByDescending(x => x.SqlId).Select(x => x.OvumPickupId).FirstOrDefault();
+                        _treatmentRepository.AddOvumPickup(ovumPickupNote);
+                        Guid latestOvumPickupId = _treatmentRepository.GetLatestOvumPickupId();
                         int ovumTotalNumber = ovumPickupNote.ovumPickupNumber.coc_Grade1 + ovumPickupNote.ovumPickupNumber.coc_Grade2 + ovumPickupNote.ovumPickupNumber.coc_Grade3 + ovumPickupNote.ovumPickupNumber.coc_Grade4 + ovumPickupNote.ovumPickupNumber.coc_Grade5;
                         for (int i = 1; i <= ovumTotalNumber; i++)
                         {
-                            OvumDetail ovumDetail = new OvumDetail()
-                            {
-                                CourseOfTreatmentId = ovumPickupNote.courseOfTreatmentId,
-                                OvumFromCourseOfTreatmentId = ovumPickupNote.courseOfTreatmentId,
-                                OvumPickupId = latestOvumPickupId,
-                                OvumNumber = i,
-                                OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation
-                            };
-                            dbContext.Add(ovumDetail);
+                            _treatmentRepository.AddOvumDetail(ovumPickupNote, latestOvumPickupId, i);
                         }
-                        dbContext.SaveChanges();
                         scope.Complete();
 
                     }
@@ -86,9 +72,80 @@ namespace ReproductiveLab_Service.Services
                 result.SetError(errorMessage);
             }
             return result;
-
-
-
         }
+        public BaseTreatmentInfoDto GetBaseTreatmentInfo(Guid courseOfTreatmentId)
+        {
+            var result = _treatmentRepository.GetBaseTreatmentInfo(courseOfTreatmentId);
+            if (result == null)
+            {
+                return new BaseTreatmentInfoDto();
+            }
+            return result;
+        }
+        public List<TreatmentSummaryDto> GetTreatmentSummary(Guid courseOfTreatmentId)
+        {
+            var q = _treatmentRepository.GetTreatmentSummary(courseOfTreatmentId);
+
+            List<Guid> observationNoteIds = q.Select(x => x.observationNoteId).ToList();
+            var observationNotes = _observationNoteService.GetObservationNoteNameByObservationNoteIds(observationNoteIds);
+            List<TreatmentSummaryDto> result = new List<TreatmentSummaryDto>();
+            foreach (var i in q)
+            {
+                TreatmentSummaryDto treatment = new TreatmentSummaryDto
+                {
+                    ovumDetailId = i.ovumDetailId,
+                    courseOfTreatmentSqlId = i.courseOfTreatmentSqlId,
+                    ovumDetailStatus = i.ovumDetailStatus,
+                    ovumNumber = i.ovumNumber,
+                    fertilizationTime = i.fertilizationTime == new DateTime(1753, 1, 1, 0, 0, 0) ? null : i.fertilizationTime,
+                    fertilizationMethod = i.fertilizationMethod == null ? null : i.fertilizationMethod,
+                    observationNote = observationNotes.FirstOrDefault(x => x.ovumDetailId == i.ovumDetailId),
+                    ovumFromCourseOfTreatmentSqlId = i.ovumFromCourseOfTreatmentSqlId,
+                    ovumSource = i.ovumSource,
+                    freezeStorageInfo = i.freezeStorageInfo
+                };
+                if (i.hasFreeze)
+                {
+                    treatment.dateOfEmbryo = i.day_Freeze;
+                }
+                else if (i.hasPickup)
+                {
+                    if (i.isFreshPickup)
+                    {
+                        treatment.dateOfEmbryo = i.day_FreshPickup;
+                    }
+                    else
+                    {
+                        treatment.dateOfEmbryo = default;
+                    }
+                }
+                else if (i.hasTransfer)
+                {
+                    if (i.isFreezeTransfer)
+                    {
+                        treatment.dateOfEmbryo = i.day_FreezeTransfer;
+                    }
+                    else if (i.isTransferThaw)
+                    {
+                        treatment.dateOfEmbryo = i.day_TransferThaw;
+                    }
+                    else if (i.isFreezeTransfer)
+                    {
+                        treatment.dateOfEmbryo = i.day_FreshTransfer;
+                    }
+                    else
+                    {
+                        treatment.dateOfEmbryo = default;
+                    }
+                }
+                else
+                {
+                    treatment.dateOfEmbryo = i.day_Thaw;
+                }
+                result.Add(treatment);
+            }
+            return result;
+        }
+
     }
 }
