@@ -57,9 +57,32 @@ namespace ReproductiveLab_Repository.Repositories
         {
             return _db.Customers.FirstOrDefault(x=>x.SqlId == customerSqlId);
         }
+        public BaseCustomerInfoDto GetBaseCustomerInfoBySqlId(int customerSqlId)
+        {
+            var customer = GetCustomerBySqlId(customerSqlId);
+            BaseCustomerInfoDto result = new BaseCustomerInfoDto();
+            if (customer == null)
+            {
+                return result;
+            }
+            result.customerId = customer.CustomerId;
+            result.customerSqlId = customer.SqlId;
+            result.customerName = customer.Name;
+            return result;
+        }
         public Guid GetCustomerIdByOvumDetailId(Guid ovumDetailId)
         {
             return _db.OvumDetails.Where(x => x.OvumDetailId == ovumDetailId).Select(x => x.CourseOfTreatment.CustomerId).FirstOrDefault();
+        }
+        public List<BaseCustomerInfoDto> GetAllCustomer()
+        {
+            return _db.Customers.Select(x => new BaseCustomerInfoDto
+            {
+                customerId = x.CustomerId,
+                customerSqlId = x.SqlId,
+                customerName = x.Name,
+                birthday = x.Birthday
+            }).OrderBy(x => x.customerSqlId).ToList();
         }
     }
 }

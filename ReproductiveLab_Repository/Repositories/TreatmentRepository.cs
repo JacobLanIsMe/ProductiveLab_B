@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForStorage;
 using ReproductiveLab_Common.Dtos.ForTreatment;
 using ReproductiveLab_Common.Enums;
@@ -132,6 +133,38 @@ namespace ReproductiveLab_Repository.Repositories
                 day_FreshTransfer = x.OvumTransferPairRecipientOvumDetails.Any() && x.OvumTransferPairRecipientOvumDetails.Any(y => y.DonorOvumDetail.OvumFreezeId == null) ? (DateTime.Now.Date - x.OvumTransferPairRecipientOvumDetails.Select(y => y.DonorOvumDetail.CourseOfTreatment.SurgicalTime).FirstOrDefault().Date).Days : 0,
                 day_Thaw = x.OvumThawFreezePairThawOvumDetails.Any() && x.OvumThaw != null ? (DateTime.Now.Date - x.OvumThaw.ThawTime.Date).Days + x.OvumThawFreezePairThawOvumDetails.Select(y => y.FreezeOvumDetail.ObservationNotes.Where(z => z.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !z.IsDeleted).Select(z => z.Day).FirstOrDefault()).FirstOrDefault() : 0,
             }).OrderBy(x => x.ovumNumber).ToList();
+        }
+        public List<Common1Dto> GetGermCellSituations()
+        {
+            return _db.GermCellSituations.Select(x => new Common1Dto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).ToList();
+        }
+        public List<Common1Dto> GetGermCellSources()
+        {
+            return _db.GermCellSources.Select(x => new Common1Dto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).ToList();
+        }
+        public List<Common1Dto> GetGermCellOperations()
+        {
+            return _db.GermCellOperations.Select(x => new Common1Dto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).ToList();
+        }
+        public List<Common1Dto> GetSpermRetrievalMethods()
+        {
+            return _db.SpermRetrievalMethods.Select(x => new Common1Dto
+            {
+                id = x.SqlId,
+                name = x.Name
+            }).ToList();
         }
     }
 }

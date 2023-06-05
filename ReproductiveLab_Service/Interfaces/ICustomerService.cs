@@ -11,5 +11,6 @@ namespace ReproductiveLab_Service.Interfaces
     {
         Task<ResponseDto> AddCustomer(AddCustomerDto input);
         Task<List<Common1Dto>> GetGenders();
+        List<BaseCustomerInfoDto> GetAllCustomer();
     }
 }

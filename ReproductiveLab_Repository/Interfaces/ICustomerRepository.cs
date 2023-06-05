@@ -1,4 +1,5 @@
-﻿using ReproductiveLab_Common.Models;
+﻿using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Models;
 using ReproductiveLabDB.Models;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,7 @@ namespace ReproductiveLab_Repository.Interfaces
         List<Gender> GetGenders();
         Customer? GetCustomerBySqlId(int customerSqlId);
         Guid GetCustomerIdByOvumDetailId(Guid ovumDetailId);
+        List<BaseCustomerInfoDto> GetAllCustomer();
+        BaseCustomerInfoDto GetBaseCustomerInfoBySqlId(int customerSqlId);
     }
 }

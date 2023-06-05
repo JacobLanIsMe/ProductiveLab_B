@@ -146,6 +146,21 @@ namespace ReproductiveLab_Service.Services
             }
             return result;
         }
-
+        public List<Common1Dto> GetGermCellSituations()
+        {
+            return _treatmentRepository.GetGermCellSituations();
+        }
+        public List<Common1Dto> GetGermCellSources()
+        {
+            return _treatmentRepository.GetGermCellSources();
+        }
+        public List<Common1Dto> GetGermCellOperations()
+        {
+            return _treatmentRepository.GetGermCellOperations();
+        }
+        public List<Common1Dto> GetSpermRetrievalMethods()
+        {
+            return _treatmentRepository.GetSpermRetrievalMethods();
+        }
     }
 }
