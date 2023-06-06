@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReproductiveLab_Common.Enums;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLabDB.Models;
 using System;
@@ -11,15 +12,18 @@ namespace ReproductiveLab_Repository.Repositories
 {
     public class OvumDetailRepository : IOvumDetailRepository
     {
-        private readonly ReproductiveLabContext _dbContext;
-        public OvumDetailRepository(ReproductiveLabContext dbContext)
+        private readonly ReproductiveLabContext _db;
+        public OvumDetailRepository(ReproductiveLabContext db)
         {
-            _dbContext = dbContext;
+            _db = db;
         }
-        public IQueryable<OvumDetail> GetCustomerOvumDetail(Guid customerId)
+        public IQueryable<OvumDetail> GetOvumDetailByCustomerId(Guid customerId)
         {
-            return _dbContext.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId);
+            return _db.OvumDetails.Where(x => x.CourseOfTreatment.CustomerId == customerId);
         }
-        
+        public OvumDetail? GetFreezeOvumDetailByIds(List<Guid> ovumDetailIds)
+        {
+            return _db.OvumDetails.FirstOrDefault(x => ovumDetailIds.Contains(x.OvumDetailId) && x.OvumDetailStatusId == (int)OvumDetailStatusEnum.Freeze);
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace ReproductiveLab_Service.Services
             {
                 return new List<GetOvumFreezeSummaryDto>();
             }
-            var customerOvumDetails = _ovumDetailRepository.GetCustomerOvumDetail((Guid)customerId);
+            var customerOvumDetails = _ovumDetailRepository.GetOvumDetailByCustomerId((Guid)customerId);
             var customerOvumFreezes = customerOvumDetails.Where(x => x.OvumFreezeId != null && x.OvumThawFreezePairFreezeOvumDetails.Count == 0 && x.OvumTransferPairDonorOvumDetails.Count == 0);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(customerOvumFreezes);
             _photoFunction.ConvertPhotoToBase64String(result);
@@ -51,7 +51,7 @@ namespace ReproductiveLab_Service.Services
             {
                 return new List<GetOvumFreezeSummaryDto>();
             }
-            var customerOvumDetail = _ovumDetailRepository.GetCustomerOvumDetail((Guid)customerId);
+            var customerOvumDetail = _ovumDetailRepository.GetOvumDetailByCustomerId((Guid)customerId);
             var recipientOvumFreezes = customerOvumDetail.Where(x => x.FertilizationId == null && x.OvumFreezeId != null);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(recipientOvumFreezes);
             _photoFunction.ConvertPhotoToBase64String(result);
@@ -62,7 +62,7 @@ namespace ReproductiveLab_Service.Services
             var customer = _customerRepository.GetCustomerBySqlId(customerSqlId);
             _errorFunction.ThrowExceptionIfNull(customer, "CustomerSqlId is not found");
             Guid customerId = customer.CustomerId;
-            var customerOvumDetail = _ovumDetailRepository.GetCustomerOvumDetail(customerId);
+            var customerOvumDetail = _ovumDetailRepository.GetOvumDetailByCustomerId(customerId);
             var donorOvumFreezes = customerOvumDetail.Where(x => x.FertilizationId == null && x.CourseOfTreatment.OvumSourceId == (int)GermCellSourceEnum.OD && x.OvumTransferPairDonorOvumDetails.Count <= 0);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(donorOvumFreezes);
             _photoFunction.ConvertPhotoToBase64String(result);
@@ -75,7 +75,7 @@ namespace ReproductiveLab_Service.Services
             {
                 return new List<GetOvumFreezeSummaryDto>();
             }
-            var customerOvumDetail = _ovumDetailRepository.GetCustomerOvumDetail((Guid)customerId);
+            var customerOvumDetail = _ovumDetailRepository.GetOvumDetailByCustomerId((Guid)customerId);
             var embryoFreezes = customerOvumDetail.Where(x => x.OvumFreezeId != null && x.FertilizationId != null);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(embryoFreezes);
             _photoFunction.ConvertPhotoToBase64String(result);

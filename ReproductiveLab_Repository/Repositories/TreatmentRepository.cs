@@ -166,5 +166,54 @@ namespace ReproductiveLab_Repository.Repositories
                 name = x.Name
             }).ToList();
         }
+        public void AddCourseOfTreatment(AddCourseOfTreatmentDto input)
+        {
+            CourseOfTreatment course = new CourseOfTreatment
+            {
+                Doctor = input.doctorId,
+                CustomerId = input.customerId,
+                SurgicalTime = input.surgicalTime,
+                TreatmentStatusId = 1,
+                Memo = input.memo,
+            };
+            if (int.TryParse(input.ovumSituationId, out int ovumSituationId))
+            {
+                course.OvumSituationId = ovumSituationId;
+            }
+            if (int.TryParse(input.ovumSourceId, out int ovumSourceId))
+            {
+                course.OvumSourceId = ovumSourceId;
+            }
+            if (int.TryParse(input.ovumOperationId, out int ovumOperationId))
+            {
+                course.OvumOperationId = ovumOperationId;
+            }
+            if (int.TryParse(input.spermSituationId, out int spermSituationId))
+            {
+                course.SpermSituationId = spermSituationId;
+            }
+            if (int.TryParse(input.spermSourceId, out int spermSourceId))
+            {
+                course.SpermSourceId = spermSourceId;
+            }
+            if (int.TryParse(input.spermOperationId, out int spermOperationId))
+            {
+                course.SpermOperationId = spermOperationId;
+            }
+            if (int.TryParse(input.SpermRetrievalMethodId, out int spermRetrievalMethodId))
+            {
+                course.SpermRetrievalMethodId = spermRetrievalMethodId;
+            }
+            if (int.TryParse(input.embryoSituationId, out int embryoSituationId))
+            {
+                course.EmbryoSituationId = embryoSituationId;
+            }
+            if (int.TryParse(input.embryoOperationId, out int embryoOperationId))
+            {
+                course.EmbryoOperationId = embryoOperationId;
+            }
+            _db.CourseOfTreatments.Add(course);
+            _db.SaveChanges();
+        }
     }
 }

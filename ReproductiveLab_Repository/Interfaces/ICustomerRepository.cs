@@ -21,5 +21,6 @@ namespace ReproductiveLab_Repository.Interfaces
         Guid GetCustomerIdByOvumDetailId(Guid ovumDetailId);
         List<BaseCustomerInfoDto> GetAllCustomer();
         BaseCustomerInfoDto GetBaseCustomerInfoBySqlId(int customerSqlId);
+        BaseCustomerInfoDto GetBaseCustomerInfoByCourseOfTreatmentId(Guid courseOfTreatmentId);
     }
 }

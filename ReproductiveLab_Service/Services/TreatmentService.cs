@@ -22,13 +22,17 @@ namespace ReproductiveLab_Service.Services
         private readonly ITreatmentFunction _treatmentFunction;
         private readonly ITreatmentRepository _treatmentRepository;
         private readonly IObservationNoteService _observationNoteService;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IOvumDetailRepository _ovumDetailRepository;
         
-        public TreatmentService(ICourseOfTreatmentRepository courseOfTreatmentRepository, ITreatmentFunction treatmentFunction, ITreatmentRepository treatmentRepository, IObservationNoteService observationNoteService)
+        public TreatmentService(ICourseOfTreatmentRepository courseOfTreatmentRepository, ITreatmentFunction treatmentFunction, ITreatmentRepository treatmentRepository, IObservationNoteService observationNoteService, ICustomerRepository customerRepository, IOvumDetailRepository ovumDetailRepository)
         {
             _courseOfTreatmentRepository = courseOfTreatmentRepository;
             _treatmentFunction = treatmentFunction;
             _treatmentRepository = treatmentRepository;
             _observationNoteService = observationNoteService;
+            _customerRepository = customerRepository;
+            _ovumDetailRepository = ovumDetailRepository;
         }
         public List<LabMainPageDto> GetMainPageInfo()
         {
@@ -161,6 +165,105 @@ namespace ReproductiveLab_Service.Services
         public List<Common1Dto> GetSpermRetrievalMethods()
         {
             return _treatmentRepository.GetSpermRetrievalMethods();
+        }
+        public List<BaseCustomerInfoDto> GetAllCustomer()
+        {
+            return _customerRepository.GetAllCustomer();
+        }
+        public BaseCustomerInfoDto GetCustomerByCustomerSqlId(int customerSqlId)
+        {
+            return _customerRepository.GetBaseCustomerInfoBySqlId(customerSqlId);
+        }
+        public BaseCustomerInfoDto GetCustomerByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        {
+            return _customerRepository.GetBaseCustomerInfoByCourseOfTreatmentId(courseOfTreatmentId);
+        }
+        public async Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    _treatmentRepository.AddCourseOfTreatment(input);
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch (Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
+        public async Task<BaseResponseDto> AddOvumFreeze(AddOvumFreezeDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                AddOvumFreezeValidation(input);
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    OvumFreeze ovumFreeze = new OvumFreeze
+                    {
+                        FreezeTime = input.freezeTime,
+                        Embryologist = input.embryologist,
+                        StorageUnitId = input.storageUnitId,
+                        MediumInUseId = input.mediumInUseId,
+                        OtherMediumName = input.otherMediumName,
+                        Memo = input.memo,
+                        OvumMorphologyA = input.ovumMorphology_A,
+                        OvumMorphologyB = input.ovumMorphology_B,
+                        OvumMorphologyC = input.ovumMorphology_C,
+                        TopColorId = input.topColorId,
+                        IsThawed = false
+                    };
+                    dbContext.OvumFreezes.Add(ovumFreeze);
+                    dbContext.SaveChanges();
+                    Guid latestOvumFreezeId = dbContext.OvumFreezes.OrderByDescending(x => x.SqlId).Select(x => x.OvumFreezeId).FirstOrDefault();
+                    var ovumDetails = dbContext.OvumDetails.Where(x => input.ovumDetailId.Contains(x.OvumDetailId));
+                    foreach (var i in ovumDetails)
+                    {
+                        i.OvumDetailStatusId = (int)OvumDetailStatusEnum.Freeze;
+                        i.OvumFreezeId = latestOvumFreezeId;
+                    }
+                    dbContext.SaveChanges();
+                    var storageUnit = dbContext.StorageUnits.FirstOrDefault(x => x.SqlId == input.storageUnitId);
+                    if (storageUnit != null)
+                    {
+                        storageUnit.IsOccupied = true;
+                    }
+                    else
+                    {
+                        throw new Exception("儲位資訊有誤");
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch (Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
+        private void AddOvumFreezeValidation(AddOvumFreezeDto input)
+        {
+            if (input.ovumDetailId.Count <= 0 || input.ovumDetailId.Count > 4)
+            {
+                throw new Exception("卵子數量請介於 1-4");
+            }
+            var isFreezed = _ovumDetailRepository.GetFreezeOvumDetailByIds(input.ovumDetailId);
+            if (isFreezed != null)
+            {
+                throw new Exception($"卵子編號: {isFreezed.OvumNumber} 已冷凍入庫");
+            }
+            var hasFreezeObservationNote = dbContext.OvumDetails.Where(x => input.ovumDetailId.Contains(x.OvumDetailId)).Include(x => x.ObservationNotes).FirstOrDefault(x => !x.ObservationNotes.Any(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation));
+            if (hasFreezeObservationNote != null)
+            {
+                throw new Exception($"卵子編號: {hasFreezeObservationNote.OvumNumber} 尚無冷凍觀察紀錄");
+            }
         }
     }
 }

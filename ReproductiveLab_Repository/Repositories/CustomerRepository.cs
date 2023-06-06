@@ -84,5 +84,20 @@ namespace ReproductiveLab_Repository.Repositories
                 birthday = x.Birthday
             }).OrderBy(x => x.customerSqlId).ToList();
         }
+        
+        public BaseCustomerInfoDto GetBaseCustomerInfoByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        {
+            var result = _db.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseCustomerInfoDto
+            {
+                customerId = x.CustomerId,
+                customerSqlId = x.Customer.SqlId,
+                customerName = x.Customer.Name
+            }).FirstOrDefault();
+            if (result == null)
+            {
+                return new BaseCustomerInfoDto();
+            }
+            return result;
+        }
     }
 }

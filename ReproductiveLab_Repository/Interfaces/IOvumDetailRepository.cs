@@ -9,7 +9,8 @@ namespace ReproductiveLab_Repository.Interfaces
 {
     public interface IOvumDetailRepository
     {
-        IQueryable<OvumDetail> GetCustomerOvumDetail(Guid customerId);
+        IQueryable<OvumDetail> GetOvumDetailByCustomerId(Guid customerId);
+        OvumDetail? GetFreezeOvumDetailByIds(List<Guid> ovumDetailIds);
         //IQueryable<OvumDetail> GetCustomerOvumFreeze(Guid customerId);
         //IQueryable<OvumDetail> GetRecipientOvumFreezes(Guid customerId);
     }

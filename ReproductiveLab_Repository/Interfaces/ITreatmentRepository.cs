@@ -20,5 +20,6 @@ namespace ReproductiveLab_Repository.Interfaces
         List<Common1Dto> GetGermCellSources();
         List<Common1Dto> GetGermCellOperations();
         List<Common1Dto> GetSpermRetrievalMethods();
+        void AddCourseOfTreatment(AddCourseOfTreatmentDto input);
     }
 }
