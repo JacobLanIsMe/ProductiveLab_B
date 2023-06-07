@@ -25,5 +25,13 @@ namespace ReproductiveLab_Repository.Repositories
         {
             return _db.OvumDetails.FirstOrDefault(x => ovumDetailIds.Contains(x.OvumDetailId) && x.OvumDetailStatusId == (int)OvumDetailStatusEnum.Freeze);
         }
+        public OvumDetail? GetFreezeObservationOvumDetailByIds(List<Guid> ovumDetailIds)
+        {
+            return _db.OvumDetails.Where(x => ovumDetailIds.Contains(x.OvumDetailId)).Include(x => x.ObservationNotes).FirstOrDefault(x => !x.ObservationNotes.Any(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation));
+        }
+        public IQueryable<OvumDetail> GetOvumDetailByIds(List<Guid> ovumDetailIds)
+        {
+            return _db.OvumDetails.Where(x => ovumDetailIds.Contains(x.OvumDetailId));
+        }
     }
 }

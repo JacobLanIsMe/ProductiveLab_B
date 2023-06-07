@@ -204,24 +204,9 @@ namespace ReproductiveLab_Service.Services
                 AddOvumFreezeValidation(input);
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    OvumFreeze ovumFreeze = new OvumFreeze
-                    {
-                        FreezeTime = input.freezeTime,
-                        Embryologist = input.embryologist,
-                        StorageUnitId = input.storageUnitId,
-                        MediumInUseId = input.mediumInUseId,
-                        OtherMediumName = input.otherMediumName,
-                        Memo = input.memo,
-                        OvumMorphologyA = input.ovumMorphology_A,
-                        OvumMorphologyB = input.ovumMorphology_B,
-                        OvumMorphologyC = input.ovumMorphology_C,
-                        TopColorId = input.topColorId,
-                        IsThawed = false
-                    };
-                    dbContext.OvumFreezes.Add(ovumFreeze);
-                    dbContext.SaveChanges();
-                    Guid latestOvumFreezeId = dbContext.OvumFreezes.OrderByDescending(x => x.SqlId).Select(x => x.OvumFreezeId).FirstOrDefault();
-                    var ovumDetails = dbContext.OvumDetails.Where(x => input.ovumDetailId.Contains(x.OvumDetailId));
+                    _treatmentRepository.AddOvumFreeze(input);
+                    Guid latestOvumFreezeId = _treatmentRepository.GetLatestOvumFreezedId();
+                    var ovumDetails = _ovumDetailRepository.GetOvumDetailByIds(input.ovumDetailId);
                     foreach (var i in ovumDetails)
                     {
                         i.OvumDetailStatusId = (int)OvumDetailStatusEnum.Freeze;
@@ -259,7 +244,7 @@ namespace ReproductiveLab_Service.Services
             {
                 throw new Exception($"卵子編號: {isFreezed.OvumNumber} 已冷凍入庫");
             }
-            var hasFreezeObservationNote = dbContext.OvumDetails.Where(x => input.ovumDetailId.Contains(x.OvumDetailId)).Include(x => x.ObservationNotes).FirstOrDefault(x => !x.ObservationNotes.Any(y => y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation));
+            var hasFreezeObservationNote = _ovumDetailRepository.GetFreezeObservationOvumDetailByIds(input.ovumDetailId);
             if (hasFreezeObservationNote != null)
             {
                 throw new Exception($"卵子編號: {hasFreezeObservationNote.OvumNumber} 尚無冷凍觀察紀錄");

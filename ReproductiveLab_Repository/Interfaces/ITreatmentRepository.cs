@@ -21,5 +21,7 @@ namespace ReproductiveLab_Repository.Interfaces
         List<Common1Dto> GetGermCellOperations();
         List<Common1Dto> GetSpermRetrievalMethods();
         void AddCourseOfTreatment(AddCourseOfTreatmentDto input);
+        void AddOvumFreeze(AddOvumFreezeDto input);
+        Guid GetLatestOvumFreezedId();
     }
 }

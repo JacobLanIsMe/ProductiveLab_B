@@ -215,5 +215,28 @@ namespace ReproductiveLab_Repository.Repositories
             _db.CourseOfTreatments.Add(course);
             _db.SaveChanges();
         }
+        public void AddOvumFreeze(AddOvumFreezeDto input)
+        {
+            OvumFreeze ovumFreeze = new OvumFreeze
+            {
+                FreezeTime = input.freezeTime,
+                Embryologist = input.embryologist,
+                StorageUnitId = input.storageUnitId,
+                MediumInUseId = input.mediumInUseId,
+                OtherMediumName = input.otherMediumName,
+                Memo = input.memo,
+                OvumMorphologyA = input.ovumMorphology_A,
+                OvumMorphologyB = input.ovumMorphology_B,
+                OvumMorphologyC = input.ovumMorphology_C,
+                TopColorId = input.topColorId,
+                IsThawed = false
+            };
+            _db.OvumFreezes.Add(ovumFreeze);
+            _db.SaveChanges();
+        }
+        public Guid GetLatestOvumFreezedId()
+        {
+            return _db.OvumFreezes.OrderByDescending(x => x.SqlId).Select(x => x.OvumFreezeId).FirstOrDefault();
+        }
     }
 }
