@@ -63,7 +63,7 @@ namespace ReproductiveLab_Service.Services
                         int ovumTotalNumber = ovumPickupNote.ovumPickupNumber.coc_Grade1 + ovumPickupNote.ovumPickupNumber.coc_Grade2 + ovumPickupNote.ovumPickupNumber.coc_Grade3 + ovumPickupNote.ovumPickupNumber.coc_Grade4 + ovumPickupNote.ovumPickupNumber.coc_Grade5;
                         for (int i = 1; i <= ovumTotalNumber; i++)
                         {
-                            _ovumDetailRepository.AddOvumDetail(ovumPickupNote, latestOvumPickupId, i);
+                            _ovumDetailRepository.AddOvumDetail(ovumPickupNote.courseOfTreatmentId, ovumPickupNote.courseOfTreatmentId, i, (int)OvumDetailStatusEnum.Incubation, latestOvumPickupId: latestOvumPickupId);
                         }
                         scope.Complete();
 
@@ -352,17 +352,8 @@ namespace ReproductiveLab_Service.Services
                         if (i.observationNoteCount == 0 && i.isTransferred) { }
                         else
                         {
-                            OvumDetail ovumDetail = new OvumDetail
-                            {
-                                CourseOfTreatmentId = input.courseOfTreatmentId,
-                                OvumNumber = count + 1,
-                                OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation,
-                                OvumThawId = latestOvumThawId,
-                                FertilizationId = i.ovumDetail.FertilizationId,
-                                OvumFromCourseOfTreatmentId = i.ovumDetail.OvumFromCourseOfTreatmentId
-                            };
-                            dbContext.OvumDetails.Add(ovumDetail);
-                            dbContext.SaveChanges();
+                            _ovumDetailRepository.AddOvumDetail(input.courseOfTreatmentId, i.ovumDetail.OvumFromCourseOfTreatmentId, count + 1, (int)OvumDetailStatusEnum.Incubation, latestOvumThawId: latestOvumThawId, fertilizationId: i.ovumDetail.FertilizationId);
+                            
                             Guid thawOvumDetailId = dbContext.OvumDetails.OrderByDescending(x => x.SqlId).Select(x => x.OvumDetailId).FirstOrDefault();
                             OvumThawFreezePair pair = new OvumThawFreezePair
                             {

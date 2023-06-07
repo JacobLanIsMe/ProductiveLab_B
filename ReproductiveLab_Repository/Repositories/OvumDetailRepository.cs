@@ -60,17 +60,28 @@ namespace ReproductiveLab_Repository.Repositories
                 ovumNumbers = y.Select(z => z.OvumNumber).OrderBy(z => z).ToList()
             });
         }
-        public void AddOvumDetail(AddOvumPickupNoteDto ovumPickupNote, Guid latestOvumPickupId, int ovumNumber)
+        public void AddOvumDetail(Guid courseOfTreatmentId, Guid OvumFromCourseOfTreatmentId, int ovumNumber, int ovumDetailStatusId, Guid? latestOvumPickupId = null, Guid? latestOvumThawId = null, Guid? fertilizationId = null)
         {
             OvumDetail ovumDetail = new OvumDetail()
             {
-                CourseOfTreatmentId = ovumPickupNote.courseOfTreatmentId,
-                OvumFromCourseOfTreatmentId = ovumPickupNote.courseOfTreatmentId,
-                OvumPickupId = latestOvumPickupId,
+                CourseOfTreatmentId = courseOfTreatmentId,
+                OvumFromCourseOfTreatmentId = OvumFromCourseOfTreatmentId,
                 OvumNumber = ovumNumber,
-                OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation
+                OvumDetailStatusId = ovumDetailStatusId
             };
-            _db.Add(ovumDetail);
+            if (latestOvumPickupId.HasValue)
+            {
+                ovumDetail.OvumPickupId = latestOvumPickupId;
+            }
+            if (latestOvumThawId.HasValue)
+            {
+                ovumDetail.OvumThawId = latestOvumThawId;
+            }
+            if (fertilizationId.HasValue)
+            {
+                ovumDetail.FertilizationId = fertilizationId;
+            }
+            _db.OvumDetails.Add(ovumDetail);
             _db.SaveChanges();
         }
         public IQueryable<FreezeOvumDetailModel> GetFreezeOvumDetailModelByIds(List<Guid> ovumDetailIds)
