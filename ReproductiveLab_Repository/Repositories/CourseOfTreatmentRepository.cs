@@ -13,18 +13,18 @@ namespace ReproductiveLab_Repository.Repositories
 {
     public class CourseOfTreatmentRepository : ICourseOfTreatmentRepository
     {
-        private readonly ReproductiveLabContext _dbContext;
-        public CourseOfTreatmentRepository(ReproductiveLabContext dbContext)
+        private readonly ReproductiveLabContext _db;
+        public CourseOfTreatmentRepository(ReproductiveLabContext db)
         {
-            _dbContext = dbContext;
+            _db = db;
         }
         public CourseOfTreatment? GetCourseOfTreatmentById(Guid courseOfTreatmentId)
         {
-            return _dbContext.CourseOfTreatments.FirstOrDefault(x=>x.CourseOfTreatmentId == courseOfTreatmentId);
+            return _db.CourseOfTreatments.FirstOrDefault(x=>x.CourseOfTreatmentId == courseOfTreatmentId);
         }
         public List<LabMainPageDto> GetMainPageInfo()
         {
-            List<LabMainPageDto> result = _dbContext.CourseOfTreatments.Select(x =>
+            List<LabMainPageDto> result = _db.CourseOfTreatments.Select(x =>
             new LabMainPageDto
             {
                 surgicalTime = x.SurgicalTime,
@@ -49,6 +49,55 @@ namespace ReproductiveLab_Repository.Repositories
             }).OrderByDescending(x => x.surgicalTime).ToList();
             
             return result;
+        }
+        public void AddCourseOfTreatment(AddCourseOfTreatmentDto input)
+        {
+            CourseOfTreatment course = new CourseOfTreatment
+            {
+                Doctor = input.doctorId,
+                CustomerId = input.customerId,
+                SurgicalTime = input.surgicalTime,
+                TreatmentStatusId = 1,
+                Memo = input.memo,
+            };
+            if (int.TryParse(input.ovumSituationId, out int ovumSituationId))
+            {
+                course.OvumSituationId = ovumSituationId;
+            }
+            if (int.TryParse(input.ovumSourceId, out int ovumSourceId))
+            {
+                course.OvumSourceId = ovumSourceId;
+            }
+            if (int.TryParse(input.ovumOperationId, out int ovumOperationId))
+            {
+                course.OvumOperationId = ovumOperationId;
+            }
+            if (int.TryParse(input.spermSituationId, out int spermSituationId))
+            {
+                course.SpermSituationId = spermSituationId;
+            }
+            if (int.TryParse(input.spermSourceId, out int spermSourceId))
+            {
+                course.SpermSourceId = spermSourceId;
+            }
+            if (int.TryParse(input.spermOperationId, out int spermOperationId))
+            {
+                course.SpermOperationId = spermOperationId;
+            }
+            if (int.TryParse(input.SpermRetrievalMethodId, out int spermRetrievalMethodId))
+            {
+                course.SpermRetrievalMethodId = spermRetrievalMethodId;
+            }
+            if (int.TryParse(input.embryoSituationId, out int embryoSituationId))
+            {
+                course.EmbryoSituationId = embryoSituationId;
+            }
+            if (int.TryParse(input.embryoOperationId, out int embryoOperationId))
+            {
+                course.EmbryoOperationId = embryoOperationId;
+            }
+            _db.CourseOfTreatments.Add(course);
+            _db.SaveChanges();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using ReproductiveLab_Common.Dtos.ForStorage;
+﻿using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Dtos.ForStorage;
+using ReproductiveLabDB.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,5 +23,8 @@ namespace ReproductiveLab_Repository.Interfaces
         void AddStorageUnit(string unitName, int latestStorageStripBoxId);
         List<StorageTankTypeDto> GetStorageTankType();
         List<OvumFreezeStorageDto> GetOvumFreezeStorageByCustomerId(Guid customerId);
+        StorageUnit? GetStorageUnitById(int storageUnitId);
+        void UpdateStorageUnitToOccupied(StorageUnit storageUnit);
+        List<Common1Dto> GetTopColors();
     }
 }

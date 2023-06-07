@@ -168,7 +168,7 @@ namespace ReproductiveLab_Repository.Repositories
                 RecheckEmbryologist = input.recheckEmbryologist,
                 OtherSpermThawMethod = input.otherSpermThawMethod,
             };
-            _mediumRepository.SetMediumInUse(spermThaw, input.mediumInUseIds);
+            _mediumRepository.SetMediumInUse<SpermThaw>(spermThaw, input.mediumInUseIds);
             _db.SpermThaws.Add(spermThaw);
             _db.SaveChanges();
         }

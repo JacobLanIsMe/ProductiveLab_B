@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForStorage;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLabDB.Models;
@@ -148,6 +149,23 @@ namespace ReproductiveLab_Repository.Repositories
                     unitName = y.UnitName,
                     isOccupied = y.IsOccupied
                 }).ToList()
+            }).ToList();
+        }
+        public StorageUnit? GetStorageUnitById(int storageUnitId)
+        {
+            return _db.StorageUnits.FirstOrDefault(x => x.SqlId == storageUnitId);
+        }
+        public void UpdateStorageUnitToOccupied(StorageUnit storageUnit)
+        {
+            storageUnit.IsOccupied = true;
+            _db.SaveChanges();
+        }
+        public List<Common1Dto> GetTopColors()
+        {
+            return _db.TopColors.Select(x => new Common1Dto
+            {
+                id = x.SqlId,
+                name = x.Name
             }).ToList();
         }
     }

@@ -22,5 +22,6 @@ namespace ReproductiveLab_Repository.Interfaces
         List<BaseCustomerInfoDto> GetAllCustomer();
         BaseCustomerInfoDto GetBaseCustomerInfoBySqlId(int customerSqlId);
         BaseCustomerInfoDto GetBaseCustomerInfoByCourseOfTreatmentId(Guid courseOfTreatmentId);
+        BaseCustomerInfoDto? GetBaseCustomerInfoByOvumDetailId(Guid ovumDetailId);
     }
 }

@@ -46,19 +46,7 @@ namespace ReproductiveLab_Repository.Repositories
         {
             return _db.OvumPickups.OrderByDescending(x => x.SqlId).Select(x => x.OvumPickupId).FirstOrDefault();
         }
-        public void AddOvumDetail(AddOvumPickupNoteDto ovumPickupNote, Guid latestOvumPickupId, int ovumNumber)
-        {
-            OvumDetail ovumDetail = new OvumDetail()
-            {
-                CourseOfTreatmentId = ovumPickupNote.courseOfTreatmentId,
-                OvumFromCourseOfTreatmentId = ovumPickupNote.courseOfTreatmentId,
-                OvumPickupId = latestOvumPickupId,
-                OvumNumber = ovumNumber,
-                OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation
-            };
-            _db.Add(ovumDetail);
-            _db.SaveChanges();
-        }
+        
         public BaseTreatmentInfoDto? GetBaseTreatmentInfo(Guid courseOfTreatmentId)
         {
             return _db.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new BaseTreatmentInfoDto
@@ -166,77 +154,57 @@ namespace ReproductiveLab_Repository.Repositories
                 name = x.Name
             }).ToList();
         }
-        public void AddCourseOfTreatment(AddCourseOfTreatmentDto input)
+        public List<Common1Dto> GetFertilizationMethods()
         {
-            CourseOfTreatment course = new CourseOfTreatment
+            return _db.FertilizationMethods.Select(x => new Common1Dto
             {
-                Doctor = input.doctorId,
-                CustomerId = input.customerId,
-                SurgicalTime = input.surgicalTime,
-                TreatmentStatusId = 1,
-                Memo = input.memo,
-            };
-            if (int.TryParse(input.ovumSituationId, out int ovumSituationId))
-            {
-                course.OvumSituationId = ovumSituationId;
-            }
-            if (int.TryParse(input.ovumSourceId, out int ovumSourceId))
-            {
-                course.OvumSourceId = ovumSourceId;
-            }
-            if (int.TryParse(input.ovumOperationId, out int ovumOperationId))
-            {
-                course.OvumOperationId = ovumOperationId;
-            }
-            if (int.TryParse(input.spermSituationId, out int spermSituationId))
-            {
-                course.SpermSituationId = spermSituationId;
-            }
-            if (int.TryParse(input.spermSourceId, out int spermSourceId))
-            {
-                course.SpermSourceId = spermSourceId;
-            }
-            if (int.TryParse(input.spermOperationId, out int spermOperationId))
-            {
-                course.SpermOperationId = spermOperationId;
-            }
-            if (int.TryParse(input.SpermRetrievalMethodId, out int spermRetrievalMethodId))
-            {
-                course.SpermRetrievalMethodId = spermRetrievalMethodId;
-            }
-            if (int.TryParse(input.embryoSituationId, out int embryoSituationId))
-            {
-                course.EmbryoSituationId = embryoSituationId;
-            }
-            if (int.TryParse(input.embryoOperationId, out int embryoOperationId))
-            {
-                course.EmbryoOperationId = embryoOperationId;
-            }
-            _db.CourseOfTreatments.Add(course);
-            _db.SaveChanges();
+                id = x.SqlId,
+                name = x.Name
+            }).OrderBy(x => x.id).ToList();
         }
-        public void AddOvumFreeze(AddOvumFreezeDto input)
+        public List<Common1Dto> GetIncubators()
         {
-            OvumFreeze ovumFreeze = new OvumFreeze
+            return _db.Incubators.Select(x => new Common1Dto
             {
-                FreezeTime = input.freezeTime,
+                id = x.SqlId,
+                name = x.Name
+            }).OrderBy(x => x.id).ToList();
+        }
+        public void AddFertilization(AddFertilizationDto input)
+        {
+            Fertilization fertilization = new Fertilization
+            {
+                FertilizationTime = input.fertilizationTime,
                 Embryologist = input.embryologist,
-                StorageUnitId = input.storageUnitId,
-                MediumInUseId = input.mediumInUseId,
-                OtherMediumName = input.otherMediumName,
-                Memo = input.memo,
-                OvumMorphologyA = input.ovumMorphology_A,
-                OvumMorphologyB = input.ovumMorphology_B,
-                OvumMorphologyC = input.ovumMorphology_C,
-                TopColorId = input.topColorId,
-                IsThawed = false
+                FertilizationMethodId = input.fertilizationMethodId,
+                IncubatorId = input.incubatorId,
+                OtherIncubator = input.otherIncubator
             };
-            _db.OvumFreezes.Add(ovumFreeze);
+            _mediumRepository.SetMediumInUse<Fertilization>(fertilization, input.mediumInUseIds);
+            _db.Fertilizations.Add(fertilization);
             _db.SaveChanges();
         }
-        public Guid GetLatestOvumFreezedId()
+        public Guid GetLatestFertilizationId()
         {
-            return _db.OvumFreezes.OrderByDescending(x => x.SqlId).Select(x => x.OvumFreezeId).FirstOrDefault();
+            return _db.Fertilizations.OrderByDescending(x => x.SqlId).Select(x => x.FertilizationId).FirstOrDefault();
         }
+        public void AddOvumThaw(AddOvumThawDto input)
+        {
+            OvumThaw ovumThaw = new OvumThaw
+            {
+                ThawTime = input.thawTime,
+                ThawMediumInUseId = input.thawMediumInUseId,
+                Embryologist = input.embryologist,
+                RecheckEmbryologist = input.recheckEmbryologist
+            };
+            _mediumRepository.SetMediumInUse<OvumThaw>(ovumThaw, input.mediumInUseIds);
+            _db.OvumThaws.Add(ovumThaw);
+            _db.SaveChanges();
+        }
+        public Guid GetLatestOvumThawId()
+        {
+            return _db.OvumThaws.OrderByDescending(x => x.SqlId).Select(x => x.OvumThawId).FirstOrDefault();
+        }
+
     }
 }

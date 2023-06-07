@@ -99,5 +99,14 @@ namespace ReproductiveLab_Repository.Repositories
             }
             return result;
         }
+        public BaseCustomerInfoDto? GetBaseCustomerInfoByOvumDetailId(Guid ovumDetailId)
+        {
+            return _db.OvumDetails.Where(x => x.OvumDetailId == ovumDetailId).Select(x => new BaseCustomerInfoDto
+            {
+                birthday = x.CourseOfTreatment.Customer.Birthday,
+                customerName = x.CourseOfTreatment.Customer.Name,
+                customerSqlId = x.CourseOfTreatment.Customer.SqlId
+            }).FirstOrDefault();
+        }
     }
 }

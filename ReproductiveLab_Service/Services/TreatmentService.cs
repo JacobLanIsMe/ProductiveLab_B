@@ -24,8 +24,10 @@ namespace ReproductiveLab_Service.Services
         private readonly IObservationNoteService _observationNoteService;
         private readonly ICustomerRepository _customerRepository;
         private readonly IOvumDetailRepository _ovumDetailRepository;
-        
-        public TreatmentService(ICourseOfTreatmentRepository courseOfTreatmentRepository, ITreatmentFunction treatmentFunction, ITreatmentRepository treatmentRepository, IObservationNoteService observationNoteService, ICustomerRepository customerRepository, IOvumDetailRepository ovumDetailRepository)
+        private readonly IStorageRepository _storageRepository;
+        private readonly IOvumFreezeRepository _ovumFreezeRepository;
+
+        public TreatmentService(ICourseOfTreatmentRepository courseOfTreatmentRepository, ITreatmentFunction treatmentFunction, ITreatmentRepository treatmentRepository, IObservationNoteService observationNoteService, ICustomerRepository customerRepository, IOvumDetailRepository ovumDetailRepository, IStorageRepository storageRepository, IOvumFreezeRepository ovumFreezeRepository)
         {
             _courseOfTreatmentRepository = courseOfTreatmentRepository;
             _treatmentFunction = treatmentFunction;
@@ -33,6 +35,8 @@ namespace ReproductiveLab_Service.Services
             _observationNoteService = observationNoteService;
             _customerRepository = customerRepository;
             _ovumDetailRepository = ovumDetailRepository;
+            _storageRepository = storageRepository;
+            _ovumFreezeRepository = ovumFreezeRepository;
         }
         public List<LabMainPageDto> GetMainPageInfo()
         {
@@ -59,7 +63,7 @@ namespace ReproductiveLab_Service.Services
                         int ovumTotalNumber = ovumPickupNote.ovumPickupNumber.coc_Grade1 + ovumPickupNote.ovumPickupNumber.coc_Grade2 + ovumPickupNote.ovumPickupNumber.coc_Grade3 + ovumPickupNote.ovumPickupNumber.coc_Grade4 + ovumPickupNote.ovumPickupNumber.coc_Grade5;
                         for (int i = 1; i <= ovumTotalNumber; i++)
                         {
-                            _treatmentRepository.AddOvumDetail(ovumPickupNote, latestOvumPickupId, i);
+                            _ovumDetailRepository.AddOvumDetail(ovumPickupNote, latestOvumPickupId, i);
                         }
                         scope.Complete();
 
@@ -178,14 +182,14 @@ namespace ReproductiveLab_Service.Services
         {
             return _customerRepository.GetBaseCustomerInfoByCourseOfTreatmentId(courseOfTreatmentId);
         }
-        public async Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input)
+        public BaseResponseDto AddCourseOfTreatment(AddCourseOfTreatmentDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
             try
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    _treatmentRepository.AddCourseOfTreatment(input);
+                    _courseOfTreatmentRepository.AddCourseOfTreatment(input);
                     scope.Complete();
                 }
                 result.SetSuccess();
@@ -196,7 +200,7 @@ namespace ReproductiveLab_Service.Services
             }
             return result;
         }
-        public async Task<BaseResponseDto> AddOvumFreeze(AddOvumFreezeDto input)
+        public BaseResponseDto AddOvumFreeze(AddOvumFreezeDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
             try
@@ -204,25 +208,19 @@ namespace ReproductiveLab_Service.Services
                 AddOvumFreezeValidation(input);
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    _treatmentRepository.AddOvumFreeze(input);
-                    Guid latestOvumFreezeId = _treatmentRepository.GetLatestOvumFreezedId();
+                    _ovumFreezeRepository.AddOvumFreeze(input);
+                    Guid latestOvumFreezeId = _ovumFreezeRepository.GetLatestOvumFreezedId();
                     var ovumDetails = _ovumDetailRepository.GetOvumDetailByIds(input.ovumDetailId);
-                    foreach (var i in ovumDetails)
-                    {
-                        i.OvumDetailStatusId = (int)OvumDetailStatusEnum.Freeze;
-                        i.OvumFreezeId = latestOvumFreezeId;
-                    }
-                    dbContext.SaveChanges();
-                    var storageUnit = dbContext.StorageUnits.FirstOrDefault(x => x.SqlId == input.storageUnitId);
+                    _ovumDetailRepository.UpdateOvumDetailToFreeze(ovumDetails, latestOvumFreezeId);
+                    var storageUnit = _storageRepository.GetStorageUnitById(input.storageUnitId);
                     if (storageUnit != null)
                     {
-                        storageUnit.IsOccupied = true;
+                        _storageRepository.UpdateStorageUnitToOccupied(storageUnit);
                     }
                     else
                     {
                         throw new Exception("儲位資訊有誤");
                     }
-                    dbContext.SaveChanges();
                     scope.Complete();
                 }
                 result.SetSuccess();
@@ -248,6 +246,171 @@ namespace ReproductiveLab_Service.Services
             if (hasFreezeObservationNote != null)
             {
                 throw new Exception($"卵子編號: {hasFreezeObservationNote.OvumNumber} 尚無冷凍觀察紀錄");
+            }
+        }
+        public BaseResponseDto UpdateOvumFreeze(AddOvumFreezeDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    if (input.ovumDetailId.Count <= 0)
+                    {
+                        throw new Exception("請選擇要修改的卵子");
+                    }
+                    var ovumFreeze = _ovumFreezeRepository.GetOvumFreezeByOvumDetailId(input.ovumDetailId[0]);
+                    if (ovumFreeze == null)
+                    {
+                        throw new Exception("無相關的卵子資訊");
+                    }
+                    _ovumFreezeRepository.UpdateOvumFreeze(ovumFreeze, input);
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch (Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+
+            return result;
+        }
+        public AddOvumFreezeDto GetOvumFreeze(Guid ovumDetailId)
+        {
+            var ovumFreeze = _ovumFreezeRepository.GetOvumFreezeDtoByOvumDetailId(ovumDetailId);
+            if (ovumFreeze == null)
+            {
+                return new AddOvumFreezeDto();
+            }
+            return ovumFreeze;
+        }
+        public BaseCustomerInfoDto GetOvumOwnerInfo(Guid ovumDetailId)
+        {
+            var result = _customerRepository.GetBaseCustomerInfoByOvumDetailId(ovumDetailId);
+            if (result == null)
+            {
+                return new BaseCustomerInfoDto();
+            }
+            return result;
+        }
+        public List<Common1Dto> GetTopColors()
+        {
+            return _storageRepository.GetTopColors();
+        }
+        public List<Common1Dto> GetFertilizationMethods()
+        {
+            return _treatmentRepository.GetFertilizationMethods();
+        }
+        public List<Common1Dto> GetIncubators()
+        {
+            return _treatmentRepository.GetIncubators();
+        }
+        public BaseResponseDto AddFertilization(AddFertilizationDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    _treatmentRepository.AddFertilization(input);
+                    Guid latestFertilizationId = _treatmentRepository.GetLatestFertilizationId();
+                    if (latestFertilizationId == Guid.Empty)
+                    {
+                        throw new Exception("Fertilisation 資料表寫入也誤");
+                    }
+                    var ovumDetailIs = _ovumDetailRepository.GetOvumDetailByIds(input.ovumDetailIds);
+                    _ovumDetailRepository.UpdateOvumDetailToFertilization(ovumDetailIs, latestFertilizationId);
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch (Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
+        public BaseResponseDto AddOvumThaw(AddOvumThawDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                AddOvumThawValidation(input);
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    #region 增加一筆 OvumThaw 的資訊，並得到此筆 OvumThaw 的 OvumThawId
+                    _treatmentRepository.AddOvumThaw(input);
+                    Guid latestOvumThawId = _treatmentRepository.GetLatestOvumThawId();
+                    #endregion
+
+                    var freezeOvumDetails = _ovumDetailRepository.GetFreezeOvumDetailModelByIds(input.freezeOvumDetailIds);
+                    _ovumDetailRepository.UpdateFreezeOvumDetail(freezeOvumDetails, latestOvumThawId);
+                    int count = 0;
+                    foreach (var i in freezeOvumDetails.ToList())
+                    {
+                        if (i.observationNoteCount == 0 && i.isTransferred) { }
+                        else
+                        {
+                            OvumDetail ovumDetail = new OvumDetail
+                            {
+                                CourseOfTreatmentId = input.courseOfTreatmentId,
+                                OvumNumber = count + 1,
+                                OvumDetailStatusId = (int)OvumDetailStatusEnum.Incubation,
+                                OvumThawId = latestOvumThawId,
+                                FertilizationId = i.ovumDetail.FertilizationId,
+                                OvumFromCourseOfTreatmentId = i.ovumDetail.OvumFromCourseOfTreatmentId
+                            };
+                            dbContext.OvumDetails.Add(ovumDetail);
+                            dbContext.SaveChanges();
+                            Guid thawOvumDetailId = dbContext.OvumDetails.OrderByDescending(x => x.SqlId).Select(x => x.OvumDetailId).FirstOrDefault();
+                            OvumThawFreezePair pair = new OvumThawFreezePair
+                            {
+                                FreezeOvumDetailId = i.ovumDetail.OvumDetailId,
+                                ThawOvumDetailId = thawOvumDetailId
+                            };
+                            dbContext.OvumThawFreezePairs.Add(pair);
+                            dbContext.SaveChanges();
+                        }
+                        count++;
+                    }
+                    dbContext.SaveChanges();
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch (Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
+        }
+        private void AddOvumThawValidation(AddOvumThawDto input)
+        {
+            if (input.freezeOvumDetailIds == null || input.freezeOvumDetailIds.Count <= 0)
+            {
+                throw new Exception("請選擇要解凍的卵子");
+            }
+            if (input.mediumInUseIds == null || input.mediumInUseIds.Count <= 0)
+            {
+                throw new Exception("請選擇培養液");
+            }
+            var hasThawedOvumDetails = _ovumDetailRepository.GetThawOvumDetailByIds(input.freezeOvumDetailIds);
+            if (hasThawedOvumDetails.Any())
+            {
+                string errorMessage = "";
+                foreach (var i in hasThawedOvumDetails)
+                {
+                    string message = $"療程編號: {i.courseOfTreatmentSqlId} ，卵子編號: ";
+                    foreach (var j in i.ovumNumbers)
+                    {
+                        message += $"{j}, ";
+                    }
+                    message = message.Substring(0, message.Length - 2);
+                    message += "已解凍\n";
+                    errorMessage += message;
+                }
+                throw new Exception(errorMessage);
             }
         }
     }

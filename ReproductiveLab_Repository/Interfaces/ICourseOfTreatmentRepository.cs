@@ -1,4 +1,5 @@
 ﻿using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Dtos.ForTreatment;
 using ReproductiveLabDB.Models;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,6 @@ namespace ReproductiveLab_Repository.Interfaces
     {
         CourseOfTreatment? GetCourseOfTreatmentById(Guid courseOfTreatmentId);
         List<LabMainPageDto> GetMainPageInfo();
+        void AddCourseOfTreatment(AddCourseOfTreatmentDto input);
     }
 }
