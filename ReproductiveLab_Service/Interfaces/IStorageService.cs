@@ -15,5 +15,6 @@ namespace ReproductiveLab_Service.Interfaces
         BaseResponseDto AddStorageTank(StorageAddNewTankDto storageAddNewTankDto);
         List<StorageTankTypeDto> GetStorageTankType();
         List<OvumFreezeStorageDto> GetOvumFreezeStorageInfo(Guid ovumDetailId);
+        List<Common1Dto> GetTopColors();
     }
 }

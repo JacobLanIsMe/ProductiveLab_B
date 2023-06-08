@@ -18,10 +18,9 @@ namespace ReproductiveLab_Repository.Interfaces
         void UpdateOvumDetailToFreeze(IQueryable<OvumDetail> ovumDetails, Guid latestOvumFreezeId);
         void UpdateOvumDetailToFertilization(IQueryable<OvumDetail> ovumDetails, Guid latestFertilizationId);
         IQueryable<ThawedOvumDetailModel> GetThawOvumDetailByIds(List<Guid> ovumDetailIds);
-        void AddOvumDetail(Guid courseOfTreatmentId, Guid OvumFromCourseOfTreatmentId, int ovumNumber, int ovumDetailStatusId, Guid? latestOvumPickupId = null, Guid? latestOvumThawId = null, Guid? fertilizationId = null);
+        void AddOvumDetail(Guid courseOfTreatmentId, Guid OvumFromCourseOfTreatmentId, int ovumNumber, int ovumDetailStatusId, Guid? latestOvumPickupId = null, Guid? latestOvumThawId = null, Guid? fertilizationId = null, Guid? ovumFreezeId = null);
         void UpdateFreezeOvumDetail(IQueryable<FreezeOvumDetailModel> freezeOvumDetails, Guid latestOvumThawId);
         IQueryable<FreezeOvumDetailModel> GetFreezeOvumDetailModelByIds(List<Guid> ovumDetailIds);
-        //IQueryable<OvumDetail> GetCustomerOvumFreeze(Guid customerId);
-        //IQueryable<OvumDetail> GetRecipientOvumFreezes(Guid customerId);
+        Guid GetLatestOvumDetailId();
     }
 }

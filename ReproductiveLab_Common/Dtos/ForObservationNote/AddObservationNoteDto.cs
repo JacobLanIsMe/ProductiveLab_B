@@ -30,4 +30,3 @@ namespace ReproductiveLab_Common.Dtos.ForObservationNote
         public List<IFormFile>? photos { get; set; }
     }
 }
-}

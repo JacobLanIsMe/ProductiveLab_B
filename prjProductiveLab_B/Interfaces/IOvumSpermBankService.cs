@@ -1,7 +1,7 @@
-﻿namespace prjProductiveLab_B.Interfaces
-{
-    public interface IOvumSpermBankService
-    {
+﻿//namespace prjProductiveLab_B.Interfaces
+//{
+//    public interface IOvumSpermBankService
+//    {
 
-    }
-}
+//    }
+//}

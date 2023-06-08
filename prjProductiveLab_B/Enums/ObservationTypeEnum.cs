@@ -1,7 +1,7 @@
-﻿namespace prjProductiveLab_B.Enums
-{
-    public enum ObservationTypeEnum
-    {
-        freezeObservation = 4
-    }
-}
+﻿//namespace prjProductiveLab_B.Enums
+//{
+//    public enum ObservationTypeEnum
+//    {
+//        freezeObservation = 4
+//    }
+//}

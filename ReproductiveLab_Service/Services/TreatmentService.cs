@@ -170,18 +170,6 @@ namespace ReproductiveLab_Service.Services
         {
             return _treatmentRepository.GetSpermRetrievalMethods();
         }
-        public List<BaseCustomerInfoDto> GetAllCustomer()
-        {
-            return _customerRepository.GetAllCustomer();
-        }
-        public BaseCustomerInfoDto GetCustomerByCustomerSqlId(int customerSqlId)
-        {
-            return _customerRepository.GetBaseCustomerInfoBySqlId(customerSqlId);
-        }
-        public BaseCustomerInfoDto GetCustomerByCourseOfTreatmentId(Guid courseOfTreatmentId)
-        {
-            return _customerRepository.GetBaseCustomerInfoByCourseOfTreatmentId(courseOfTreatmentId);
-        }
         public BaseResponseDto AddCourseOfTreatment(AddCourseOfTreatmentDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
@@ -294,10 +282,7 @@ namespace ReproductiveLab_Service.Services
             }
             return result;
         }
-        public List<Common1Dto> GetTopColors()
-        {
-            return _storageRepository.GetTopColors();
-        }
+        
         public List<Common1Dto> GetFertilizationMethods()
         {
             return _treatmentRepository.GetFertilizationMethods();
@@ -353,19 +338,12 @@ namespace ReproductiveLab_Service.Services
                         else
                         {
                             _ovumDetailRepository.AddOvumDetail(input.courseOfTreatmentId, i.ovumDetail.OvumFromCourseOfTreatmentId, count + 1, (int)OvumDetailStatusEnum.Incubation, latestOvumThawId: latestOvumThawId, fertilizationId: i.ovumDetail.FertilizationId);
-                            
-                            Guid thawOvumDetailId = dbContext.OvumDetails.OrderByDescending(x => x.SqlId).Select(x => x.OvumDetailId).FirstOrDefault();
-                            OvumThawFreezePair pair = new OvumThawFreezePair
-                            {
-                                FreezeOvumDetailId = i.ovumDetail.OvumDetailId,
-                                ThawOvumDetailId = thawOvumDetailId
-                            };
-                            dbContext.OvumThawFreezePairs.Add(pair);
-                            dbContext.SaveChanges();
+
+                            Guid thawOvumDetailId = _ovumDetailRepository.GetLatestOvumDetailId();
+                            _treatmentRepository.AddOvumThawFreezePair(i.ovumDetail.OvumDetailId, thawOvumDetailId);
                         }
                         count++;
                     }
-                    dbContext.SaveChanges();
                     scope.Complete();
                 }
                 result.SetSuccess();
@@ -403,6 +381,49 @@ namespace ReproductiveLab_Service.Services
                 }
                 throw new Exception(errorMessage);
             }
+        }
+        public BaseResponseDto OvumBankTransfer(OvumBankTransferDto input)
+        {
+            BaseResponseDto result = new BaseResponseDto();
+            try
+            {
+                if (input.transferOvumDetailIds == null || input.transferOvumDetailIds.Count < 1)
+                {
+                    throw new Exception("請選擇要轉移的卵子");
+                }
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    // 將受贈者的OvumFromCourseOfTreatmentId 改成捐贈者的 CourseOfTreatmentId
+                    var recipientCourseOfTreatmentId = _courseOfTreatmentRepository.GetCourseOfTreatmentIdBySqlId(input.recipientCourseOfTreatmentSqlId);
+                    if (recipientCourseOfTreatmentId == Guid.Empty)
+                    {
+                        throw new Exception("查無此受贈者之療程編號");
+                    }
+
+                    var donorOvumDetails = _ovumDetailRepository.GetOvumDetailByIds(input.transferOvumDetailIds).ToList();
+                    if (donorOvumDetails.Count != input.transferOvumDetailIds.Count)
+                    {
+                        throw new Exception("捐贈卵子資訊有誤");
+                    }
+                    for (int i = 0; i < donorOvumDetails.Count; i++)
+                    {
+                        // 加入新的 OvumDetail 資料
+                        int ovumDetailStatusId = donorOvumDetails[i].OvumFreezeId == null ? (int)OvumDetailStatusEnum.Incubation : (int)OvumDetailStatusEnum.Freeze;
+                        _ovumDetailRepository.AddOvumDetail(recipientCourseOfTreatmentId, donorOvumDetails[i].OvumFromCourseOfTreatmentId, i + 1, ovumDetailStatusId, fertilizationId: donorOvumDetails[i].FertilizationId, ovumFreezeId: donorOvumDetails[i].OvumFreezeId);
+
+                        Guid latestOvumDetailId = _ovumDetailRepository.GetLatestOvumDetailId();
+                        // 加入新的 OvumTransferPair 資料
+                        _treatmentRepository.AddOvumTransferPair(latestOvumDetailId, donorOvumDetails[i].OvumDetailId);
+                    }
+                    scope.Complete();
+                }
+                result.SetSuccess();
+            }
+            catch (Exception ex)
+            {
+                result.SetError(ex.Message);
+            }
+            return result;
         }
     }
 }

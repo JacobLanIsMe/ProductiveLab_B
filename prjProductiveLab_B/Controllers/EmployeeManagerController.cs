@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Service.Interfaces;
 

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Enums;
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForMedium;
 using ReproductiveLab_Service.Interfaces;
-using ReproductiveLabDB.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

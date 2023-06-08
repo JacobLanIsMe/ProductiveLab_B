@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos.ForTransferIn;
-using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Interfaces;
-using Microsoft.IdentityModel.Tokens;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Dtos.ForTransferIn;
+using ReproductiveLab_Service.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -11,15 +10,15 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class TransferInController : ControllerBase
     {
-        private readonly ITransferInService transferInService;
+        private readonly ITransferInService _transferInService;
         public TransferInController(ITransferInService transferInService) 
         {
-            this.transferInService = transferInService;
+            _transferInService = transferInService;
         }
         [HttpPost("AddTransferIn")]
         public BaseResponseDto AddTransferIn(AddTransferInDto input)
         {
-            return transferInService.AddTransferIn(input);
+            return _transferInService.AddTransferIn(input);
         }
     }
 }

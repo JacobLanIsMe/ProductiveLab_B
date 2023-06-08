@@ -60,7 +60,7 @@ namespace ReproductiveLab_Repository.Repositories
                 ovumNumbers = y.Select(z => z.OvumNumber).OrderBy(z => z).ToList()
             });
         }
-        public void AddOvumDetail(Guid courseOfTreatmentId, Guid OvumFromCourseOfTreatmentId, int ovumNumber, int ovumDetailStatusId, Guid? latestOvumPickupId = null, Guid? latestOvumThawId = null, Guid? fertilizationId = null)
+        public void AddOvumDetail(Guid courseOfTreatmentId, Guid OvumFromCourseOfTreatmentId, int ovumNumber, int ovumDetailStatusId, Guid? latestOvumPickupId = null, Guid? latestOvumThawId = null, Guid? fertilizationId = null, Guid? ovumFreezeId = null)
         {
             OvumDetail ovumDetail = new OvumDetail()
             {
@@ -80,6 +80,10 @@ namespace ReproductiveLab_Repository.Repositories
             if (fertilizationId.HasValue)
             {
                 ovumDetail.FertilizationId = fertilizationId;
+            }
+            if (ovumFreezeId.HasValue)
+            {
+                ovumDetail.OvumFreezeId = ovumFreezeId;
             }
             _db.OvumDetails.Add(ovumDetail);
             _db.SaveChanges();
@@ -116,6 +120,10 @@ namespace ReproductiveLab_Repository.Repositories
                 }
             }
             _db.SaveChanges();
+        }
+        public Guid GetLatestOvumDetailId() 
+        {
+            return _db.OvumDetails.OrderByDescending(x => x.SqlId).Select(x => x.OvumDetailId).FirstOrDefault();
         }
     }
 }

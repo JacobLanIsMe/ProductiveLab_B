@@ -13,11 +13,11 @@ using System.Transactions;
 
 namespace ReproductiveLab_Service.Services
 {
-    public class StorageServie : IStorageService
+    public class StorageService : IStorageService
     {
         private readonly IStorageRepository _storageRepository;
         private readonly ICustomerRepository _customerRepository;
-        public StorageServie(IStorageRepository storageRepository, ICustomerRepository customerRepository)
+        public StorageService(IStorageRepository storageRepository, ICustomerRepository customerRepository)
         {
             _storageRepository = storageRepository;
             _customerRepository = customerRepository;
@@ -100,6 +100,10 @@ namespace ReproductiveLab_Service.Services
                 i.stripBoxEmptyUnit = count;
             }
             return result;
+        }
+        public List<Common1Dto> GetTopColors()
+        {
+            return _storageRepository.GetTopColors();
         }
     }
 }

@@ -2,9 +2,6 @@
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForOperateSperm;
 using ReproductiveLab_Service.Interfaces;
-//using prjProductiveLab_B.Dtos;
-//using prjProductiveLab_B.Dtos.ForOperateSperm;
-//using prjProductiveLab_B.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {

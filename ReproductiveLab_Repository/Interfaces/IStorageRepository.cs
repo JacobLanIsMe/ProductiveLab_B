@@ -24,6 +24,7 @@ namespace ReproductiveLab_Repository.Interfaces
         List<StorageTankTypeDto> GetStorageTankType();
         List<OvumFreezeStorageDto> GetOvumFreezeStorageByCustomerId(Guid customerId);
         StorageUnit? GetStorageUnitById(int storageUnitId);
+        IQueryable<StorageUnit> GetStorageUnitByIds(List<int> storageUnitIds);
         void UpdateStorageUnitToOccupied(StorageUnit storageUnit);
         List<Common1Dto> GetTopColors();
     }

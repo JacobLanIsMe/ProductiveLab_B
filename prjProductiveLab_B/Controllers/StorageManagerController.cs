@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForStorage;
 using ReproductiveLab_Service.Interfaces;
-//using prjProductiveLab_B.Dtos;
-//using prjProductiveLab_B.Dtos.ForStorage;
-//using prjProductiveLab_B.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {

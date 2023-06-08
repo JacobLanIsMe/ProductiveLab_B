@@ -14,5 +14,6 @@ namespace ReproductiveLab_Repository.Interfaces
         CourseOfTreatment? GetCourseOfTreatmentById(Guid courseOfTreatmentId);
         List<LabMainPageDto> GetMainPageInfo();
         void AddCourseOfTreatment(AddCourseOfTreatmentDto input);
+        Guid GetCourseOfTreatmentIdBySqlId(int sqlId);
     }
 }

@@ -155,6 +155,10 @@ namespace ReproductiveLab_Repository.Repositories
         {
             return _db.StorageUnits.FirstOrDefault(x => x.SqlId == storageUnitId);
         }
+        public IQueryable<StorageUnit> GetStorageUnitByIds(List<int> storageUnitIds)
+        {
+            return _db.StorageUnits.Where(x => storageUnitIds.Contains(x.SqlId));
+        }
         public void UpdateStorageUnitToOccupied(StorageUnit storageUnit)
         {
             storageUnit.IsOccupied = true;

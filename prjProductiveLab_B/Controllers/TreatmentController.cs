@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using prjProductiveLab_B.Dtos;
-using prjProductiveLab_B.Dtos.ForTreatment;
-using prjProductiveLab_B.Interfaces;
-using ReproductiveLabDB.Models;
+using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Dtos.ForTreatment;
+using ReproductiveLab_Service.Interfaces;
 
 namespace prjProductiveLab_B.Controllers
 {
@@ -10,120 +9,124 @@ namespace prjProductiveLab_B.Controllers
     [ApiController]
     public class TreatmentController : ControllerBase
     {
-        public readonly ITreatmentService treatmentService;
+        private readonly ITreatmentService _treatmentService;
+        private readonly ICustomerService _customerService;
+        private readonly IStorageService _storageService;
         public readonly IOperateSpermService operateSpermService;
-        public TreatmentController(ITreatmentService treatmentService, IOperateSpermService operateSpermService) 
+        public TreatmentController(ITreatmentService treatmentService, ICustomerService customerService, IStorageService storageService, IOperateSpermService operateSpermService) 
         {
-            this.treatmentService = treatmentService;
+            _treatmentService = treatmentService;
+            _customerService = customerService;
+            _storageService = storageService;
             this.operateSpermService = operateSpermService;
         }
        
         [HttpGet("GetGermCellSituations")]
-        public async Task<List<CommonDto>> GetGermCellSituations()
+        public List<Common1Dto> GetGermCellSituations()
         {
-            return await treatmentService.GetGermCellSituations();
+            return _treatmentService.GetGermCellSituations();
         }
         [HttpGet("GetGermCellSources")]
-        public async Task<List<CommonDto>> GetGermCellSources()
+        public List<Common1Dto> GetGermCellSources()
         {
-            return await treatmentService.GetGermCellSources();
+            return _treatmentService.GetGermCellSources();
         }
         [HttpGet("GetGermCellOperations")]
-        public async Task<List<CommonDto>> GetGermCellOperations()
+        public List<Common1Dto> GetGermCellOperations()
         {
-            return await treatmentService.GetGermCellOperations();
+            return _treatmentService.GetGermCellOperations();
         }
         [HttpGet("GetSpermRetrievalMethods")]
-        public async Task<List<CommonDto>> GetSpermRetrievalMethods()
+        public List<Common1Dto> GetSpermRetrievalMethods()
         {
-            return await treatmentService.GetSpermRetrievalMethods();
+            return _treatmentService.GetSpermRetrievalMethods();
         }
         [HttpGet("GetAllCustomer")]
-        public async Task<List<BaseCustomerInfoDto>> GetAllCustomer()
+        public List<BaseCustomerInfoDto> GetAllCustomer()
         {
-            return await treatmentService.GetAllCustomer();
+            return _customerService.GetAllCustomer();
         }
         [HttpGet("GetCustomerByCustomerSqlId")]
-        public async Task<BaseCustomerInfoDto> GetCustomerByCustomerSqlId(int customerSqlId)
+        public BaseCustomerInfoDto GetCustomerByCustomerSqlId(int customerSqlId)
         {
-            return await treatmentService.GetCustomerByCustomerSqlId(customerSqlId);
+            return _customerService.GetCustomerByCustomerSqlId(customerSqlId);
         }
         [HttpGet("GetCustomerByCourseOfTreatmentId")]
-        public async Task<BaseCustomerInfoDto> GetCustomerByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        public BaseCustomerInfoDto GetCustomerByCourseOfTreatmentId(Guid courseOfTreatmentId)
         {
-            return await treatmentService.GetCustomerByCourseOfTreatmentId(courseOfTreatmentId);
+            return _customerService.GetCustomerByCourseOfTreatmentId(courseOfTreatmentId);
         }
         [HttpPost("AddCourseOfTreatment")]
-        public async Task<BaseResponseDto> AddCourseOfTreatment(AddCourseOfTreatmentDto input)
+        public BaseResponseDto AddCourseOfTreatment(AddCourseOfTreatmentDto input)
         {
-            return await this.treatmentService.AddCourseOfTreatment(input);
+            return _treatmentService.AddCourseOfTreatment(input);
         }
         [HttpPost("AddOvumPickupNote")]
         public BaseResponseDto AddOvumPickupNote([FromBody] AddOvumPickupNoteDto ovumPickupNote)
         {
-            return treatmentService.AddOvumPickupNote(ovumPickupNote);
+            return _treatmentService.AddOvumPickupNote(ovumPickupNote);
         }
 
         [HttpGet("GetBaseTreatmentInfo")]
-        public async Task<BaseTreatmentInfoDto> GetBaseTreatmentInfo(Guid courseOfTreatmentId)
+        public BaseTreatmentInfoDto GetBaseTreatmentInfo(Guid courseOfTreatmentId)
         {
-            return await treatmentService.GetBaseTreatmentInfo(courseOfTreatmentId);
+            return _treatmentService.GetBaseTreatmentInfo(courseOfTreatmentId);
         }
 
         [HttpGet("GetTreatmentSummary")]
-        public async Task<List<TreatmentSummaryDto>> GetTreatmentSummary(Guid courseOfTreatmentId)
+        public List<TreatmentSummaryDto> GetTreatmentSummary(Guid courseOfTreatmentId)
         {
-            return await treatmentService.GetTreatmentSummary(courseOfTreatmentId);
+            return _treatmentService.GetTreatmentSummary(courseOfTreatmentId);
         }
         [HttpPost("AddOvumFreeze")]
-        public async Task<BaseResponseDto> AddOvumFreeze(AddOvumFreezeDto input)
+        public BaseResponseDto AddOvumFreeze(AddOvumFreezeDto input)
         {
-            return await treatmentService.AddOvumFreeze(input);
+            return _treatmentService.AddOvumFreeze(input);
         }
         [HttpPost("UpdateOvumFreeze")]
-        public async Task<BaseResponseDto> UpdateOvumFreeze(AddOvumFreezeDto input)
+        public BaseResponseDto UpdateOvumFreeze(AddOvumFreezeDto input)
         {
-            return await treatmentService.UpdateOvumFreeze(input);
+            return _treatmentService.UpdateOvumFreeze(input);
         }
         [HttpGet("GetOvumFreeze")]
-        public async Task<AddOvumFreezeDto> GetOvumFreeze(Guid ovumDetailId)
+        public AddOvumFreezeDto GetOvumFreeze(Guid ovumDetailId)
         {
-            return await treatmentService.GetOvumFreeze(ovumDetailId);
+            return _treatmentService.GetOvumFreeze(ovumDetailId);
         }
         [HttpGet("GetOvumOwnerInfo")]
-        public async Task<BaseCustomerInfoDto> GetOvumOwnerInfo(Guid ovumDetailId)
+        public BaseCustomerInfoDto GetOvumOwnerInfo(Guid ovumDetailId)
         {
-            return await treatmentService.GetOvumOwnerInfo(ovumDetailId);
+            return _treatmentService.GetOvumOwnerInfo(ovumDetailId);
         }
         [HttpGet("GetTopColors")]
-        public async Task<List<CommonDto>> GetTopColors()
+        public List<Common1Dto> GetTopColors()
         {
-            return await treatmentService.GetTopColors();
+            return _storageService.GetTopColors();
         }
         [HttpGet("GetFertilizationMethods")]
-        public async Task<List<CommonDto>> GetFertilizationMethods()
+        public List<Common1Dto> GetFertilizationMethods()
         {
-            return await treatmentService.GetFertilizationMethods();
+            return _treatmentService.GetFertilizationMethods();
         }
         [HttpGet("GetIncubators")]
-        public async Task<List<CommonDto>> GetIncubators()
+        public List<Common1Dto> GetIncubators()
         {
-            return await treatmentService.GetIncubators();
+            return _treatmentService.GetIncubators();
         }
         [HttpPost("AddFertilization")]
         public BaseResponseDto AddFertilization(AddFertilizationDto input)
         {
-            return treatmentService.AddFertilization(input);
+            return _treatmentService.AddFertilization(input);
         }
         [HttpPost("AddOvumThaw")]
         public BaseResponseDto AddOvumThaw(AddOvumThawDto input)
         {
-            return treatmentService.AddOvumThaw(input);
+            return _treatmentService.AddOvumThaw(input);
         }
         [HttpPost("OvumBankTransfer")]
-        public async Task<BaseResponseDto> OvumBankTransfer(OvumBankTransferDto input)
+        public BaseResponseDto OvumBankTransfer(OvumBankTransferDto input)
         {
-            return await treatmentService.OvumBankTransfer(input);
+            return _treatmentService.OvumBankTransfer(input);
         }
     }
 }

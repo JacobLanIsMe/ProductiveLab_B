@@ -1,4 +1,5 @@
-﻿using ReproductiveLab_Common.Dtos.ForTreatment;
+﻿using Reproductive_SharedFunction.Interfaces;
+using ReproductiveLab_Common.Dtos.ForTreatment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Reproductive_SharedFunction.Services
 {
-    public class TreatmentFunction
+    public class TreatmentFunction : ITreatmentFunction
     {
         public string OvumPickupNoteValidation(AddOvumPickupNoteDto ovumPickupNote)
         {

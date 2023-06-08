@@ -27,5 +27,7 @@ namespace ReproductiveLab_Repository.Interfaces
         Guid GetLatestFertilizationId();
         void AddOvumThaw(AddOvumThawDto input);
         Guid GetLatestOvumThawId();
+        void AddOvumThawFreezePair(Guid freezeOvumDetailId, Guid thawOvumDetailId);
+        void AddOvumTransferPair(Guid recipientOvumDetailId, Guid donorOvumDetailId);
     }
 }

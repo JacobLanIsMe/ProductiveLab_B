@@ -205,6 +205,25 @@ namespace ReproductiveLab_Repository.Repositories
         {
             return _db.OvumThaws.OrderByDescending(x => x.SqlId).Select(x => x.OvumThawId).FirstOrDefault();
         }
-
+        public void AddOvumThawFreezePair(Guid freezeOvumDetailId, Guid thawOvumDetailId)
+        {
+            OvumThawFreezePair pair = new OvumThawFreezePair
+            {
+                FreezeOvumDetailId = freezeOvumDetailId,
+                ThawOvumDetailId = thawOvumDetailId
+            };
+            _db.OvumThawFreezePairs.Add(pair);
+            _db.SaveChanges();
+        }
+        public void AddOvumTransferPair(Guid recipientOvumDetailId, Guid donorOvumDetailId)
+        {
+            OvumTransferPair pair = new OvumTransferPair
+            {
+                RecipientOvumDetailId = recipientOvumDetailId,
+                DonorOvumDetailId = donorOvumDetailId
+            };
+            _db.OvumTransferPairs.Add(pair);
+            _db.SaveChanges();
+        }
     }
 }

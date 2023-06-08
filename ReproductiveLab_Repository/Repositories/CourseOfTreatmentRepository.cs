@@ -99,5 +99,9 @@ namespace ReproductiveLab_Repository.Repositories
             _db.CourseOfTreatments.Add(course);
             _db.SaveChanges();
         }
+        public Guid GetCourseOfTreatmentIdBySqlId(int sqlId)
+        {
+            return _db.CourseOfTreatments.Where(x => x.SqlId == sqlId).Select(x => x.CourseOfTreatmentId).FirstOrDefault();
+        }
     }
 }
