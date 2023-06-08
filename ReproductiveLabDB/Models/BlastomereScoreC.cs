@@ -10,7 +10,7 @@ namespace ReproductiveLabDB.Models
             ObservationNotes = new HashSet<ObservationNote>();
         }
 
-        public int SlqId { get; set; }
+        public int SqlId { get; set; }
         public string Name { get; set; } = null!;
 
         public virtual ICollection<ObservationNote> ObservationNotes { get; set; }

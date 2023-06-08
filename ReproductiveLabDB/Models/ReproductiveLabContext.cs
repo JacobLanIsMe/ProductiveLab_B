@@ -89,56 +89,61 @@ namespace ReproductiveLabDB.Models
             modelBuilder.Entity<BlastocystScoreExpansion>(entity =>
             {
                 entity.HasKey(e => e.SqlId)
-                    .HasName("PK_BlastocystScore_Expantion");
+                    .HasName("PK_BlastocystScoreExpansion");
 
                 entity.ToTable("BlastocystScore_Expansion");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<BlastocystScoreIce>(entity =>
             {
-                entity.HasKey(e => e.SqlId);
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_BlastocystScoreICE");
 
                 entity.ToTable("BlastocystScore_ICE");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<BlastocystScoreTe>(entity =>
             {
-                entity.HasKey(e => e.SqlId);
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_BlastocystScoreTE");
 
                 entity.ToTable("BlastocystScore_TE");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<BlastomereScoreC>(entity =>
             {
-                entity.HasKey(e => e.SlqId);
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_BlastomereScoreC");
 
                 entity.ToTable("BlastomereScore_C");
 
-                entity.Property(e => e.SlqId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<BlastomereScoreF>(entity =>
             {
-                entity.HasKey(e => e.SqlId);
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_BlastomereScoreF");
 
                 entity.ToTable("BlastomereScore_F");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<BlastomereScoreG>(entity =>
             {
-                entity.HasKey(e => e.SqlId);
+                entity.HasKey(e => e.SqlId)
+                    .HasName("PK_BlastomereScoreG");
 
                 entity.ToTable("BlastomereScore_G");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<CourseOfTreatment>(entity =>
@@ -233,7 +238,9 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.CustomerId).HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Birthday).HasColumnType("date");
+                entity.Property(e => e.Birthday).HasColumnType("datetime");
+
+                entity.Property(e => e.Name).HasMaxLength(50);
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
@@ -255,13 +262,12 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("EmbryoStatus");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Employee>(entity =>
             {
                 entity.HasKey(e => e.EmployeeId)
-                    .HasName("PK_Staff")
                     .IsClustered(false);
 
                 entity.ToTable("Employee");
@@ -271,35 +277,32 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.EmployeeId).HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
+                entity.Property(e => e.Name).HasMaxLength(50);
 
-                entity.HasOne(d => d.IdentityServer)
-                    .WithMany(p => p.Employees)
-                    .HasForeignKey(d => d.IdentityServerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Staff_IdentityServer");
+                entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.JobTitle)
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.JobTitleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Staff_Identity");
+                    .HasConstraintName("FK_Employee_JobTitle");
             });
 
             modelBuilder.Entity<Fertilization>(entity =>
             {
                 entity.HasKey(e => e.FertilizationId)
-                    .HasName("PK_Fertilisation")
                     .IsClustered(false);
 
                 entity.ToTable("Fertilization");
 
-                entity.HasIndex(e => e.SqlId, "IX_Fertilisation")
+                entity.HasIndex(e => e.SqlId, "IX_Fertilization")
                     .IsClustered();
 
                 entity.Property(e => e.FertilizationId).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.FertilizationTime).HasColumnType("datetime");
+
+                entity.Property(e => e.OtherIncubator).HasMaxLength(50);
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
@@ -307,55 +310,53 @@ namespace ReproductiveLabDB.Models
                     .WithMany(p => p.Fertilizations)
                     .HasForeignKey(d => d.Embryologist)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Fertilisation_Employee");
+                    .HasConstraintName("FK_Fertilization_Employee");
 
                 entity.HasOne(d => d.FertilizationMethod)
                     .WithMany(p => p.Fertilizations)
                     .HasForeignKey(d => d.FertilizationMethodId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Fertilisation_FertilisationMethod");
+                    .HasConstraintName("FK_Fertilization_FertilizationMethod");
 
                 entity.HasOne(d => d.Incubator)
                     .WithMany(p => p.Fertilizations)
                     .HasForeignKey(d => d.IncubatorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Fertilisation_Incubator");
+                    .HasConstraintName("FK_Fertilization_Incubator");
 
                 entity.HasOne(d => d.MediumInUseId1Navigation)
                     .WithMany(p => p.FertilizationMediumInUseId1Navigations)
                     .HasForeignKey(d => d.MediumInUseId1)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Fertilisation_MediumInUse");
+                    .HasConstraintName("FK_Fertilization_MediumInUse");
 
                 entity.HasOne(d => d.MediumInUseId2Navigation)
                     .WithMany(p => p.FertilizationMediumInUseId2Navigations)
                     .HasForeignKey(d => d.MediumInUseId2)
-                    .HasConstraintName("FK_Fertilisation_MediumInUse1");
+                    .HasConstraintName("FK_Fertilization_MediumInUse1");
 
                 entity.HasOne(d => d.MediumInUseId3Navigation)
                     .WithMany(p => p.FertilizationMediumInUseId3Navigations)
                     .HasForeignKey(d => d.MediumInUseId3)
-                    .HasConstraintName("FK_Fertilisation_MediumInUse2");
+                    .HasConstraintName("FK_Fertilization_MediumInUse2");
             });
 
             modelBuilder.Entity<FertilizationMethod>(entity =>
             {
-                entity.HasKey(e => e.SqlId)
-                    .HasName("PK_FertilisationMethod");
+                entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("FertilizationMethod");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<FertilizationResult>(entity =>
             {
-                entity.HasKey(e => e.SqlId)
-                    .HasName("PK_FertilisationResult");
+                entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("FertilizationResult");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<FrequentlyUsedMedium>(entity =>
@@ -363,6 +364,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("FrequentlyUsedMedium");
+
+                entity.Property(e => e.Name).HasMaxLength(50);
 
                 entity.HasOne(d => d.MediumType)
                     .WithMany(p => p.FrequentlyUsedMedia)
@@ -376,7 +379,11 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("Function");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Icon).HasMaxLength(50);
+
+                entity.Property(e => e.Name).HasMaxLength(50);
+
+                entity.Property(e => e.Route).HasMaxLength(50);
 
                 entity.HasOne(d => d.FunctionType)
                     .WithMany(p => p.Functions)
@@ -391,7 +398,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("FunctionType");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Gender>(entity =>
@@ -400,7 +407,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("Gender");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<GermCellOperation>(entity =>
@@ -409,7 +416,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("GermCellOperation");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<GermCellSituation>(entity =>
@@ -418,7 +425,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("GermCellSituation");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<GermCellSource>(entity =>
@@ -427,7 +434,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("GermCellSource");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<IdentityServer>(entity =>
@@ -436,7 +443,11 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("IdentityServer");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.ClientId).HasMaxLength(50);
+
+                entity.Property(e => e.ClientSecret).HasMaxLength(50);
+
+                entity.Property(e => e.Scope).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Incubator>(entity =>
@@ -445,23 +456,21 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("Incubator");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<JobTitle>(entity =>
             {
-                entity.HasKey(e => e.SqlId)
-                    .HasName("PK_Identity");
+                entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("JobTitle");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<MediumInUse>(entity =>
             {
                 entity.HasKey(e => e.MediumInUseId)
-                    .HasName("PK_Medium")
                     .IsClustered(false);
 
                 entity.ToTable("MediumInUse");
@@ -471,9 +480,13 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.MediumInUseId).HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.ExpirationDate).HasColumnType("date");
+                entity.Property(e => e.ExpirationDate).HasColumnType("datetime");
 
-                entity.Property(e => e.OpenDate).HasColumnType("date");
+                entity.Property(e => e.LotNumber).HasMaxLength(50);
+
+                entity.Property(e => e.Name).HasMaxLength(50);
+
+                entity.Property(e => e.OpenDate).HasColumnType("datetime");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
@@ -489,7 +502,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("MediumType");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<ObservationNote>(entity =>
@@ -506,9 +519,9 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.BlastocystScoreExpansionId).HasColumnName("BlastocystScore_Expansion_Id");
 
-                entity.Property(e => e.BlastocystScoreIceId).HasColumnName("BlastocystScore_ICE_Id");
+                entity.Property(e => e.BlastocystScoreIceId).HasColumnName("BlastocystScore_Ice_Id");
 
-                entity.Property(e => e.BlastocystScoreTeId).HasColumnName("BlastocystScore_TE_Id");
+                entity.Property(e => e.BlastocystScoreTeId).HasColumnName("BlastocystScore_Te_Id");
 
                 entity.Property(e => e.BlastomereScoreCId).HasColumnName("BlastomereScore_C_Id");
 
@@ -516,49 +529,41 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.BlastomereScoreGId).HasColumnName("BlastomereScore_G_Id");
 
-                entity.Property(e => e.Kidscore)
-                    .HasColumnType("decimal(18, 1)")
-                    .HasColumnName("KIDScore");
+                entity.Property(e => e.KidScore).HasColumnType("decimal(18, 0)");
 
                 entity.Property(e => e.ObservationTime).HasColumnType("datetime");
-
-                entity.Property(e => e.Pgtanumber).HasColumnName("PGTANumber");
-
-                entity.Property(e => e.Pgtaresult).HasColumnName("PGTAResult");
-
-                entity.Property(e => e.Pgtmresult).HasColumnName("PGTMResult");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.BlastocystScoreExpansion)
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.BlastocystScoreExpansionId)
-                    .HasConstraintName("FK_ObservationNote_BlastocystScore_Expantion");
+                    .HasConstraintName("FK_ObservationNote_BlastocystScoreExpansion");
 
                 entity.HasOne(d => d.BlastocystScoreIce)
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.BlastocystScoreIceId)
-                    .HasConstraintName("FK_ObservationNote_BlastocystScore_ICE");
+                    .HasConstraintName("FK_ObservationNote_BlastocystScoreICE");
 
                 entity.HasOne(d => d.BlastocystScoreTe)
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.BlastocystScoreTeId)
-                    .HasConstraintName("FK_ObservationNote_BlastocystScore_TE");
+                    .HasConstraintName("FK_ObservationNote_BlastocystScoreTE");
 
                 entity.HasOne(d => d.BlastomereScoreC)
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.BlastomereScoreCId)
-                    .HasConstraintName("FK_ObservationNote_BlastomereScore_C");
+                    .HasConstraintName("FK_ObservationNote_BlastomereScoreC");
 
                 entity.HasOne(d => d.BlastomereScoreF)
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.BlastomereScoreFId)
-                    .HasConstraintName("FK_ObservationNote_BlastomereScore_F");
+                    .HasConstraintName("FK_ObservationNote_BlastomereScoreF");
 
                 entity.HasOne(d => d.BlastomereScoreG)
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.BlastomereScoreGId)
-                    .HasConstraintName("FK_ObservationNote_BlastomereScore_G");
+                    .HasConstraintName("FK_ObservationNote_BlastomereScoreG");
 
                 entity.HasOne(d => d.EmbryologistNavigation)
                     .WithMany(p => p.ObservationNotes)
@@ -569,7 +574,7 @@ namespace ReproductiveLabDB.Models
                 entity.HasOne(d => d.FertilizationResult)
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.FertilizationResultId)
-                    .HasConstraintName("FK_ObservationNote_FertilisationResult");
+                    .HasConstraintName("FK_ObservationNote_FertilizationResult");
 
                 entity.HasOne(d => d.ObservationType)
                     .WithMany(p => p.ObservationNotes)
@@ -580,7 +585,7 @@ namespace ReproductiveLabDB.Models
                     .WithMany(p => p.ObservationNotes)
                     .HasForeignKey(d => d.OvumDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ObservationNote_OvumPickupDetail");
+                    .HasConstraintName("FK_ObservationNote_OvumDetail");
 
                 entity.HasOne(d => d.OvumMaturation)
                     .WithMany(p => p.ObservationNotes)
@@ -625,7 +630,11 @@ namespace ReproductiveLabDB.Models
                 entity.HasIndex(e => e.SqlId, "IX_ObservationNoteOperation")
                     .IsClustered();
 
-                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.Id)
+                    .HasMaxLength(50)
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SpindleResult).HasMaxLength(4000);
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
@@ -681,6 +690,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.ObservationNotePhotoId).HasDefaultValueSql("(newid())");
 
+                entity.Property(e => e.PhotoName).HasMaxLength(50);
+
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
                 entity.HasOne(d => d.ObservationNote)
@@ -696,7 +707,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("ObservationType");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<OperationType>(entity =>
@@ -705,7 +716,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("OperationType");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<OvumAbnormality>(entity =>
@@ -714,18 +725,17 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("OvumAbnormality");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<OvumDetail>(entity =>
             {
                 entity.HasKey(e => e.OvumDetailId)
-                    .HasName("PK_OvumPickupDetail")
                     .IsClustered(false);
 
                 entity.ToTable("OvumDetail");
 
-                entity.HasIndex(e => e.SqlId, "IX_OvumPickupDetail")
+                entity.HasIndex(e => e.SqlId, "IX_OvumDetail")
                     .IsClustered();
 
                 entity.Property(e => e.OvumDetailId).HasDefaultValueSql("(newid())");
@@ -741,18 +751,18 @@ namespace ReproductiveLabDB.Models
                 entity.HasOne(d => d.Fertilization)
                     .WithMany(p => p.OvumDetails)
                     .HasForeignKey(d => d.FertilizationId)
-                    .HasConstraintName("FK_OvumPickupDetail_Fertilisation");
+                    .HasConstraintName("FK_OvumDetail_Fertilization");
 
                 entity.HasOne(d => d.OvumDetailStatus)
                     .WithMany(p => p.OvumDetails)
                     .HasForeignKey(d => d.OvumDetailStatusId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumPickupDetail_OvumPickupDetailStatus");
+                    .HasConstraintName("FK_OvumDetail_OvumDetailStatus");
 
                 entity.HasOne(d => d.OvumFreeze)
                     .WithMany(p => p.OvumDetails)
                     .HasForeignKey(d => d.OvumFreezeId)
-                    .HasConstraintName("FK_OvumPickupDetail_OvumFreeze");
+                    .HasConstraintName("FK_OvumDetail_OvumFreeze");
 
                 entity.HasOne(d => d.OvumFromCourseOfTreatment)
                     .WithMany(p => p.OvumDetailOvumFromCourseOfTreatments)
@@ -763,12 +773,12 @@ namespace ReproductiveLabDB.Models
                 entity.HasOne(d => d.OvumPickup)
                     .WithMany(p => p.OvumDetails)
                     .HasForeignKey(d => d.OvumPickupId)
-                    .HasConstraintName("FK_OvumPickupDetail_OvumPickup");
+                    .HasConstraintName("FK_OvumDetail_OvumPickup");
 
                 entity.HasOne(d => d.OvumThaw)
                     .WithMany(p => p.OvumDetails)
                     .HasForeignKey(d => d.OvumThawId)
-                    .HasConstraintName("FK_OvumPickupDetail_OvumThaw");
+                    .HasConstraintName("FK_OvumDetail_OvumThaw");
 
                 entity.HasOne(d => d.TransferIn)
                     .WithMany(p => p.OvumDetails)
@@ -778,12 +788,11 @@ namespace ReproductiveLabDB.Models
 
             modelBuilder.Entity<OvumDetailStatus>(entity =>
             {
-                entity.HasKey(e => e.SqlId)
-                    .HasName("PK_OvumPickupDetailStatus");
+                entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("OvumDetailStatus");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<OvumFreeze>(entity =>
@@ -800,11 +809,9 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.FreezeTime).HasColumnType("datetime");
 
-                entity.Property(e => e.OvumMorphologyA).HasColumnName("OvumMorphology_A");
+                entity.Property(e => e.Memo).HasMaxLength(4000);
 
-                entity.Property(e => e.OvumMorphologyB).HasColumnName("OvumMorphology_B");
-
-                entity.Property(e => e.OvumMorphologyC).HasColumnName("OvumMorphology_C");
+                entity.Property(e => e.OtherMediumName).HasMaxLength(50);
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
@@ -839,7 +846,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("OvumMaturation");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<OvumPickup>(entity =>
@@ -853,16 +860,6 @@ namespace ReproductiveLabDB.Models
                     .IsClustered();
 
                 entity.Property(e => e.OvumPickupId).HasDefaultValueSql("(newid())");
-
-                entity.Property(e => e.CocGrade1).HasColumnName("COC_Grade1");
-
-                entity.Property(e => e.CocGrade2).HasColumnName("COC_Grade2");
-
-                entity.Property(e => e.CocGrade3).HasColumnName("COC_Grade3");
-
-                entity.Property(e => e.CocGrade4).HasColumnName("COC_Grade4");
-
-                entity.Property(e => e.CocGrade5).HasColumnName("COC_Grade5");
 
                 entity.Property(e => e.EndTime).HasColumnType("datetime");
 
@@ -879,6 +876,22 @@ namespace ReproductiveLabDB.Models
                     .HasForeignKey(d => d.Embryologist)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OvumPickup_Employee");
+
+                entity.HasOne(d => d.MediumInUseId1Navigation)
+                    .WithMany(p => p.OvumPickupMediumInUseId1Navigations)
+                    .HasForeignKey(d => d.MediumInUseId1)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OvumPickup_MediumInUse");
+
+                entity.HasOne(d => d.MediumInUseId2Navigation)
+                    .WithMany(p => p.OvumPickupMediumInUseId2Navigations)
+                    .HasForeignKey(d => d.MediumInUseId2)
+                    .HasConstraintName("FK_OvumPickup_MediumInUse1");
+
+                entity.HasOne(d => d.MediumInUseId3Navigation)
+                    .WithMany(p => p.OvumPickupMediumInUseId3Navigations)
+                    .HasForeignKey(d => d.MediumInUseId3)
+                    .HasConstraintName("FK_OvumPickup_MediumInUse2");
             });
 
             modelBuilder.Entity<OvumThaw>(entity =>
@@ -950,13 +963,13 @@ namespace ReproductiveLabDB.Models
                     .WithMany(p => p.OvumThawFreezePairFreezeOvumDetails)
                     .HasForeignKey(d => d.FreezeOvumDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumThawFreezePair_OvumPickupDetail");
+                    .HasConstraintName("FK_OvumThawFreezePair_OvumDetail");
 
                 entity.HasOne(d => d.ThawOvumDetail)
                     .WithMany(p => p.OvumThawFreezePairThawOvumDetails)
                     .HasForeignKey(d => d.ThawOvumDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OvumThawFreezePair_OvumPickupDetail1");
+                    .HasConstraintName("FK_OvumThawFreezePair_OvumDetail1");
             });
 
             modelBuilder.Entity<OvumTransferPair>(entity =>
@@ -1025,7 +1038,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("SpermFreezeOperationMethod");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<SpermFreezeSituation>(entity =>
@@ -1041,6 +1054,8 @@ namespace ReproductiveLabDB.Models
                 entity.Property(e => e.SpermFreezeSituationId).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.FreezeTime).HasColumnType("datetime");
+
+                entity.Property(e => e.OtherFreezeMediumName).HasMaxLength(50);
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
@@ -1085,7 +1100,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("SpermRetrievalMethod");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<SpermScore>(entity =>
@@ -1100,23 +1115,23 @@ namespace ReproductiveLabDB.Models
 
                 entity.Property(e => e.SpermScoreId).HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.ActivityA).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.ActivityA).HasColumnType("decimal(18, 0)");
 
-                entity.Property(e => e.ActivityB).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.ActivityB).HasColumnType("decimal(18, 0)");
 
-                entity.Property(e => e.ActivityC).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.ActivityC).HasColumnType("decimal(18, 0)");
 
-                entity.Property(e => e.ActivityD).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.ActivityD).HasColumnType("decimal(18, 0)");
 
-                entity.Property(e => e.Concentration).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.Concentration).HasColumnType("decimal(18, 0)");
 
-                entity.Property(e => e.Morphology).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.Morphology).HasColumnType("decimal(18, 0)");
 
                 entity.Property(e => e.RecordTime).HasColumnType("datetime");
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
-                entity.Property(e => e.Volume).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.Volume).HasColumnType("decimal(18, 0)");
 
                 entity.HasOne(d => d.CourseOfTreatment)
                     .WithMany(p => p.SpermScores)
@@ -1143,7 +1158,7 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("SpermScoreTimePoint");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.TimePoint).HasMaxLength(50);
             });
 
             modelBuilder.Entity<SpermThaw>(entity =>
@@ -1157,6 +1172,8 @@ namespace ReproductiveLabDB.Models
                     .IsClustered();
 
                 entity.Property(e => e.SpermThawId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.OtherSpermThawMethod).HasMaxLength(50);
 
                 entity.Property(e => e.SqlId).ValueGeneratedOnAdd();
 
@@ -1200,7 +1217,7 @@ namespace ReproductiveLabDB.Models
                     .WithMany(p => p.SpermThaws)
                     .HasForeignKey(d => d.SpermThawMethodId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SpermThaw_SpermThawMethod1");
+                    .HasConstraintName("FK_SpermThaw_SpermThawMethod");
             });
 
             modelBuilder.Entity<SpermThawFreezePair>(entity =>
@@ -1236,43 +1253,46 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("SpermThawMethod");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<StorageCanist>(entity =>
             {
-                entity.HasKey(e => e.SqlId)
-                    .HasName("PK_StorageStrip");
+                entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("StorageCanist");
+
+                entity.Property(e => e.CanistName).HasMaxLength(50);
 
                 entity.HasOne(d => d.StorageTank)
                     .WithMany(p => p.StorageCanists)
                     .HasForeignKey(d => d.StorageTankId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_StorageStrip_StorageTank");
+                    .HasConstraintName("FK_StorageCanist_StorageTank");
             });
 
             modelBuilder.Entity<StorageStripBox>(entity =>
             {
-                entity.HasKey(e => e.SqlId)
-                    .HasName("PK_StorageCaneBox");
+                entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("StorageStripBox");
+
+                entity.Property(e => e.StripBoxName).HasMaxLength(50);
 
                 entity.HasOne(d => d.StorageCanist)
                     .WithMany(p => p.StorageStripBoxes)
                     .HasForeignKey(d => d.StorageCanistId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_StorageCaneBox_StorageShelf");
+                    .HasConstraintName("FK_StorageStripBox_StorageCanist");
             });
 
             modelBuilder.Entity<StorageTank>(entity =>
             {
-                entity.HasKey(e => e.SqlId)
-                    .HasName("PK_Storage");
+                entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("StorageTank");
+
+                entity.Property(e => e.TankName).HasMaxLength(50);
 
                 entity.HasOne(d => d.StorageTankType)
                     .WithMany(p => p.StorageTanks)
@@ -1283,12 +1303,11 @@ namespace ReproductiveLabDB.Models
 
             modelBuilder.Entity<StorageTankType>(entity =>
             {
-                entity.HasKey(e => e.SqlId)
-                    .HasName("PK_StorageType");
+                entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("StorageTankType");
 
-                entity.Property(e => e.SqlId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<StorageUnit>(entity =>
@@ -1297,11 +1316,13 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("StorageUnit");
 
+                entity.Property(e => e.UnitName).HasMaxLength(50);
+
                 entity.HasOne(d => d.StorageStripBox)
                     .WithMany(p => p.StorageUnits)
                     .HasForeignKey(d => d.StorageStripBoxId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_StorageUnit_StorageCaneBox");
+                    .HasConstraintName("FK_StorageUnit_StorageStripBox");
             });
 
             modelBuilder.Entity<TopColor>(entity =>
@@ -1311,6 +1332,8 @@ namespace ReproductiveLabDB.Models
                 entity.ToTable("TopColor");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
+
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TransferIn>(entity =>
@@ -1337,6 +1360,8 @@ namespace ReproductiveLabDB.Models
                 entity.ToTable("TreatmentStatus");
 
                 entity.Property(e => e.SqlId).ValueGeneratedNever();
+
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             OnModelCreatingPartial(modelBuilder);

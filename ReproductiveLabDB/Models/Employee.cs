@@ -28,7 +28,6 @@ namespace ReproductiveLabDB.Models
         public int IdentityServerId { get; set; }
         public bool IsDeleted { get; set; }
 
-        public virtual IdentityServer IdentityServer { get; set; } = null!;
         public virtual JobTitle JobTitle { get; set; } = null!;
         public virtual ICollection<CourseOfTreatment> CourseOfTreatments { get; set; }
         public virtual ICollection<Fertilization> Fertilizations { get; set; }

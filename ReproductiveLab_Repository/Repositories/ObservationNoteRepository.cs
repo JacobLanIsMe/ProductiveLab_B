@@ -82,7 +82,7 @@ namespace ReproductiveLab_Repository.Repositories
         {
             return await _db.BlastomereScoreCs.Select(x => new Common1Dto
             {
-                id = x.SlqId,
+                id = x.SqlId,
                 name = x.Name
             }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
         }
@@ -320,10 +320,10 @@ namespace ReproductiveLab_Repository.Repositories
                 blastocystScore_ICE_Id = x.BlastocystScoreIceId.ToString(),
                 blastocystScore_TE_Id = x.BlastocystScoreTeId.ToString(),
                 memo = x.Memo,
-                kidScore = x.Kidscore.ToString(),
-                pgtaNumber = x.Pgtanumber.ToString(),
-                pgtaResult = x.Pgtaresult,
-                pgtmResult = x.Pgtmresult,
+                kidScore = x.KidScore.ToString(),
+                pgtaNumber = x.PgtaNumber.ToString(),
+                pgtaResult = x.PgtaResult,
+                pgtmResult = x.PgtmResult,
                 operationTypeIds = x.ObservationNoteOperations.Where(y => y.IsDeleted == false).Select(y => y.OperationTypeId).ToList(),
                 spindleResult = x.ObservationNoteOperations.Where(y => y.OperationTypeId == (int)OperationTypeEnum.Spindle && y.SpindleResult != null && y.IsDeleted == false).Select(y => y.SpindleResult).FirstOrDefault(),
                 day = x.Day,
@@ -344,10 +344,10 @@ namespace ReproductiveLab_Repository.Repositories
                 ovumDetailId = x.OvumDetailId,
                 observationTime = x.ObservationTime,
                 memo = x.Memo,
-                kidScore = x.Kidscore.ToString(),
-                pgtaNumber = x.Pgtanumber.ToString(),
-                pgtaResult = x.Pgtaresult,
-                pgtmResult = x.Pgtmresult,
+                kidScore = x.KidScore.ToString(),
+                pgtaNumber = x.PgtaNumber.ToString(),
+                pgtaResult = x.PgtaResult,
+                pgtmResult = x.PgtmResult,
                 day = x.Day,
                 embryologist = x.EmbryologistNavigation.Name,
                 ovumMaturationName = x.OvumMaturation.Name,
@@ -400,9 +400,9 @@ namespace ReproductiveLab_Repository.Repositories
                 day = x.Day,
                 fertilizationResultName = x.FertilizationResult.Name,
                 observationTime = x.ObservationTime,
-                pgtaNumber = x.Pgtanumber.ToString(),
-                pgtaResult = x.Pgtaresult,
-                kidScore = x.Kidscore.ToString(),
+                pgtaNumber = x.PgtaNumber.ToString(),
+                pgtaResult = x.PgtaResult,
+                kidScore = x.KidScore.ToString(),
                 ovumMaturationName = x.OvumMaturation.Name,
                 blastomereScore_C_Name = x.BlastomereScoreC.Name,
                 blastomereScore_G_Name = x.BlastomereScoreG.Name,
@@ -433,19 +433,19 @@ namespace ReproductiveLab_Repository.Repositories
             }
             if (input.pgtaResult != "null")
             {
-                observationNote.Pgtaresult = input.pgtaResult;
+                observationNote.PgtaResult = input.pgtaResult;
             }
             if (input.pgtmResult != "null")
             {
-                observationNote.Pgtmresult = input.pgtmResult;
+                observationNote.PgtmResult = input.pgtmResult;
             }
             if (Int32.TryParse(input.pgtaNumber, out int pgtaNumber))
             {
-                observationNote.Pgtanumber = pgtaNumber;
+                observationNote.PgtaNumber = pgtaNumber;
             }
             else
             {
-                observationNote.Pgtanumber = null;
+                observationNote.PgtaNumber = null;
             }
             if (Int32.TryParse(input.ovumMaturationId, out int ovumMaturationId))
             {
@@ -525,7 +525,7 @@ namespace ReproductiveLab_Repository.Repositories
             {
                 if (kidScore >= 0 && kidScore <= Convert.ToDecimal(9.9))
                 {
-                    observationNote.Kidscore = kidScore;
+                    observationNote.KidScore = kidScore;
                 }
                 else
                 {
@@ -534,7 +534,7 @@ namespace ReproductiveLab_Repository.Repositories
             }
             else
             {
-                observationNote.Kidscore = null;
+                observationNote.KidScore = null;
             }
             return observationNote;
         }

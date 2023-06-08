@@ -27,11 +27,11 @@ namespace ReproductiveLabDB.Models
         public int? BlastocystScoreExpansionId { get; set; }
         public int? BlastocystScoreIceId { get; set; }
         public int? BlastocystScoreTeId { get; set; }
-        public decimal? Kidscore { get; set; }
+        public decimal? KidScore { get; set; }
         public string? Memo { get; set; }
-        public int? Pgtanumber { get; set; }
-        public string? Pgtaresult { get; set; }
-        public string? Pgtmresult { get; set; }
+        public int? PgtaNumber { get; set; }
+        public string? PgtaResult { get; set; }
+        public string? PgtmResult { get; set; }
         public int Day { get; set; }
         public bool IsDeleted { get; set; }
 

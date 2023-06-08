@@ -55,10 +55,10 @@ namespace Reproductive_SharedFunction.Services
                         photoName = z.PhotoName,
                         isMainPhoto = true
                     }).ToList(),
-                    kidScore = y.Kidscore.ToString(),
-                    pgtaNumber = y.Pgtanumber.ToString(),
-                    pgtaResult = y.Pgtaresult,
-                    pgtmResult = y.Pgtmresult
+                    kidScore = y.KidScore.ToString(),
+                    pgtaNumber = y.PgtaNumber.ToString(),
+                    pgtaResult = y.PgtaResult,
+                    pgtmResult = y.PgtmResult
                 }).FirstOrDefault(),
                 freezeStorageInfo = new BaseStorage
                 {

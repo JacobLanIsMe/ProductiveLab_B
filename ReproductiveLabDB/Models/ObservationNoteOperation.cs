@@ -6,7 +6,7 @@ namespace ReproductiveLabDB.Models
     public partial class ObservationNoteOperation
     {
         public int SqlId { get; set; }
-        public Guid Id { get; set; }
+        public byte[] Id { get; set; } = null!;
         public Guid ObservationNoteId { get; set; }
         public int OperationTypeId { get; set; }
         public string? SpindleResult { get; set; }
