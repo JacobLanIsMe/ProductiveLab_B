@@ -8,6 +8,11 @@ namespace ReproductiveLab_Common.Enums
 {
     public enum ObservationTypeEnum
     {
-        freezeObservation = 4
+        eggPeelingObservation = 1,
+        fertilizationObservation = 2,
+        observation = 3,
+        freezeObservation = 4,
+        thawObservation = 5,
+        implantObservation = 6
     }
 }
