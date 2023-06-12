@@ -18,23 +18,13 @@ namespace ReproductiveLab_Service.Services
         {
             _employeeRepository = employeeRepository;
         }
-        public async Task<List<EmployeeDto>> GetAllEmbryologist()
+        public List<Common2Dto> GetAllEmbryologist()
         {
-            var embryologists = await _employeeRepository.GetEmployeesByJobTitleId(JobTitleEnum.embryologist);
-            return ConvertEmployeeToEmployeeDto(embryologists);
+            return _employeeRepository.GetEmployeesByJobTitleId(JobTitleEnum.embryologist);
         }
-        public async Task<List<EmployeeDto>> GetAllDoctor()
+        public List<Common2Dto> GetAllDoctor()
         {
-            var doctors = await _employeeRepository.GetEmployeesByJobTitleId(JobTitleEnum.doctor);
-            return ConvertEmployeeToEmployeeDto(doctors);
-        }
-        private List<EmployeeDto> ConvertEmployeeToEmployeeDto(List<Employee> employees)
-        {
-            return employees.Select(x => new EmployeeDto
-            {
-                employeeId = x.EmployeeId,
-                name = x.Name
-            }).ToList();
+            return _employeeRepository.GetEmployeesByJobTitleId(JobTitleEnum.doctor);
         }
     }
 }

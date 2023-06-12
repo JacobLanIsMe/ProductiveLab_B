@@ -15,9 +15,9 @@ namespace ReproductiveLab_Service.Interfaces
         List<Common1Dto> GetObservationType();
         List<Common1Dto> GetOvumAbnormality();
         List<Common1Dto> GetFertilizationResult();
-        Task<BlastomereScoreDto> GetBlastomereScore();
+        BlastomereScoreDto GetBlastomereScore();
         List<Common1Dto> GetEmbryoStatus();
-        Task<BlastocystScoreDto> GetBlastocystScore();
+        BlastocystScoreDto GetBlastocystScore();
         List<Common1Dto> GetOperationType();
         BaseResponseDto AddObservationNote(AddObservationNoteDto input);
         GetObservationNoteDto? GetExistingObservationNote(Guid observationNoteId);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForTreatment;
+using ReproductiveLab_Common.Enums;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLabDB.Models;
 using System;
@@ -57,7 +58,7 @@ namespace ReproductiveLab_Repository.Repositories
                 Doctor = input.doctorId,
                 CustomerId = input.customerId,
                 SurgicalTime = input.surgicalTime,
-                TreatmentStatusId = 1,
+                TreatmentStatusId = (int)TreatmentStatusEnum.inTreatment,
                 Memo = input.memo,
             };
             if (int.TryParse(input.ovumSituationId, out int ovumSituationId))

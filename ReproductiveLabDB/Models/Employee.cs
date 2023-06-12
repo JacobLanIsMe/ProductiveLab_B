@@ -25,7 +25,7 @@ namespace ReproductiveLabDB.Models
         public string Name { get; set; } = null!;
         public int JobTitleId { get; set; }
         public int GenderId { get; set; }
-        public int IdentityServerId { get; set; }
+        public int? IdentityServerId { get; set; }
         public bool IsDeleted { get; set; }
 
         public virtual JobTitle JobTitle { get; set; } = null!;

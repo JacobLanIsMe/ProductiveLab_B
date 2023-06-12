@@ -1,4 +1,5 @@
-﻿using ReproductiveLab_Common.Enums;
+﻿using ReproductiveLab_Common.Dtos;
+using ReproductiveLab_Common.Enums;
 using ReproductiveLabDB.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,6 @@ namespace ReproductiveLab_Repository.Interfaces
 {
     public interface IEmployeeRepository
     {
-        Task<List<Employee>> GetEmployeesByJobTitleId(JobTitleEnum jobTitle);
+        List<Common2Dto> GetEmployeesByJobTitleId(JobTitleEnum jobTitle);
     }
 }

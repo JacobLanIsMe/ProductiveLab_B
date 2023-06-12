@@ -93,6 +93,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("BlastocystScore_Expansion");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -102,6 +104,8 @@ namespace ReproductiveLabDB.Models
                     .HasName("PK_BlastocystScoreICE");
 
                 entity.ToTable("BlastocystScore_ICE");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
@@ -113,6 +117,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("BlastocystScore_TE");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -122,6 +128,8 @@ namespace ReproductiveLabDB.Models
                     .HasName("PK_BlastomereScoreC");
 
                 entity.ToTable("BlastomereScore_C");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
@@ -133,6 +141,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("BlastomereScore_F");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -142,6 +152,8 @@ namespace ReproductiveLabDB.Models
                     .HasName("PK_BlastomereScoreG");
 
                 entity.ToTable("BlastomereScore_G");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
@@ -262,6 +274,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("EmbryoStatus");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -356,6 +370,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("FertilizationResult");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -378,6 +394,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("Function");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Icon).HasMaxLength(50);
 
@@ -407,6 +425,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("Gender");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -415,6 +435,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("GermCellOperation");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
@@ -425,6 +447,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("GermCellSituation");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -433,6 +457,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("GermCellSource");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
@@ -456,6 +482,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("Incubator");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -464,6 +492,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("JobTitle");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
@@ -501,6 +531,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("MediumType");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
@@ -707,6 +739,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("ObservationType");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -716,6 +750,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("OperationType");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -724,6 +760,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("OvumAbnormality");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
@@ -792,6 +830,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("OvumDetailStatus");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -845,6 +885,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("OvumMaturation");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
@@ -1099,6 +1141,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("SpermRetrievalMethod");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });

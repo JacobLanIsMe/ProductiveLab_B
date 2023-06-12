@@ -41,9 +41,9 @@ namespace prjProductiveLab_B.Controllers
             return _observationNoteService.GetFertilizationResult();
         }
         [HttpGet("GetBlastomereScore")]
-        public async Task<BlastomereScoreDto> GetBlastomereScore()
+        public BlastomereScoreDto GetBlastomereScore()
         {
-            return await _observationNoteService.GetBlastomereScore();
+            return _observationNoteService.GetBlastomereScore();
         }
         [HttpGet("GetEmbryoStatus")]
         public List<Common1Dto> GetEmbryoStatus()
@@ -51,9 +51,9 @@ namespace prjProductiveLab_B.Controllers
             return _observationNoteService.GetEmbryoStatus();
         }
         [HttpGet("GetBlastocystScore")]
-        public async Task<BlastocystScoreDto> GetBlastocystScore()
+        public BlastocystScoreDto GetBlastocystScore()
         {
-            return await _observationNoteService.GetBlastocystScore();
+            return _observationNoteService.GetBlastocystScore();
         }
         [HttpGet("GetOperationType")]
         public List<Common1Dto> GetOperationType()

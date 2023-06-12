@@ -14,14 +14,14 @@ namespace prjProductiveLab_B.Controllers
             _employeeService = employeeService;
         }
         [HttpGet("GetAllEmbryologist")]
-        public async Task<List<EmployeeDto>> GetAllEmbryologist()
+        public List<Common2Dto> GetAllEmbryologist()
         {
-            return await _employeeService.GetAllEmbryologist();
+            return _employeeService.GetAllEmbryologist();
         }
         [HttpGet("GetAllDoctor")]
-        public async Task<List<EmployeeDto>> GetAllDoctor()
+        public List<Common2Dto> GetAllDoctor()
         {
-            return await _employeeService.GetAllDoctor();
+            return _employeeService.GetAllDoctor();
         }
     }
 }

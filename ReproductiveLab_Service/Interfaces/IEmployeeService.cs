@@ -10,7 +10,7 @@ namespace ReproductiveLab_Service.Interfaces
 {
     public interface IEmployeeService
     {
-        Task<List<EmployeeDto>> GetAllEmbryologist();
-        Task<List<EmployeeDto>> GetAllDoctor();
+        List<Common2Dto> GetAllEmbryologist();
+        List<Common2Dto> GetAllDoctor();
     }
 }

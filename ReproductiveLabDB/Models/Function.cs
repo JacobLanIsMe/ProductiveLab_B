@@ -7,7 +7,7 @@ namespace ReproductiveLabDB.Models
     {
         public int SqlId { get; set; }
         public string Name { get; set; } = null!;
-        public string Route { get; set; } = null!;
+        public string? Route { get; set; }
         public int FunctionTypeId { get; set; }
         public string? Icon { get; set; }
         public int ParentFunctionId { get; set; }

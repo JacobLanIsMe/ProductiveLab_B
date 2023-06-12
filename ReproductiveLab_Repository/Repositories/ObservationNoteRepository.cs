@@ -78,29 +78,32 @@ namespace ReproductiveLab_Repository.Repositories
                 name = x.Name
             }).OrderBy(x => x.id).AsNoTracking().ToList();
         }
-        public async Task<List<Common1Dto>> GetBlastomereScoreC()
+        public List<Common1Dto> GetBlastomereScoreC()
         {
-            return await _db.BlastomereScoreCs.Select(x => new Common1Dto
+            var result = _db.BlastomereScoreCs.Select(x => new Common1Dto
             {
                 id = x.SqlId,
                 name = x.Name
-            }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
+            }).OrderBy(x => x.id).AsNoTracking().ToList();
+            return result;
         }
-        public async Task<List<Common1Dto>> GetBlastomereScoreG()
+        public List<Common1Dto> GetBlastomereScoreG()
         {
-            return await _db.BlastomereScoreGs.Select(x => new Common1Dto
+            var result = _db.BlastomereScoreGs.Select(x => new Common1Dto
             {
                 id = x.SqlId,
                 name = x.Name
-            }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
+            }).OrderBy(x => x.id).AsNoTracking().ToList();
+            return result;
         }
-        public async Task<List<Common1Dto>> GetBlastomereScoreF()
+        public List<Common1Dto> GetBlastomereScoreF()
         {
-            return await _db.BlastomereScoreFs.Select(x => new Common1Dto
+            var result = _db.BlastomereScoreFs.Select(x => new Common1Dto
             {
                 id = x.SqlId,
                 name = x.Name
-            }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
+            }).OrderBy(x => x.id).AsNoTracking().ToList();
+            return result;
         }
         public List<Common1Dto> GetEmbryoStatus()
         {
@@ -110,29 +113,29 @@ namespace ReproductiveLab_Repository.Repositories
                 name = x.Name,
             }).OrderBy(x => x.id).AsNoTracking().ToList();
         }
-        public async Task<List<Common1Dto>> GetBlastocystScoreExpansion()
+        public List<Common1Dto> GetBlastocystScoreExpansion()
         {
-            return await _db.BlastocystScoreExpansions.Select(x => new Common1Dto
+            return _db.BlastocystScoreExpansions.Select(x => new Common1Dto
             {
                 id = x.SqlId,
                 name = x.Name
-            }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
+            }).OrderBy(x => x.id).AsNoTracking().ToList();
         }
-        public async Task<List<Common1Dto>> GetBlastocystScoreIce()
+        public List<Common1Dto> GetBlastocystScoreIce()
         {
-            return await _db.BlastocystScoreIces.Select(x => new Common1Dto
+            return _db.BlastocystScoreIces.Select(x => new Common1Dto
             {
                 id = x.SqlId,
                 name = x.Name
-            }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
+            }).OrderBy(x => x.id).AsNoTracking().ToList();
         }
-        public async Task<List<Common1Dto>> GetBlastocystScoreTe()
+        public List<Common1Dto> GetBlastocystScoreTe()
         {
-            return await _db.BlastocystScoreTes.Select(x => new Common1Dto
+            return _db.BlastocystScoreTes.Select(x => new Common1Dto
             {
                 id = x.SqlId,
                 name = x.Name
-            }).OrderBy(x => x.id).AsNoTracking().ToListAsync();
+            }).OrderBy(x => x.id).AsNoTracking().ToList();
         }
         public List<Common1Dto> GetOperationType()
         {

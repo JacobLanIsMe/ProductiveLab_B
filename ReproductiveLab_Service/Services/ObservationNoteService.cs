@@ -66,16 +66,16 @@ namespace ReproductiveLab_Service.Services
         {
             return _observationNoteRepository.GetFertilizationResult();
         }
-        public async Task<BlastomereScoreDto> GetBlastomereScore()
+        public BlastomereScoreDto GetBlastomereScore()
         {
             var blastomereScore_C = _observationNoteRepository.GetBlastomereScoreC();
             var blastomereScore_G = _observationNoteRepository.GetBlastomereScoreG();
             var blastomereScore_F = _observationNoteRepository.GetBlastomereScoreF();
             BlastomereScoreDto result = new BlastomereScoreDto
             {
-                blastomereScore_C = await blastomereScore_C,
-                blastomereScore_G = await blastomereScore_G,
-                blastomereScore_F = await blastomereScore_F,
+                blastomereScore_C = blastomereScore_C,
+                blastomereScore_G = blastomereScore_G,
+                blastomereScore_F = blastomereScore_F,
             };
             return result;
         }
@@ -83,16 +83,16 @@ namespace ReproductiveLab_Service.Services
         {
             return _observationNoteRepository.GetEmbryoStatus();
         }
-        public async Task<BlastocystScoreDto> GetBlastocystScore()
+        public BlastocystScoreDto GetBlastocystScore()
         {
             var blastocystScore_Expansion = _observationNoteRepository.GetBlastocystScoreExpansion();
             var blastocystScore_ICE = _observationNoteRepository.GetBlastocystScoreIce();
             var blastocystScore_TE = _observationNoteRepository.GetBlastocystScoreTe();
             BlastocystScoreDto result = new BlastocystScoreDto
             {
-                blastocystScore_Expansion = await blastocystScore_Expansion,
-                blastocystScore_ICE = await blastocystScore_ICE,
-                blastocystScore_TE = await blastocystScore_TE
+                blastocystScore_Expansion = blastocystScore_Expansion,
+                blastocystScore_ICE = blastocystScore_ICE,
+                blastocystScore_TE = blastocystScore_TE
             };
             return result;
         }
