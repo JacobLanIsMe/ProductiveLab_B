@@ -2,6 +2,7 @@
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForMedium;
 using ReproductiveLab_Service.Interfaces;
+using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,7 +24,7 @@ namespace prjProductiveLab_B.Controllers
             return _mediumService.AddMediumInUse(medium);            
         }
         [HttpGet("GetInUseMediums")]
-        public List<InUseMediumDto> GetInUseMediums()
+        public List<MediumDto> GetInUseMediums()
         {
             return _mediumService.GetInUseMediums();
         }
@@ -36,6 +37,11 @@ namespace prjProductiveLab_B.Controllers
         public List<FrequentlyUsedMediumDto> GetFrequentlyUsedMediums()
         {
             return _mediumService.GetFrequentlyUsedMediums();
+        }
+        [HttpPost("GetInUseMediumByIds")]
+        public List<MediumDto> GetInUseMediumByIds(List<Guid> mediumInUseIds) 
+        {
+            return _mediumService.GetInUseMediumByIds(mediumInUseIds);
         }
     }
 }

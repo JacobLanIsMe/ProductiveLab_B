@@ -17,6 +17,7 @@ namespace ReproductiveLab_Common.Dtos.ForTreatment
         public int dateOfEmbryo { get; set; }
         public int ovumNumber { get; set; }
         public DateTime? fertilizationTime { get; set; }
+        public DateTime? freezeTime { get; set; }
         public string? fertilizationMethod { get; set; }
         public GetObservationNoteNameDto? observationNote { get; set; }
         public string? ovumSource { get; set; }

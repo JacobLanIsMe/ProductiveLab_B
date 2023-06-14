@@ -70,18 +70,11 @@ namespace ReproductiveLab_Repository.Repositories
                 throw;
             }
         }
-        public List<InUseMediumDto> GetInUseMediums()
+        public List<MediumDto> GetInUseMediums()
         {
-            return _db.MediumInUses.Where(x => x.IsDeleted == false && x.ExpirationDate >= DateTime.Now).Select(x => new InUseMediumDto
-            {
-                mediumInUseId = x.MediumInUseId.ToString(),
-                name = x.Name,
-                openDate = x.OpenDate,
-                expirationDate = x.ExpirationDate,
-                lotNumber = x.LotNumber,
-                isDeleted = x.IsDeleted,
-                mediumTypeId = x.MediumTypeId,
-            }).OrderBy(x => x.mediumTypeId).ThenBy(x => x.name).AsNoTracking().ToList();
+            var q = _db.MediumInUses.Where(x => x.IsDeleted == false && x.ExpirationDate >= DateTime.Now);
+            var result = ConvertMediumInUseToMediumDto(q).OrderBy(x => x.mediumTypeId).ThenBy(x => x.name).ToList();
+            return result;
         }
         public List<Common1Dto> GetMediumTypes()
         {
@@ -114,6 +107,26 @@ namespace ReproductiveLab_Repository.Repositories
             {
                 mediumTable.GetType().GetProperty("MediumInUseId3").SetValue(mediumTable, inputMediums[2]);
             }
+        }
+        public List<MediumDto> GetInUseMediumByIds(List<Guid> mediumInUseIds)
+        {
+            var q = _db.MediumInUses.Where(x => mediumInUseIds.Contains(x.MediumInUseId));
+            var result = ConvertMediumInUseToMediumDto(q);
+            return result;
+        }
+        private List<MediumDto> ConvertMediumInUseToMediumDto(IQueryable<MediumInUse> mediumInUses)
+        {
+            var result = mediumInUses.Select(x => new MediumDto
+            {
+                mediumInUseId = x.MediumInUseId,
+                name = x.Name,
+                openDate = x.OpenDate,
+                expirationDate = x.ExpirationDate,
+                lotNumber = x.LotNumber,
+                isDeleted = x.IsDeleted,
+                mediumTypeId = x.MediumTypeId
+            }).AsNoTracking().ToList();
+            return result;
         }
     }
 }

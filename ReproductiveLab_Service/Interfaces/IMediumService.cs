@@ -11,8 +11,9 @@ namespace ReproductiveLab_Service.Interfaces
     public interface IMediumService
     {
         BaseResponseDto AddMediumInUse(AddMediumInUseDto medium);
-        List<InUseMediumDto> GetInUseMediums();
+        List<MediumDto> GetInUseMediums();
         List<Common1Dto> GetMediumTypes();
         List<FrequentlyUsedMediumDto> GetFrequentlyUsedMediums();
+        List<MediumDto> GetInUseMediumByIds(List<Guid> mediumInUseIds);
     }
 }

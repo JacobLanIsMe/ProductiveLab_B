@@ -112,7 +112,8 @@ namespace ReproductiveLab_Service.Services
                     observationNote = observationNotes.FirstOrDefault(x => x.ovumDetailId == i.ovumDetailId),
                     ovumFromCourseOfTreatmentSqlId = i.ovumFromCourseOfTreatmentSqlId,
                     ovumSource = i.ovumSource,
-                    freezeStorageInfo = i.freezeStorageInfo
+                    freezeStorageInfo = i.freezeStorageInfo,
+                    freezeTime = i.freezeTime,
                 };
                 if (i.hasFreeze)
                 {

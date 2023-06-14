@@ -19,9 +19,15 @@ namespace ReproductiveLab_Repository.Repositories
         {
             _db = db;
         }
-        public Guid? GetCustomerIdByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        public Guid? GetMaleCustomerIdByCourseOfTreatmentId(Guid courseOfTreatmentId)
         {
-            return _db.CourseOfTreatments.Where(x=>x.CourseOfTreatmentId == courseOfTreatmentId).Select(x=> x.SpermOperationId == (int)GermCellOperationEnum.freeze ? x.CustomerId : x.Customer.Spouse).FirstOrDefault();
+            var result = _db.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => x.SpermOperationId == (int)GermCellOperationEnum.freeze ? x.CustomerId : x.Customer.Spouse).FirstOrDefault();
+            return result;
+        }
+        public Guid GetCustomerIdByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        {
+            var result = _db.CourseOfTreatments.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => x.CustomerId).FirstOrDefault();
+            return result;
         }
         public void AddCustomer(CustomerModel input)
         {

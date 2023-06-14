@@ -49,6 +49,9 @@ namespace Reproductive_SharedFunction.Services
                     blastocystScore_Expansion_Name = y.BlastocystScoreExpansion.Name,
                     blastocystScore_TE_Name = y.BlastocystScoreTe.Name,
                     blastocystScore_ICE_Name = y.BlastocystScoreIce.Name,
+                    ovumAbnormalityName = y.ObservationNoteOvumAbnormalities.Where(z=>!z.IsDeleted).Select(z=>z.OvumAbnormality.Name).ToList(),
+                    embryoStatusName = y.ObservationNoteEmbryoStatuses.Where(z=>!z.IsDeleted).Select(z=>z.EmbryoStatus.Name).ToList(),
+                    operationTypeName = y.ObservationNoteOperations.Where(z=>!z.IsDeleted).Select(z=>z.OperationType.Name).ToList(),    
                     observationNotePhotos = y.ObservationNotePhotos.Where(z => z.IsMainPhoto == true && z.IsDeleted == false).Select(z => new ObservationNotePhotoDto
                     {
                         observationNotePhotoId = z.ObservationNotePhotoId,

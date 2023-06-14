@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ReproductiveLab_Common.Dtos.ForMedium
 {
-    public class InUseMediumDto
+    public class MediumDto
     {
-        public string? mediumInUseId { get; set; }
+        public Guid? mediumInUseId { get; set; }
         public string? name { get; set; }
         public DateTime? openDate { get; set; }
         public DateTime? expirationDate { get; set; }

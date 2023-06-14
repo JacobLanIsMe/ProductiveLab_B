@@ -13,8 +13,9 @@ namespace ReproductiveLab_Common.Models
         public int courseOfTreatmentSqlId { get; set; }
         public string ovumDetailStatus { get; set; }
         public int ovumNumber { get; set; } 
-        public DateTime fertilizationTime { get; set; }
+        public DateTime? fertilizationTime { get; set; }
         public string? fertilizationMethod { get; set; }
+        public DateTime? freezeTime { get; set; }
         public Guid observationNoteId { get; set; }
         public BaseStorage? freezeStorageInfo { get; set; }
         public string? ovumSource { get; set; }

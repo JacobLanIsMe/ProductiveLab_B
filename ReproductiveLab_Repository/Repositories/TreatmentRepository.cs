@@ -81,8 +81,9 @@ namespace ReproductiveLab_Repository.Repositories
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
                 ovumDetailStatus = x.OvumDetailStatus.Name,
                 ovumNumber = x.OvumNumber,
-                fertilizationTime = x.Fertilization == null ? new DateTime(1753, 1, 1, 0, 0, 0) : x.Fertilization.FertilizationTime,
+                fertilizationTime = x.Fertilization == null ? null : x.Fertilization.FertilizationTime,
                 fertilizationMethod = x.Fertilization == null ? null : x.Fertilization.FertilizationMethod.Name,
+                freezeTime = x.OvumFreeze == null ? null : x.OvumFreeze.FreezeTime,
                 observationNoteId = x.OvumFreezeId == null ? x.ObservationNotes.Where(y => !y.IsDeleted).OrderByDescending(y => y.SqlId).Select(y => y.ObservationNoteId).FirstOrDefault() : x.ObservationNotes.Where(y => !y.IsDeleted && y.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation).Select(y => y.ObservationNoteId).FirstOrDefault(),
                 freezeStorageInfo = x.OvumFreeze == null ? null : new BaseStorage
                 {

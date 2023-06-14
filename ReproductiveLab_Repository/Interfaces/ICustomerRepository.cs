@@ -11,7 +11,8 @@ namespace ReproductiveLab_Repository.Interfaces
 {
     public interface ICustomerRepository
     {
-        Guid? GetCustomerIdByCourseOfTreatmentId(Guid courseOfTreatmentId);
+        Guid? GetMaleCustomerIdByCourseOfTreatmentId(Guid courseOfTreatmentId);
+        Guid GetCustomerIdByCourseOfTreatmentId(Guid courseOfTreatmentId);
         void AddCustomer(CustomerModel input);
         Customer? GetLatestCustomer();
         Customer? GetCustomerById(Guid customerId);

@@ -33,12 +33,8 @@ namespace ReproductiveLab_Service.Services
         }
         public List<GetOvumFreezeSummaryDto> GetOvumFreezeSummary(Guid courseOfTreatmentId)
         {
-            Guid? customerId = _customerRepository.GetCustomerIdByCourseOfTreatmentId(courseOfTreatmentId);
-            if (!customerId.HasValue)
-            {
-                return new List<GetOvumFreezeSummaryDto>();
-            }
-            var customerOvumDetails = _ovumDetailRepository.GetOvumDetailByCustomerId((Guid)customerId);
+            Guid customerId = _customerRepository.GetCustomerIdByCourseOfTreatmentId(courseOfTreatmentId);
+            var customerOvumDetails = _ovumDetailRepository.GetOvumDetailByCustomerId(customerId);
             var customerOvumFreezes = customerOvumDetails.Where(x => x.OvumFreezeId != null && x.OvumThawFreezePairFreezeOvumDetails.Count == 0 && x.OvumTransferPairDonorOvumDetails.Count == 0);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(customerOvumFreezes);
             _photoFunction.ConvertPhotoToBase64String(result);
@@ -46,13 +42,9 @@ namespace ReproductiveLab_Service.Services
         }
         public List<GetOvumFreezeSummaryDto> GetRecipientOvumFreezes(Guid courseOfTreatmentId)
         {
-            Guid? customerId = _customerRepository.GetCustomerIdByCourseOfTreatmentId(courseOfTreatmentId);
-            if (!customerId.HasValue)
-            {
-                return new List<GetOvumFreezeSummaryDto>();
-            }
-            var customerOvumDetail = _ovumDetailRepository.GetOvumDetailByCustomerId((Guid)customerId);
-            var recipientOvumFreezes = customerOvumDetail.Where(x => x.FertilizationId == null && x.OvumFreezeId != null);
+            Guid customerId = _customerRepository.GetCustomerIdByCourseOfTreatmentId(courseOfTreatmentId);
+            var customerOvumDetails = _ovumDetailRepository.GetOvumDetailByCustomerId(customerId);
+            var recipientOvumFreezes = customerOvumDetails.Where(x => x.FertilizationId == null && x.OvumFreezeId != null);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(recipientOvumFreezes);
             _photoFunction.ConvertPhotoToBase64String(result);
             return result;
@@ -70,13 +62,9 @@ namespace ReproductiveLab_Service.Services
         }
         public List<GetOvumFreezeSummaryDto> GetEmbryoFreezes(Guid courseOfTreatmentId)
         {
-            Guid? customerId = _customerRepository.GetCustomerIdByCourseOfTreatmentId(courseOfTreatmentId);
-            if (!customerId.HasValue)
-            {
-                return new List<GetOvumFreezeSummaryDto>();
-            }
-            var customerOvumDetail = _ovumDetailRepository.GetOvumDetailByCustomerId((Guid)customerId);
-            var embryoFreezes = customerOvumDetail.Where(x => x.OvumFreezeId != null && x.FertilizationId != null);
+            Guid customerId = _customerRepository.GetCustomerIdByCourseOfTreatmentId(courseOfTreatmentId);
+            var customerOvumDetails = _ovumDetailRepository.GetOvumDetailByCustomerId(customerId);
+            var embryoFreezes = customerOvumDetails.Where(x => x.OvumFreezeId != null && x.FertilizationId != null);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(embryoFreezes);
             _photoFunction.ConvertPhotoToBase64String(result);
             return result;
@@ -90,12 +78,13 @@ namespace ReproductiveLab_Service.Services
         }
         public List<GetSpermFreezeSummaryDto> GetSpermFreezeSummary(Guid courseOfTreatmentId)
         {
-            var customerId = _customerRepository.GetCustomerIdByCourseOfTreatmentId(courseOfTreatmentId);
+            var customerId = _customerRepository.GetMaleCustomerIdByCourseOfTreatmentId(courseOfTreatmentId);
             if (!customerId.HasValue)
             {
                 return new List<GetSpermFreezeSummaryDto>();
             }
-            return _spermFreezeRepository.GetSpermFreezeSummary((Guid)customerId);
+            var result = _spermFreezeRepository.GetSpermFreezeSummary((Guid)customerId); ;
+            return result;
         }
     }
 }

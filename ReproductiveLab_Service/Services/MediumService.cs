@@ -47,7 +47,7 @@ namespace ReproductiveLab_Service.Services
                 throw new Exception("Lot Number 不能為空");
             }
         }
-        public List<InUseMediumDto> GetInUseMediums()
+        public List<MediumDto> GetInUseMediums()
         {
             return _mediumRepository.GetInUseMediums();
         }
@@ -58,6 +58,10 @@ namespace ReproductiveLab_Service.Services
         public List<FrequentlyUsedMediumDto> GetFrequentlyUsedMediums()
         {
             return _mediumRepository.GetFrequentlyUsedMediums();
+        }
+        public List<MediumDto> GetInUseMediumByIds(List<Guid> mediumInUseIds)
+        {
+            return _mediumRepository.GetInUseMediumByIds(mediumInUseIds);
         }
     }
 }
