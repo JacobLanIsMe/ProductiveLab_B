@@ -56,7 +56,7 @@ namespace ReproductiveLab_Repository.Repositories
                 baseSpermInfo_Fresh = new BaseOperateSpermInfoDto
                 {
                     spermSituationName = x.CourseOfTreatment.SpermSituation == null ? null : x.CourseOfTreatment.SpermSituation.Name,
-                    //spermRetrievalMethodName = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment
+                    spermRetrievalMethodName = x.CourseOfTreatment.SpermRetrievalMethod.Name,
                     spermOwner = new BaseCustomerInfoDto
                     {
                         customerName = x.CourseOfTreatment.Customer.GenderId == (int)GenderEnum.female && x.CourseOfTreatment.Customer.SpouseNavigation != null ? x.CourseOfTreatment.Customer.SpouseNavigation.Name : x.CourseOfTreatment.Customer.Name,
