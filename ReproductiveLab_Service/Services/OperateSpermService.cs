@@ -174,7 +174,10 @@ namespace ReproductiveLab_Service.Services
             }
             return result;
         }
-
+        public bool HasSpermFreezeByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        {
+            return _operateSpermRepository.HasSpermFreezeByCourseOfTreatmentId(courseOfTreatmentId);
+        }
 
 
     }

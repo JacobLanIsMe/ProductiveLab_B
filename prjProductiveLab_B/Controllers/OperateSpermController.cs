@@ -54,5 +54,10 @@ namespace prjProductiveLab_B.Controllers
         {
             return _operateSpermService.AddSpermThaw(input);
         }
+        [HttpGet("HasSpermFreezeByCourseOfTreatmentId")]
+        public bool HasSpermFreezeByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        {
+            return _operateSpermService.HasSpermFreezeByCourseOfTreatmentId(courseOfTreatmentId);
+        }
     }
 }

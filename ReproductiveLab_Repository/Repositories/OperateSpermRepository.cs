@@ -1,16 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForOperateSperm;
 using ReproductiveLab_Common.Enums;
 using ReproductiveLab_Common.Models;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLabDB.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReproductiveLab_Repository.Repositories
 {
@@ -196,7 +190,11 @@ namespace ReproductiveLab_Repository.Repositories
             }
             _db.SaveChanges();
         }
-
+        public bool HasSpermFreezeByCourseOfTreatmentId(Guid courseOfTreatmentId)
+        {
+            bool hasSpermFreezes = _db.SpermFreezes.AsNoTracking().Any(x => x.CourseOfTreatmentId == courseOfTreatmentId);
+            return hasSpermFreezes;
+        }
 
 
 

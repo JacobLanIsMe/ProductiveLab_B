@@ -18,5 +18,6 @@ namespace ReproductiveLab_Service.Interfaces
         List<SpermScoreDto> GetSpermScores(Guid courseOfTreatmentId);
         List<Common1Dto> GetSpermThawMethods();
         BaseResponseDto AddSpermThaw(AddSpermThawDto input);
+        bool HasSpermFreezeByCourseOfTreatmentId(Guid courseOfTreatmentId);
     }
 }

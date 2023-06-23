@@ -25,5 +25,6 @@ namespace ReproductiveLab_Repository.Interfaces
         void AddSpermThaw(AddSpermThawDto input);
         Guid GetLatestSpermThawId();
         void AddSpermThawFreezePair(List<Guid> spermFreezeIds, Guid latestSpermThawId);
+        bool HasSpermFreezeByCourseOfTreatmentId(Guid courseOfTreatmentId);
     }
 }
