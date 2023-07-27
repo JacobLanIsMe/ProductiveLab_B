@@ -8,14 +8,24 @@ using ReproductiveLab_Service.Services;
 using ReproductiveLabDB.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
+builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+{
+    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+    config.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+    if (args != null)
+    {
+        config.AddCommandLine(args);
+    }
+    
+});
+builder.Services.AddDbContext<ReproductiveLabContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<ReproductiveLabContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ReproductiveLabDatabase")));
+
+
+builder.Services.AddDbContext<ReproductiveLabContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IFunctionRepository, FunctionRepository>();
