@@ -81,6 +81,8 @@ if (!app.Environment.IsProduction())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(allowSpecificOrigins);
 app.UseAuthorization();
 
 app.MapControllers();
