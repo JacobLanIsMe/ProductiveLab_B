@@ -18,6 +18,7 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
     }
     
 });
+//var a = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ReproductiveLabContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -60,7 +61,7 @@ builder.Services.AddScoped<IOvumFreezeRepository, OvumFreezeRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
