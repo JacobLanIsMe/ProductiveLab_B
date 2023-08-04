@@ -19,7 +19,6 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
     
 });
 //var a = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ReproductiveLabContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -58,6 +57,20 @@ builder.Services.AddScoped<IPhotoFunction, PhotoFunction>();
 builder.Services.AddScoped<IObservationNoteFunction, ObservationNoteFunction>();
 builder.Services.AddScoped<IOperateSpermFunction, OperateSpermFunction>();
 builder.Services.AddScoped<IOvumFreezeRepository, OvumFreezeRepository>();
+#region CORS
+var allowSpecificOrigins = "allowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: allowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyMethod();
+                          policy.AllowAnyMethod();
+                          policy.AllowAnyOrigin();
+                      });
+});
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
