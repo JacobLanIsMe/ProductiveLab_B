@@ -1,6 +1,12 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Dapper;
+using Imgur.API.Authentication;
+using Imgur.API.Endpoints;
+using Imgur.API.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForObservationNote;
 using ReproductiveLab_Common.Enums;
@@ -8,20 +14,30 @@ using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLabDB.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace ReproductiveLab_Repository.Repositories
 {
     public class ObservationNoteRepository : IObservationNoteRepository
     {
         private readonly ReproductiveLabContext _db;
+        //private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
-        public ObservationNoteRepository(ReproductiveLabContext db, IWebHostEnvironment env)
+        private string? imgurClientId = null;
+        private string? imgurClientSecret = null;
+        private string? dbConnectionString = null;
+        
+        public ObservationNoteRepository(ReproductiveLabContext db, IWebHostEnvironment env, IConfiguration config)
         {
             _db = db;
             _env = env;
+            imgurClientId = config.GetSection("Imgur")["ClientId"];
+            imgurClientSecret = config.GetSection("Imgur")["ClientSecret"];
+            dbConnectionString = config.GetConnectionString("DefaultConnection");
         }
         public IQueryable<ObservationNote> GetObservationNotesByOvumDetailIds(List<Guid> ovumDetailIds)
         {
@@ -206,20 +222,34 @@ namespace ReproductiveLab_Repository.Repositories
             }
             _db.SaveChanges();
         }
-        public void AddObservationNotePhoto(List<IFormFile>? photos, Guid observationNoteId, bool hasAlreadyMainPhotoIndex, int mainPhotoIndex)
+        public async void AddObservationNotePhoto(List<IFormFile>? photos, Guid observationNoteId, bool hasAlreadyMainPhotoIndex, int mainPhotoIndex)
         {
-            for (int i = 0; i < photos.Count; i++)
+            if (string.IsNullOrEmpty(imgurClientId) || string.IsNullOrEmpty(imgurClientSecret))
             {
-                string pName = Guid.NewGuid() + ".png";
-                string path = Path.Combine(_env.ContentRootPath, "uploads", "images", pName);
-                using (FileStream stream = new FileStream(path, FileMode.Create))
-                {
-                    photos[i].CopyTo(stream);
-                }
+                throw new Exception("ImgurClientId or ImgurClientSecret cannot be null");
+            }
+            var apiClient = new ApiClient(imgurClientId, imgurClientSecret);
+            List<HttpClient> httpClients = new List<HttpClient>();
+            List<MemoryStream> memoryStreams = new List<MemoryStream>();
+            foreach (var photo in photos)
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClients.Add(httpClient);
+                MemoryStream stream = new MemoryStream();
+                await photo.CopyToAsync(stream);
+                memoryStreams.Add(stream);
+            }
+            List<ObservationNotePhoto> observationNotePhotos = new List<ObservationNotePhoto>();
+            for (int i = 0; i < memoryStreams.Count; i++)
+            {
+                memoryStreams[i].Seek(0, SeekOrigin.Begin);
+                var imageEndpoint = new ImageEndpoint(apiClient, httpClients[i]);
+                IImage imageUpload = await imageEndpoint.UploadImageAsync(memoryStreams[i]);
+                string imageUrl = imageUpload.Link;
                 ObservationNotePhoto photo = new ObservationNotePhoto
                 {
                     ObservationNoteId = observationNoteId,
-                    PhotoName = pName,
+                    PhotoName = imageUrl,
                     IsDeleted = false
                 };
                 if (hasAlreadyMainPhotoIndex)
@@ -230,9 +260,31 @@ namespace ReproductiveLab_Repository.Repositories
                 {
                     photo.IsMainPhoto = mainPhotoIndex == i ? true : false;
                 }
-                _db.ObservationNotePhotos.Add(photo);
+                observationNotePhotos.Add(photo);
             }
-            _db.SaveChanges();
+            InsertObservationNotePhoto(observationNotePhotos);
+        }
+        private void InsertObservationNotePhoto(List<ObservationNotePhoto> observationNotePhotos)
+        {
+            using (TransactionScope scope = new TransactionScope())
+            {
+                string sqlCommand = @"INSERT INTO [ObservationNotePhoto]
+           ([ObservationNoteId]
+           ,[IsMainPhoto]
+           ,[PhotoName]
+           ,[IsDeleted])
+     VALUES
+           (@ObservationNoteId
+           ,@IsMainPhoto
+           ,@PhotoName
+           ,@IsDeleted)";
+                using (var conn = new SqlConnection(dbConnectionString))
+                {
+                    conn.Execute(sqlCommand, observationNotePhotos);
+                }
+                scope.Complete();
+            }
+
         }
         public ObservationNote? GetObservationNoteById(Guid observationNoteId)
         {

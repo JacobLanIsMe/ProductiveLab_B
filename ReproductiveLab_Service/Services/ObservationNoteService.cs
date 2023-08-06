@@ -109,10 +109,11 @@ namespace ReproductiveLab_Service.Services
                 {
                     _observationNoteRepository.AddObservationNote(input);
                     Guid latestObservationNoteId = _observationNoteRepository.GetLatestObservationNoteId();
+                    _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, latestObservationNoteId, false);
                     _observationNoteFunction.AddObservationNoteEmbryoStatus(latestObservationNoteId, input);
                     _observationNoteFunction.AddObservationNoteOvumAbnormality(latestObservationNoteId, input);
                     _observationNoteFunction.AddObservationNoteOperation(latestObservationNoteId, input);
-                    _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, latestObservationNoteId, false);
+                    
                     scope.Complete();
                 }
                 result.SetSuccess();

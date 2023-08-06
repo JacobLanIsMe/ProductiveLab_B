@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.143" />
+    <PackageReference Include="Imgur.API" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ReproductiveLabDB\ReproductiveLabDB.csproj" />
     <ProjectReference Include="..\ReproductiveLab_Common\ReproductiveLab_Common.csproj" />
   </ItemGroup>
