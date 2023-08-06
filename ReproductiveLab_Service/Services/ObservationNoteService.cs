@@ -34,13 +34,13 @@ namespace ReproductiveLab_Service.Services
             var result = _observationNoteRepository.GetObservationNoteByCourseOfTreatmentId(courseOfTreatmentId);
             foreach (var i in result)
             {
-                foreach (var j in i.observationNote)
-                {
-                    if (j.mainPhoto != null)
-                    {
-                        j.mainPhotoBase64 = _photoFunction.GetBase64String(j.mainPhoto);
-                    }
-                }
+                //foreach (var j in i.observationNote)
+                //{
+                //    if (j.mainPhoto != null)
+                //    {
+                //        j.mainPhotoBase64 = _photoFunction.GetBase64String(j.mainPhoto);
+                //    }
+                //}
                 List<List<Observation>> observationList = new List<List<Observation>>();
                 for (int j = 0; j < 7; j++)
                 {
