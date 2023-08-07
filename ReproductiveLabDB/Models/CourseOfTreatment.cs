@@ -30,6 +30,7 @@ namespace ReproductiveLabDB.Models
         public int? SpermRetrievalMethodId { get; set; }
         public int? EmbryoSituationId { get; set; }
         public int? EmbryoOperationId { get; set; }
+        public bool IsTerminated { get; set; }
 
         public virtual Customer Customer { get; set; } = null!;
         public virtual Employee DoctorNavigation { get; set; } = null!;

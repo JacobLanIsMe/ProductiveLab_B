@@ -1080,6 +1080,8 @@ namespace ReproductiveLabDB.Models
 
                 entity.ToTable("SpermFreezeOperationMethod");
 
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
+
                 entity.Property(e => e.Name).HasMaxLength(50);
             });
 
@@ -1201,6 +1203,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("SpermScoreTimePoint");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.TimePoint).HasMaxLength(50);
             });
@@ -1350,6 +1354,8 @@ namespace ReproductiveLabDB.Models
                 entity.HasKey(e => e.SqlId);
 
                 entity.ToTable("StorageTankType");
+
+                entity.Property(e => e.SqlId).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });

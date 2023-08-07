@@ -61,9 +61,9 @@ namespace prjProductiveLab_B.Controllers
             return _observationNoteService.GetOperationType();
         }
         [HttpPost("AddObservationNote")]
-        public BaseResponseDto AddObservationNote([FromForm] AddObservationNoteDto input)
+        public async Task<BaseResponseDto> AddObservationNote([FromForm] AddObservationNoteDto input)
         {
-            return _observationNoteService.AddObservationNote(input);
+            return await _observationNoteService.AddObservationNote(input);
         }
         [HttpGet("GetExistingObservationNote")]
         public GetObservationNoteDto? GetExistingObservationNote(Guid observationNoteId)
@@ -81,9 +81,9 @@ namespace prjProductiveLab_B.Controllers
             return _observationNoteService.DeleteObservationNote(observationNoteId);
         }
         [HttpPost("UpdateObservationNote")]
-        public BaseResponseDto UpdateObservationNote([FromForm] UpdateObservationNoteDto input)
+        public async Task<BaseResponseDto> UpdateObservationNote([FromForm] UpdateObservationNoteDto input)
         {
-            return _observationNoteService.UpdateObservationNote(input);
+            return await _observationNoteService.UpdateObservationNote(input);
         }
         [HttpPost("GetFreezeObservationNotes")]
         public List<GetObservationNoteNameDto> GetFreezeObservationNotes(List<Guid> ovumDetailIds)

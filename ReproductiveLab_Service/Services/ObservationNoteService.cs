@@ -91,16 +91,16 @@ namespace ReproductiveLab_Service.Services
         {
             return _observationNoteRepository.GetOperationType();
         }
-        public BaseResponseDto AddObservationNote(AddObservationNoteDto input)
+        public async Task<BaseResponseDto> AddObservationNote(AddObservationNoteDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
             try
             {
-                using (TransactionScope scope = new TransactionScope())
+                using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     _observationNoteRepository.AddObservationNote(input);
                     Guid latestObservationNoteId = _observationNoteRepository.GetLatestObservationNoteId();
-                    _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, latestObservationNoteId, false);
+                    await _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, latestObservationNoteId, false);
                     _observationNoteFunction.AddObservationNoteEmbryoStatus(latestObservationNoteId, input);
                     _observationNoteFunction.AddObservationNoteOvumAbnormality(latestObservationNoteId, input);
                     _observationNoteFunction.AddObservationNoteOperation(latestObservationNoteId, input);
@@ -120,7 +120,7 @@ namespace ReproductiveLab_Service.Services
             return result;
         }
 
-        public BaseResponseDto UpdateObservationNote(UpdateObservationNoteDto input)
+        public async Task<BaseResponseDto> UpdateObservationNote(UpdateObservationNoteDto input)
         {
             BaseResponseDto result = new BaseResponseDto();
             var existingObservationNote = _observationNoteRepository.GetObservationNoteById(input.observationNoteId);
@@ -128,7 +128,7 @@ namespace ReproductiveLab_Service.Services
             {
                 try
                 {
-                    using (TransactionScope scope = new TransactionScope())
+                    using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                     {
                         AddObservationNoteDto inputTemp = (AddObservationNoteDto)input;
                         _observationNoteRepository.UpdateObservationNote(existingObservationNote, inputTemp);
@@ -154,17 +154,17 @@ namespace ReproductiveLab_Service.Services
                             }
                             else if (!modifiedPhotos.Any(x => x.IsMainPhoto == true) && input.photos != null)
                             {
-                                _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
+                                await _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
                             }
                             else if (modifiedPhotos.Any(x => x.IsMainPhoto == true) && input.photos != null)
                             {
-                                _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, true);
+                                await _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, true);
                             }
                         }
                         else
                         {
                             _observationNoteRepository.DeleteObservationNotePhoto(existingPhotos);
-                            _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
+                            await _observationNoteFunction.AddObservationNotePhoto(input.photos, input.mainPhotoIndex, input.observationNoteId, false);
                         }
                         scope.Complete();
                     }

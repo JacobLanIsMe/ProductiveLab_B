@@ -21,11 +21,11 @@ namespace ReproductiveLab_Repository.Repositories
         }
         public CourseOfTreatment? GetCourseOfTreatmentById(Guid courseOfTreatmentId)
         {
-            return _db.CourseOfTreatments.FirstOrDefault(x=>x.CourseOfTreatmentId == courseOfTreatmentId);
+            return _db.CourseOfTreatments.FirstOrDefault(x => x.CourseOfTreatmentId == courseOfTreatmentId);
         }
         public List<LabMainPageDto> GetMainPageInfo()
         {
-            List<LabMainPageDto> result = _db.CourseOfTreatments.Select(x =>
+            List<LabMainPageDto> result = _db.CourseOfTreatments.Where(x => !x.IsTerminated).Select(x =>
             new LabMainPageDto
             {
                 surgicalTime = x.SurgicalTime,
@@ -48,7 +48,7 @@ namespace ReproductiveLab_Repository.Repositories
                 },
                 treatmentStatus = x.TreatmentStatus.Name
             }).OrderByDescending(x => x.surgicalTime).ToList();
-            
+
             return result;
         }
         public void AddCourseOfTreatment(AddCourseOfTreatmentDto input)

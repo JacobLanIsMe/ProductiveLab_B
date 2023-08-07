@@ -35,7 +35,7 @@ namespace Reproductive_SharedFunction.Services
             List<int> operationTypeIds = JsonSerializer.Deserialize<List<int>>(input.operationTypeId);
             _observationNoteRepository.AddObservationNoteOperation(observationNoteId, input, operationTypeIds);
         }
-        public void AddObservationNotePhoto(List<IFormFile>? photos, string inputMainPhotoIndex, Guid observationNoteId, bool hasAlreadyMainPhotoIndex)
+        public async Task AddObservationNotePhoto(List<IFormFile>? photos, string inputMainPhotoIndex, Guid observationNoteId, bool hasAlreadyMainPhotoIndex)
         {
             if (photos != null)
             {
@@ -47,7 +47,7 @@ namespace Reproductive_SharedFunction.Services
                         throw new FormatException("主照片選項有誤");
                     }
                 }
-                _observationNoteRepository.AddObservationNotePhoto(photos, observationNoteId, hasAlreadyMainPhotoIndex, mainPhotoIndex);
+                await _observationNoteRepository.AddObservationNotePhoto(photos, observationNoteId, hasAlreadyMainPhotoIndex, mainPhotoIndex);
             }
         }
         public void DeleteObservationNoteEmbryoStatus(Guid observationNoteId)

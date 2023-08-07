@@ -19,12 +19,12 @@ namespace ReproductiveLab_Service.Interfaces
         List<Common1Dto> GetEmbryoStatus();
         BlastocystScoreDto GetBlastocystScore();
         List<Common1Dto> GetOperationType();
-        BaseResponseDto AddObservationNote(AddObservationNoteDto input);
+        Task<BaseResponseDto> AddObservationNote(AddObservationNoteDto input);
         GetObservationNoteDto? GetExistingObservationNote(Guid observationNoteId);
         List<GetObservationNoteNameDto> GetObservationNoteNameByObservationNoteIds(List<Guid> observationNoteIds);
         GetObservationNoteNameDto? GetExistingObservationNoteName(Guid observationNoteId);
         BaseResponseDto DeleteObservationNote(Guid observationNoteId);
-        BaseResponseDto UpdateObservationNote(UpdateObservationNoteDto input);
+        Task<BaseResponseDto> UpdateObservationNote(UpdateObservationNoteDto input);
         List<GetObservationNoteNameDto> GetFreezeObservationNotes(List<Guid> ovumDetailIds);
     }
 }

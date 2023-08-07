@@ -14,7 +14,7 @@ namespace Reproductive_SharedFunction.Interfaces
         void AddObservationNoteEmbryoStatus(Guid observationNoteId, AddObservationNoteDto input);
         void AddObservationNoteOvumAbnormality(Guid observationNoteId, AddObservationNoteDto input);
         void AddObservationNoteOperation(Guid observationNoteId, AddObservationNoteDto input);
-        void AddObservationNotePhoto(List<IFormFile>? photos, string inputMainPhotoIndex, Guid observationNoteId, bool hasAlreadyMainPhotoIndex);
+        Task AddObservationNotePhoto(List<IFormFile>? photos, string inputMainPhotoIndex, Guid observationNoteId, bool hasAlreadyMainPhotoIndex);
         void DeleteObservationNoteEmbryoStatus(Guid observationNoteId);
         void DeleteObservationNoteOperation(Guid observationNoteId);
         void DeleteObservationNoteOvumAbnormality(Guid observationNoteId);

@@ -30,7 +30,7 @@ namespace ReproductiveLab_Repository.Repositories
         private string? imgurClientId = null;
         private string? imgurClientSecret = null;
         private string? dbConnectionString = null;
-        
+
         public ObservationNoteRepository(ReproductiveLabContext db, IWebHostEnvironment env, IConfiguration config)
         {
             _db = db;
@@ -59,7 +59,7 @@ namespace ReproductiveLab_Repository.Repositories
                     mainPhoto = y.ObservationNotePhotos.Where(z => z.IsMainPhoto == true && z.IsDeleted == false).Select(z => z.PhotoName).FirstOrDefault()
                 }).ToList()
             }).OrderBy(x => x.ovumNumber).AsNoTracking().ToList();
-            
+
             return result;
         }
         public List<Common1Dto> GetOvumMaturation()
@@ -222,7 +222,7 @@ namespace ReproductiveLab_Repository.Repositories
             }
             _db.SaveChanges();
         }
-        public async void AddObservationNotePhoto(List<IFormFile>? photos, Guid observationNoteId, bool hasAlreadyMainPhotoIndex, int mainPhotoIndex)
+        public async Task AddObservationNotePhoto(List<IFormFile>? photos, Guid observationNoteId, bool hasAlreadyMainPhotoIndex, int mainPhotoIndex)
         {
             if (string.IsNullOrEmpty(imgurClientId) || string.IsNullOrEmpty(imgurClientSecret))
             {
@@ -266,23 +266,19 @@ namespace ReproductiveLab_Repository.Repositories
         }
         private void InsertObservationNotePhoto(List<ObservationNotePhoto> observationNotePhotos)
         {
-            using (TransactionScope scope = new TransactionScope())
-            {
-                string sqlCommand = @"INSERT INTO [ObservationNotePhoto]
+            string sqlCommand = @"INSERT INTO [ObservationNotePhoto]
            ([ObservationNoteId]
            ,[IsMainPhoto]
            ,[PhotoName]
            ,[IsDeleted])
-     VALUES
+            VALUES
            (@ObservationNoteId
            ,@IsMainPhoto
            ,@PhotoName
            ,@IsDeleted)";
-                using (var conn = new SqlConnection(dbConnectionString))
-                {
-                    conn.Execute(sqlCommand, observationNotePhotos);
-                }
-                scope.Complete();
+            using (var conn = new SqlConnection(dbConnectionString))
+            {
+                conn.Execute(sqlCommand, observationNotePhotos);
             }
 
         }

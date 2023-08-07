@@ -32,7 +32,7 @@ namespace ReproductiveLab_Repository.Interfaces
         void AddObservationNoteEmbryoStatus(Guid observationNoteId, List<int> embryoStatusIds);
         void AddObservationNoteOvumAbnormality(Guid observationNoteId, List<int> ovumAbnormalityIds);
         void AddObservationNoteOperation(Guid observationNoteId, AddObservationNoteDto input, List<int> operationTypeIds);
-        void AddObservationNotePhoto(List<IFormFile>? photos, Guid observationNoteId, bool hasAlreadyMainPhotoIndex, int mainPhotoIndex);
+        Task AddObservationNotePhoto(List<IFormFile>? photos, Guid observationNoteId, bool hasAlreadyMainPhotoIndex, int mainPhotoIndex);
         ObservationNote? GetObservationNoteById(Guid observationNoteId);
         void deleteObservationNoteEmbryoStatus(Guid observationNoteId);
         void deleteObservationNoteOperation(Guid observationNoteId);
