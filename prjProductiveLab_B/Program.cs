@@ -53,7 +53,7 @@ builder.Services.AddScoped<ITransferInRepository, TransferInRepository>();
 builder.Services.AddScoped<IErrorFunction, ErrorFunction>();
 builder.Services.AddScoped<ITreatmentFunction, TreatmentFunction>();
 builder.Services.AddScoped<IOvumDetailFunction, OvumDetailFunction>();
-builder.Services.AddScoped<IPhotoFunction, PhotoFunction>();
+//builder.Services.AddScoped<IPhotoFunction, PhotoFunction>();
 builder.Services.AddScoped<IObservationNoteFunction, ObservationNoteFunction>();
 builder.Services.AddScoped<IOperateSpermFunction, OperateSpermFunction>();
 builder.Services.AddScoped<IOvumFreezeRepository, OvumFreezeRepository>();

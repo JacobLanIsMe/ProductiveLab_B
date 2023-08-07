@@ -10,8 +10,8 @@ namespace Reproductive_SharedFunction.Interfaces
 {
     public interface IPhotoFunction
     {
-        void ConvertPhotoToBase64String(List<GetOvumFreezeSummaryDto> result);
-        string? GetBase64String(string? photoName);
-        void GetObservationNotePhotoBase64String(List<ObservationNotePhotoDto> observationNotePhotos);
+        //void ConvertPhotoToBase64String(List<GetOvumFreezeSummaryDto> result);
+        //string? GetBase64String(string? photoName);
+        //void GetObservationNotePhotoBase64String(List<ObservationNotePhotoDto> observationNotePhotos);
     }
 }

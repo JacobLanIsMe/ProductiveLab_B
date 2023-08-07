@@ -1,19 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Reproductive_SharedFunction.Interfaces;
+﻿using Reproductive_SharedFunction.Interfaces;
 using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForObservationNote;
 using ReproductiveLab_Common.Enums;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLab_Service.Interfaces;
-using ReproductiveLabDB.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace ReproductiveLab_Service.Services
@@ -21,12 +12,12 @@ namespace ReproductiveLab_Service.Services
     public class ObservationNoteService : IObservationNoteService
     {
         private readonly IObservationNoteRepository _observationNoteRepository;
-        private readonly IPhotoFunction _photoFunction;
+        //private readonly IPhotoFunction _photoFunction;
         private readonly IObservationNoteFunction _observationNoteFunction;
-        public ObservationNoteService(IObservationNoteRepository observationNoteRepository, IPhotoFunction photoFunction, IObservationNoteFunction observationNoteFunction)
+        public ObservationNoteService(IObservationNoteRepository observationNoteRepository,/* IPhotoFunction photoFunction,*/ IObservationNoteFunction observationNoteFunction)
         {
             _observationNoteRepository = observationNoteRepository;
-            _photoFunction = photoFunction;
+            //_photoFunction = photoFunction;
             _observationNoteFunction = observationNoteFunction;
         }
         public List<ObservationNoteDto> GetObservationNote(Guid courseOfTreatmentId)
@@ -203,10 +194,6 @@ namespace ReproductiveLab_Service.Services
                 result.ovumAbnormalityId = JsonSerializer.Serialize(result.ovumAbnormalityIds);
                 result.embryoStatusId = JsonSerializer.Serialize(result.embryoStatusIds);
                 result.operationTypeId = JsonSerializer.Serialize(result.operationTypeIds);
-                if (result.observationNotePhotos != null && result.observationNotePhotos.Count != 0)
-                {
-                    _photoFunction.GetObservationNotePhotoBase64String(result.observationNotePhotos);
-                }
                 return result;
             }
 
@@ -235,10 +222,6 @@ namespace ReproductiveLab_Service.Services
             List<ObservationNoteOperationDto> observationNoteOperations = _observationNoteRepository.GetObservationNoteOperationNameByObservationNoteId(observationNoteId);
             observationNotes[0].operationTypeName = observationNoteOperations.Select(x => x.operationTypeName).ToList();
             observationNotes[0].spindleResult = observationNoteOperations.Where(x => x.operationTypeId == (int)OperationTypeEnum.Spindle && x.spindleResult != null).Select(x => x.spindleResult).FirstOrDefault();
-            if (observationNotes[0].observationNotePhotos != null && observationNotes[0].observationNotePhotos.Count != 0)
-            {
-                _photoFunction.GetObservationNotePhotoBase64String(observationNotes[0].observationNotePhotos);
-            }
             return observationNotes[0];
         }
         public BaseResponseDto DeleteObservationNote(Guid observationNoteId)

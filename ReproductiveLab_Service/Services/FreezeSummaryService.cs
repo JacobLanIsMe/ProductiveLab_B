@@ -16,16 +16,16 @@ namespace ReproductiveLab_Service.Services
     {
         private readonly ISpermFreezeRepository _spermFreezeRepository;
         private readonly IOvumDetailFunction _ovumDetailFunction;
-        private readonly IPhotoFunction _photoFunction;
+        //private readonly IPhotoFunction _photoFunction;
         private readonly IErrorFunction _errorFunction;
         private readonly IOvumDetailRepository _ovumDetailRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly IObservationNoteRepository _observationNoteRepository;
-        public FreezeSummaryService(IOvumDetailFunction ovumDetailFunction, IPhotoFunction photo, IErrorFunction errorFunction, IOvumDetailRepository ovumDetailRepository, ICustomerRepository customerRepository, IObservationNoteRepository observationNoteRepository, ISpermFreezeRepository spermFreezeRepository)
+        public FreezeSummaryService(IOvumDetailFunction ovumDetailFunction,/* IPhotoFunction photo,*/ IErrorFunction errorFunction, IOvumDetailRepository ovumDetailRepository, ICustomerRepository customerRepository, IObservationNoteRepository observationNoteRepository, ISpermFreezeRepository spermFreezeRepository)
         {
             _ovumDetailFunction = ovumDetailFunction;
             _ovumDetailRepository = ovumDetailRepository;
-            _photoFunction = photo;
+            //_photoFunction = photo;
             _errorFunction = errorFunction;
             _customerRepository = customerRepository;
             _observationNoteRepository = observationNoteRepository;
@@ -37,7 +37,7 @@ namespace ReproductiveLab_Service.Services
             var customerOvumDetails = _ovumDetailRepository.GetOvumDetailByCustomerId(customerId);
             var customerOvumFreezes = customerOvumDetails.Where(x => x.OvumFreezeId != null && x.OvumThawFreezePairFreezeOvumDetails.Count == 0 && x.OvumTransferPairDonorOvumDetails.Count == 0);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(customerOvumFreezes);
-            _photoFunction.ConvertPhotoToBase64String(result);
+            //_photoFunction.ConvertPhotoToBase64String(result);
             return result;
         }
         public List<GetOvumFreezeSummaryDto> GetRecipientOvumFreezes(Guid courseOfTreatmentId)
@@ -46,7 +46,7 @@ namespace ReproductiveLab_Service.Services
             var customerOvumDetails = _ovumDetailRepository.GetOvumDetailByCustomerId(customerId);
             var recipientOvumFreezes = customerOvumDetails.Where(x => x.FertilizationId == null && x.OvumFreezeId != null);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(recipientOvumFreezes);
-            _photoFunction.ConvertPhotoToBase64String(result);
+            //_photoFunction.ConvertPhotoToBase64String(result);
             return result;
         }
         public List<GetOvumFreezeSummaryDto> GetDonorOvums(int customerSqlId)
@@ -57,7 +57,7 @@ namespace ReproductiveLab_Service.Services
             var customerOvumDetail = _ovumDetailRepository.GetOvumDetailByCustomerId(customerId);
             var donorOvumFreezes = customerOvumDetail.Where(x => x.FertilizationId == null && x.CourseOfTreatment.OvumSourceId == (int)GermCellSourceEnum.OD && x.OvumTransferPairDonorOvumDetails.Count <= 0);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(donorOvumFreezes);
-            _photoFunction.ConvertPhotoToBase64String(result);
+            //_photoFunction.ConvertPhotoToBase64String(result);
             return result;
         }
         public List<GetOvumFreezeSummaryDto> GetEmbryoFreezes(Guid courseOfTreatmentId)
@@ -66,7 +66,7 @@ namespace ReproductiveLab_Service.Services
             var customerOvumDetails = _ovumDetailRepository.GetOvumDetailByCustomerId(customerId);
             var embryoFreezes = customerOvumDetails.Where(x => x.OvumFreezeId != null && x.FertilizationId != null);
             List<GetOvumFreezeSummaryDto> result = _ovumDetailFunction.GetOvumDetailInfos(embryoFreezes);
-            _photoFunction.ConvertPhotoToBase64String(result);
+            //_photoFunction.ConvertPhotoToBase64String(result);
             return result;
         }
         public List<Guid> GetUnFreezingObservationNoteOvumDetails(List<Guid> ovumDetailIds)

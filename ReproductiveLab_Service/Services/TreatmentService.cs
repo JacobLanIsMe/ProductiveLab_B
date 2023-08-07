@@ -1,17 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Reproductive_SharedFunction.Interfaces;
+﻿using Reproductive_SharedFunction.Interfaces;
 using ReproductiveLab_Common.Dtos;
-using ReproductiveLab_Common.Dtos.ForStorage;
 using ReproductiveLab_Common.Dtos.ForTreatment;
 using ReproductiveLab_Common.Enums;
 using ReproductiveLab_Repository.Interfaces;
 using ReproductiveLab_Service.Interfaces;
-using ReproductiveLabDB.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace ReproductiveLab_Service.Services
@@ -26,9 +18,9 @@ namespace ReproductiveLab_Service.Services
         private readonly IOvumDetailRepository _ovumDetailRepository;
         private readonly IStorageRepository _storageRepository;
         private readonly IOvumFreezeRepository _ovumFreezeRepository;
-        private readonly IPhotoFunction _photoFunction;
+        //private readonly IPhotoFunction _photoFunction;
 
-        public TreatmentService(ICourseOfTreatmentRepository courseOfTreatmentRepository, ITreatmentFunction treatmentFunction, ITreatmentRepository treatmentRepository, IObservationNoteService observationNoteService, ICustomerRepository customerRepository, IOvumDetailRepository ovumDetailRepository, IStorageRepository storageRepository, IOvumFreezeRepository ovumFreezeRepository, IPhotoFunction photoFunction)
+        public TreatmentService(ICourseOfTreatmentRepository courseOfTreatmentRepository, ITreatmentFunction treatmentFunction, ITreatmentRepository treatmentRepository, IObservationNoteService observationNoteService, ICustomerRepository customerRepository, IOvumDetailRepository ovumDetailRepository, IStorageRepository storageRepository, IOvumFreezeRepository ovumFreezeRepository/*, IPhotoFunction photoFunction*/)
         {
             _courseOfTreatmentRepository = courseOfTreatmentRepository;
             _treatmentFunction = treatmentFunction;
@@ -38,7 +30,7 @@ namespace ReproductiveLab_Service.Services
             _ovumDetailRepository = ovumDetailRepository;
             _storageRepository = storageRepository;
             _ovumFreezeRepository = ovumFreezeRepository;
-            _photoFunction = photoFunction;
+            //_photoFunction = photoFunction;
         }
         public List<LabMainPageDto> GetMainPageInfo()
         {
@@ -156,7 +148,7 @@ namespace ReproductiveLab_Service.Services
                 if (treatment.observationNote!=null && treatment.observationNote.observationNotePhotos != null)
                 {
                     treatment.observationNote.observationNotePhotos = treatment.observationNote.observationNotePhotos.Where(x => x.isMainPhoto).ToList();
-                    _photoFunction.GetObservationNotePhotoBase64String(treatment.observationNote.observationNotePhotos);
+                    //_photoFunction.GetObservationNotePhotoBase64String(treatment.observationNote.observationNotePhotos);
                 }
                 result.Add(treatment);
             }
