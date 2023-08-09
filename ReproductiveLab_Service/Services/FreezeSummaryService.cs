@@ -52,7 +52,10 @@ namespace ReproductiveLab_Service.Services
         public List<GetOvumFreezeSummaryDto> GetDonorOvums(int customerSqlId)
         {
             var customer = _customerRepository.GetCustomerBySqlId(customerSqlId);
-            _errorFunction.ThrowExceptionIfNull(customer, "CustomerSqlId is not found");
+            if (customer == null)
+            {
+                return new List<GetOvumFreezeSummaryDto>();
+            }
             Guid customerId = customer.CustomerId;
             var customerOvumDetail = _ovumDetailRepository.GetOvumDetailByCustomerId(customerId);
             var donorOvumFreezes = customerOvumDetail.Where(x => x.FertilizationId == null && x.CourseOfTreatment.OvumSourceId == (int)GermCellSourceEnum.OD && x.OvumTransferPairDonorOvumDetails.Count <= 0);

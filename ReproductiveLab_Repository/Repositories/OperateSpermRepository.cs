@@ -34,13 +34,13 @@ namespace ReproductiveLab_Repository.Repositories
         }
         public List<SpermScoreModel> GetSpermScoresByCourseOfTreatmentId(Guid courseOfTreatmentId)
         {
-            return _db.SpermScores.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new SpermScoreModel
+            var result = _db.SpermScores.Where(x => x.CourseOfTreatmentId == courseOfTreatmentId).Select(x => new SpermScoreModel
             {
                 isThawed = x.CourseOfTreatment.SpermThaws.Any() ? true : false,
                 baseSpermInfo_Thaw = new BaseOperateSpermInfoDto
                 {
                     spermSituationName = x.CourseOfTreatment.SpermSituation == null ? null : x.CourseOfTreatment.SpermSituation.Name,
-                    //spermRetrievalMethodName = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment
+                    spermRetrievalMethodName = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment.SpermThaws.FirstOrDefault().SpermThawFreezePairs.FirstOrDefault().SpermFreeze.CourseOfTreatment.SpermRetrievalMethod.Name : null,
                     spermOwner = new BaseCustomerInfoDto
                     {
                         customerName = x.CourseOfTreatment.SpermThaws.Any() ? x.CourseOfTreatment.SpermThaws.First().SpermThawFreezePairs.Select(y => y.SpermFreeze.CourseOfTreatment.Customer.Name).FirstOrDefault() : null,
@@ -73,6 +73,7 @@ namespace ReproductiveLab_Repository.Repositories
                 courseOfTreatmentId = x.CourseOfTreatmentId,
                 courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId
             }).OrderBy(x => x.spermScoreTimePointId).ThenBy(x => x.recordTime).ToList();
+            return result;
         }
 
         public void AddSpermScore(SpermScoreDto addSpermScore)
