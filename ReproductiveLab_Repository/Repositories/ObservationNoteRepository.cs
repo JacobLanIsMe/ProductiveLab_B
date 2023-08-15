@@ -589,5 +589,37 @@ namespace ReproductiveLab_Repository.Repositories
             }
             return observationNote;
         }
+        public List<GetObservationNoteNameDto> GetFreezeObservationNoteInfosByOvumDetailIds(List<Guid> ovumDetailIds)
+        {
+            var q = _db.ObservationNotes.Where(x => (ovumDetailIds.Contains(x.OvumDetailId) && x.ObservationTypeId == (int)ObservationTypeEnum.freezeObservation && !x.IsDeleted)).OrderByDescending(x => x.ObservationTime).Select(x => new GetObservationNoteNameDto
+            {
+                ovumDetailId = x.OvumDetailId,
+                observationNoteId = x.ObservationNoteId,
+                day = x.Day,
+                memo = x.Memo,
+                ovumMaturationName = x.OvumMaturation.Name,
+                fertilizationResultName = x.FertilizationResult.Name,
+                blastomereScore_C_Name = x.BlastomereScoreC.Name,
+                blastomereScore_G_Name = x.BlastomereScoreG.Name,
+                blastomereScore_F_Name = x.BlastomereScoreF.Name,
+                blastocystScore_Expansion_Name = x.BlastocystScoreExpansion.Name,
+                blastocystScore_TE_Name = x.BlastocystScoreTe.Name,
+                blastocystScore_ICE_Name = x.BlastocystScoreIce.Name,
+                kidScore = x.KidScore.ToString(),
+                pgtaNumber = x.PgtaNumber.ToString(),
+                pgtaResult = x.PgtaResult,
+                pgtmResult = x.PgtmResult,
+                ovumAbnormalityName = x.ObservationNoteOvumAbnormalities.Where(z => !z.IsDeleted).Select(z => z.OvumAbnormality.Name).ToList(),
+                embryoStatusName = x.ObservationNoteEmbryoStatuses.Where(z => !z.IsDeleted).Select(z => z.EmbryoStatus.Name).ToList(),
+                operationTypeName = x.ObservationNoteOperations.Where(z => !z.IsDeleted).Select(z => z.OperationType.Name).ToList(),
+                observationNotePhotos = x.ObservationNotePhotos.Where(z => z.IsMainPhoto == true && z.IsDeleted == false).Select(z => new ObservationNotePhotoDto
+                {
+                    observationNotePhotoId = z.ObservationNotePhotoId,
+                    photoName = z.PhotoName,
+                    isMainPhoto = true
+                }).ToList(),
+            }).ToList();
+            return q;
+        }
     }
 }

@@ -47,5 +47,6 @@ namespace ReproductiveLab_Repository.Interfaces
         List<Common2Dto> GetObservationNoteEmbryoStatuseNameByObservationNoteIds(List<Guid> observationNoteIds);
         List<ObservationNoteOperationDto> GetObservationNoteOperationNameByObservationNoteId(Guid observationNoteId);
         List<GetObservationNoteNameDto> GetFreezeObservationNotes(List<Guid> ovumDetailIds);
+        List<GetObservationNoteNameDto> GetFreezeObservationNoteInfosByOvumDetailIds(List<Guid> ovumDetailIds);
     }
 }

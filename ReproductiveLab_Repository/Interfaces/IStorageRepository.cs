@@ -27,5 +27,6 @@ namespace ReproductiveLab_Repository.Interfaces
         IQueryable<StorageUnit> GetStorageUnitByIds(List<int> storageUnitIds);
         void UpdateStorageUnitToOccupied(StorageUnit storageUnit);
         List<Common1Dto> GetTopColors();
+        List<BaseStorageWithOvumDetailId> GetStorageInfosByOvumDetailIds(List<Guid> ovumDetailIds);
     }
 }

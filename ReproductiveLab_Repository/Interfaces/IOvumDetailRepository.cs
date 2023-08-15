@@ -1,4 +1,5 @@
-﻿using ReproductiveLab_Common.Dtos.ForTreatment;
+﻿using ReproductiveLab_Common.Dtos.ForFreezeSummary;
+using ReproductiveLab_Common.Dtos.ForTreatment;
 using ReproductiveLab_Common.Models;
 using ReproductiveLabDB.Models;
 using System;
@@ -22,5 +23,6 @@ namespace ReproductiveLab_Repository.Interfaces
         void UpdateFreezeOvumDetail(IQueryable<FreezeOvumDetailModel> freezeOvumDetails, Guid latestOvumThawId);
         IQueryable<FreezeOvumDetailModel> GetFreezeOvumDetailModelByIds(List<Guid> ovumDetailIds);
         Guid GetLatestOvumDetailId();
+        List<GetOvumFreezeSummaryDto> GetBaseOvumDetailInfosByOvumDetails(IQueryable<OvumDetail> ovumDetails);
     }
 }

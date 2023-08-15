@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReproductiveLab_Common.Dtos.ForFreezeSummary;
+using ReproductiveLab_Common.Dtos;
 using ReproductiveLab_Common.Dtos.ForTreatment;
 using ReproductiveLab_Common.Enums;
 using ReproductiveLab_Common.Models;
@@ -124,6 +126,31 @@ namespace ReproductiveLab_Repository.Repositories
         public Guid GetLatestOvumDetailId() 
         {
             return _db.OvumDetails.OrderByDescending(x => x.SqlId).Select(x => x.OvumDetailId).FirstOrDefault();
+        }
+        public List<GetOvumFreezeSummaryDto> GetBaseOvumDetailInfosByOvumDetails(IQueryable<OvumDetail> ovumDetails)
+        {
+            var q = ovumDetails.Select(x => new GetOvumFreezeSummaryDto
+            {
+                courseOfTreatmentSqlId = x.CourseOfTreatment.SqlId,
+                courseOfTreatmentId = x.CourseOfTreatmentId,
+                ovumFromCourseOfTreatmentSqlId = x.OvumFromCourseOfTreatment.SqlId,
+                ovumFromCourseOfTreatmentId = x.OvumFromCourseOfTreatmentId,
+                ovumSource = x.CourseOfTreatment.OvumSource.Name,
+                ovumSourceOwner = new BaseCustomerInfoDto
+                {
+                    customerSqlId = x.OvumFromCourseOfTreatment.Customer.SqlId,
+                    customerId = x.OvumFromCourseOfTreatment.CustomerId,
+                    customerName = x.OvumFromCourseOfTreatment.Customer.Name
+                },
+                ovumDetailId = x.OvumDetailId,
+                ovumNumber = x.OvumNumber,
+                ovumPickupTime = x.OvumPickup == null ? null : x.OvumPickup.StartTime,
+                freezeTime = x.OvumFreeze == null ? null : x.OvumFreeze.FreezeTime,
+                thawTime = x.OvumThaw == null ? null : x.OvumThaw.ThawTime,
+                medium = x.OvumFreeze.MediumInUse.MediumTypeId == (int)MediumTypeEnum.other ? x.OvumFreeze.OtherMediumName : x.OvumFreeze.MediumInUse.Name,
+                isThawed = x.OvumThawFreezePairFreezeOvumDetails.Count == 0 ? false : true
+            }).OrderBy(x => x.ovumPickupTime).ThenBy(x => x.ovumNumber).ToList();
+            return q;
         }
     }
 }

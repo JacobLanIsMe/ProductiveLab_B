@@ -17,4 +17,9 @@ namespace ReproductiveLab_Common.Dtos.ForStorage
         public string? topColorName { get; set; }
         public StorageUnitDto? unitInfo { get; set; }
     }
+    public class BaseStorageWithOvumDetailId : BaseStorage
+    {
+        public Guid OvumDetailId { get; set; }  
+    }
+
 }

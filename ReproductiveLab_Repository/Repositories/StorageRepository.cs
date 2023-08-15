@@ -172,5 +172,30 @@ namespace ReproductiveLab_Repository.Repositories
                 name = x.Name
             }).ToList();
         }
+        public List<BaseStorageWithOvumDetailId> GetStorageInfosByOvumDetailIds(List<Guid> ovumDetailIds)
+        {
+            var q = _db.OvumDetails.Where(x => ovumDetailIds.Contains(x.OvumDetailId)).Select(x => new BaseStorageWithOvumDetailId
+            {
+                OvumDetailId = x.OvumDetailId,
+                tankInfo = new StorageTankDto
+                {
+                    tankName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.TankName,
+                    tankTypeId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTank.StorageTankTypeId
+                },
+                tankId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.StorageTankId,
+                canistId = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanistId,
+                canistName = x.OvumFreeze.StorageUnit.StorageStripBox.StorageCanist.CanistName,
+                stripBoxId = x.OvumFreeze.StorageUnit.StorageStripBoxId,
+                stripBoxName = x.OvumFreeze.StorageUnit.StorageStripBox.StripBoxName,
+                topColorName = x.OvumFreeze.TopColor.Name,
+                unitInfo = new StorageUnitDto
+                {
+                    storageUnitId = x.OvumFreeze.StorageUnitId,
+                    unitName = x.OvumFreeze.StorageUnit.UnitName,
+                    isOccupied = x.OvumFreeze.StorageUnit.IsOccupied
+                }
+            }).ToList();
+            return q;
+        }
     }
 }
